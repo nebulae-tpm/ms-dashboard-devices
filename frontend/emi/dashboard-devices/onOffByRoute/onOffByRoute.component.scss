@@ -1,0 +1,16 @@
+@import "src/app/core/scss/fuse";
+.circle {
+  /*This creates a 1px solid red border around your element(div) */
+  border:1px solid black;
+  height: 10px;
+  /* border-radius 50% will make it fully rounded. */
+  border-radius: 50%;
+  -moz-border-radius:50%;
+  -webkit-border-radius: 50%;
+   width: 10px;
+}
+
+// h2 {
+//   text-align: left;
+// }
+

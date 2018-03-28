@@ -1,0 +1,35 @@
+[
+    {
+        "name": "devices",
+        "src": "frontend/emi/dashboard-devices",
+        "groups": [
+            {
+                "id": "DASHBOARDS",
+                "icon": "account_circle",
+                "translate": {
+                    "en": "Dashboard",
+                    "es": "Tableros"
+                },
+                "priority": 1000
+            }
+        ],
+        "contents": [
+            {
+                "groupId": "DASHBOARDS",
+                "id": "devices",
+                "icon": "account_circle",
+                "translate": {
+                    "en": "Devices",
+                    "es": "Dispositivos"
+                },
+                "navURL": "/devices",
+                "path": "devices",
+                "loadChildren": "./main/content/dashboard-devices/dashboard-devices.module#DashboardDevicesModule",
+                "priority": 1000
+            }
+        ],
+        "preBuildCommands": [],
+        "environmentVars": {
+        }
+    }
+]
