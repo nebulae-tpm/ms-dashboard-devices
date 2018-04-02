@@ -25,7 +25,8 @@
                 "navURL": "/devices",
                 "path": "devices",
                 "loadChildren": "./main/content/dashboard-devices/dashboard-devices.module#DashboardDevicesModule",
-                "priority": 1000
+                "priority": 1000,
+                "default" : true
             }
         ],
         "preBuildCommands": [],
