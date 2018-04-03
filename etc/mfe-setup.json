@@ -17,7 +17,7 @@
             {
                 "groupId": "DASHBOARDS",
                 "id": "dashboard-devices",
-                "icon": "account_circle",
+                "icon": "dashboard",
                 "translate": {
                     "en": "Devices",
                     "es": "Dispositivos"

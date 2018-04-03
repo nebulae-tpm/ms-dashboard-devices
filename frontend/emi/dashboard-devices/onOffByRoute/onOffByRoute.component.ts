@@ -1,3 +1,4 @@
+import { FuseTranslationLoaderService } from './../../../../core/services/translation-loader.service';
 import { OnOffByRouteDashboardService } from './onOffByRoute.service';
 import { Component, OnDestroy, OnInit, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { fuseAnimations } from '../../../../core/animations';
@@ -14,6 +15,8 @@ import { Subscription } from 'rxjs/Subscription';
 import * as Rx from 'rxjs';
 import * as Util from 'util';
 import { from } from 'rxjs/observable/from';
+import { locale as english } from '../i18n/en';
+import { locale as spanish } from '../i18n/es';
 import {
   map,
   groupBy,
@@ -58,7 +61,11 @@ export class OnOffByRouteDashboardComponent implements OnInit, OnDestroy, AfterV
   widget10: any = {};
   widget11: any = {};
 
-  constructor( private onOffByRouteDashboardService: OnOffByRouteDashboardService) {  
+  constructor(
+    private onOffByRouteDashboardService: OnOffByRouteDashboardService,
+    private translationLoader: FuseTranslationLoaderService) {
+
+    this.translationLoader.loadTranslations(english, spanish);
 
     this.widget1 = {
       'alerts': Math.floor(Math.random() * 200 + 90),

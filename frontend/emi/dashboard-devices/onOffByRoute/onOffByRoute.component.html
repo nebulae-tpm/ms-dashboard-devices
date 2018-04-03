@@ -16,7 +16,7 @@
               <mat-select class="simplified font-size-16" [(ngModel)]="widget4.currentRange" (change)="widget4.onSelectionChange($event.value)"
                 aria-label="Change range">
                 <mat-option *ngFor="let range of widget4.ranges | keys" [value]="range.key">
-                  {{range.value}}
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -29,11 +29,11 @@
             <div class="red-fg font-size-72 line-height-72">
               {{ widget4.alerts }}
             </div>
-            <div class="h3 secondary-text font-weight-500">{{ widget4.label }}</div>
+            <div class="h3 secondary-text font-weight-500">{{ 'DASHBOARD.MINI_WIDGET.ALERTS_BY_PROCESOR' | translate }}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-            <span class="h4 secondary-text text-truncate"> Dispositivos: </span>
+            <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
             <span class="h4 ml-8"> {{widget4.reporterDevices}} </span>
           </div>
         </div>
@@ -52,7 +52,7 @@
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">Ver Listado Completo</button>
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']"> {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }} </button>
             </div>
           </mat-list>
 
@@ -71,7 +71,7 @@
             <mat-form-field>
               <mat-select class="simplified font-size-16" [(ngModel)]="widget2.currentRange" aria-label="Change range" (change)="widget2.onSelectionChange($event.value)">
                 <mat-option *ngFor="let range of widget2.ranges | keys" [value]="range.key">
-                  {{range.value}}
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -84,11 +84,11 @@
             <div class="red-fg font-size-72 line-height-72">
               {{ widget2.alerts }}
             </div>
-            <div class="h3 secondary-text font-weight-500">{{ widget2.label }}</div>
+            <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_RAM' | translate}}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-            <span class="h4 secondary-text text-truncate"> Dispositivos: </span>
+            <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
             <span class="h4 ml-8"> {{widget2.reporterDevices}} </span>
           </div>
         </div>
@@ -107,7 +107,7 @@
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">Ver Listado Completo</button>
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
             </div>
           </mat-list>
 
@@ -126,7 +126,7 @@
             <mat-form-field>
               <mat-select class="simplified font-size-16" [(ngModel)]="widget3.currentRange" aria-label="Change range" (change)="widget3.onSelectionChange($event.value)">
                 <mat-option *ngFor="let range of widget3.ranges | keys" [value]="range.key">
-                  {{range.value}}
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -139,11 +139,11 @@
             <div class="red-fg font-size-72 line-height-72">
               {{ widget3.alerts }}
             </div>
-            <div class="h3 secondary-text font-weight-500">{{ widget3.label }}</div>
+            <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_VOLTAGE' | translate}}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-            <span class="h4 secondary-text text-truncate"> Dispositivos: </span>
+            <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
             <span class="h4 ml-8"> {{widget3.reporterDevices}} </span>
           </div>
         </div>
@@ -162,7 +162,7 @@
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">Ver Listado Completo</button>
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
             </div>
           </mat-list>
 
@@ -181,7 +181,7 @@
             <mat-form-field>
               <mat-select class="simplified font-size-16" [(ngModel)]="widget1.currentRange" aria-label="Change range" (change)="widget1.onSelectionChange($event.value)">
                 <mat-option *ngFor="let range of widget1.ranges | keys" [value]="range.key">
-                  {{range.value}}
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -194,11 +194,11 @@
             <div class="red-fg font-size-72 line-height-72">
               {{ widget1.alerts }}
             </div>
-            <div class="h3 secondary-text font-weight-500">{{ widget1.label }}</div>
+            <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_TEMPERATURE' | translate}}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-            <span class="h4 secondary-text text-truncate"> Dispositivos: </span>
+            <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
             <span class="h4 ml-8"> {{widget1.reporterDevices}} </span>
           </div>
         </div>
@@ -217,7 +217,7 @@
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">Ver Listado Completo</button>
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
             </div>
           </mat-list>
 
@@ -236,7 +236,7 @@
           <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
 
             <div fxFlex class="py-8 h2">
-              <strong style="text-align: center; float: center"> Dispositivos por cuenca </strong>
+              <strong style="text-align: center; float: center"> {{'DASHBOARD.DEVICES_BY_CUENCA' | translate}} </strong>
             </div>
 
             <!-- <div fxFlex="0 1 auto" class="py-8" fxLayout="row">
@@ -257,7 +257,7 @@
               [showXAxisLabel]="widget5.showXAxisLabel"
               [showYAxisLabel]="widget5.showYAxisLabel"
               [xAxisLabel]="widget5.xAxisLabel"
-              [yAxisLabel]="widget5.yAxisLabel"
+              [yAxisLabel]="'DASHBOARD.TOTAL_USAGES' | translate"
               (select)="widget5.onSelect($event)">
             </ngx-charts-bar-vertical-stacked>
           </div>
@@ -275,12 +275,12 @@
 
           <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
             <div class="h3">
-              <strong> Usos Vs Errores de escritura totales del sistema </strong>
+              <strong> {{ 'DASHBOARD.USAGES_VS_ERRORS' | translate }} </strong>
             </div>
             <mat-form-field>
               <mat-select class="simplified" [(ngModel)]="widget6.currentTimeRange" (change)="widget6.onRangeChanged($event.value)" aria-label="Change range">
                 <mat-option *ngFor="let range of widget6.timeRanges | keys" [value]="range.key">
-                  {{range.value}}
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -295,12 +295,12 @@
           <div class="py-8 mh-16 border-top" fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap>
 
             <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
-              <span class="mat-display-1 mb-0"> Usos </span>
+              <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
               <span class="h4"> {{ widget6.usagesCount | async}} </span>
             </div>
 
             <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
-              <span class="mat-display-1 mb-0">Errores</span>
+              <span class="mat-display-1 mb-0">{{'DASHBOARD.ERRORS' | translate}}</span>
               <span class="h4">{{widget6.errorsCount | async}}</span>
             </div>
           </div>
@@ -319,7 +319,7 @@
 
           <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
             <div class="h3">
-              <strong> Usos Vs Errores de escritura por: </strong>
+              <strong> {{'DASHBOARD.USAGES_VS_ERRORS_by' | translate}} </strong>
             </div>
             <mat-form-field>
               <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca" (change)="widget7.onCuencaFilterChanged($event.value)"
@@ -334,7 +334,7 @@
               <mat-select class="simplified" [(ngModel)]="widget7.currentTimeRange" (change)="widget7.onTimeRangeFilterChanged($event.value)"
                 aria-label="Change range">
                 <mat-option *ngFor="let range of widget7.timeRanges | keys" [value]="range.key">
-                  {{range.value}}
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -358,12 +358,12 @@
           <div class="py-8 mh-16 border-top" fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap>
 
             <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
-              <span class="mat-display-1 mb-0"> Usos </span>
+              <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
               <span class="h4"> {{ widget7.datasets[1].total }} </span>
             </div>
 
             <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
-              <span class="mat-display-1 mb-0">Errores</span>
+              <span class="mat-display-1 mb-0">{{ 'DASHBOARD.ERRORS' | translate }}</span>
               <span class="h4"> {{ widget7.datasets[0].total }} </span>
             </div>
           </div>
@@ -385,11 +385,11 @@
               <mat-form-field>
                 <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
                   <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
-                    {{range.value}}
+                    {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <h2 style="text-align: center; width: 100%; padding-right: 33%;"> Afluencia de Usuarios </h2>
+              <h2 style="text-align: center; width: 100%; padding-right: 33%;"> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </h2>
               <button mat-icon-button fuseWidgetToggle aria-label="more">
                 <mat-icon>more_vert</mat-icon>
               </button>
@@ -397,7 +397,7 @@
 
             <ngx-charts-advanced-pie-chart
               [results]="widget9.data"
-              [label]="'Usos totales'"
+              [label]="'DASHBOARD.TOTAL_USAGES' | translate "
               [scheme]="widget9.scheme" >
             </ngx-charts-advanced-pie-chart>
 
@@ -416,18 +416,18 @@
               <mat-form-field style="width: 25%">
                 <mat-select class="simplified font-size-16" [(ngModel)]="widget9.currentRange" aria-label="Change range">
                   <mat-option *ngFor="let range of widget9.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget9()">
-                    {{range.value}}
+                    {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <h2 style="text-align: center; width: 100%; padding-right: 33%;"> Afluencia de usuarios </h2>
+              <h2 style="text-align: center; width: 100%; padding-right: 33%;"> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </h2>
 
               <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
                   <mat-icon class="s-16">close</mat-icon>
               </button>
             </div>
 
-            <ngx-charts-gauge [results]="widget9.data" [legendTitle]="'Usos por cuenca'" [max]="widget9.max" [units]="widget9.units"
+            <ngx-charts-gauge [results]="widget9.data" [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate" [max]="widget9.max" [units]=" 'DASHBOARD.TOTAL_USAGES' | translate "
               [legend]="widget9.legend" [textValue]="widget9.textValue" [scheme]="widget9.scheme" (select)="widget9.toggleLegend()" >
             </ngx-charts-gauge>
           </div>
