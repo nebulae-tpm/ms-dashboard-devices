@@ -1,6 +1,6 @@
 [
     {
-        "name": "devices",
+        "name": "dashboard-devices",
         "src": "frontend/emi/dashboard-devices",
         "groups": [
             {
@@ -16,14 +16,14 @@
         "contents": [
             {
                 "groupId": "DASHBOARDS",
-                "id": "devices",
+                "id": "dashboard-devices",
                 "icon": "account_circle",
                 "translate": {
                     "en": "Devices",
                     "es": "Dispositivos"
                 },
-                "navURL": "/devices",
-                "path": "devices",
+                "navURL": "/dashboard-devices",
+                "path": "dashboard-devices",
                 "loadChildren": "./main/content/dashboard-devices/dashboard-devices.module#DashboardDevicesModule",
                 "priority": 1000,
                 "roles" : ["operator"],
