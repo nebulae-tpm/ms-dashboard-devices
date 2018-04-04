@@ -1,899 +1,506 @@
-<div id="dashboard-project" class="page-layout simple right-sidenav" fxLayout="row">
+<div id="e-commerce-dashboard" class="page-layout simple fullwidth">
 
-    <mat-sidenav-container>
+  <!-- CONTENT -->
+  <div class="content p-24 w-100-p">
 
-        <!-- CENTER -->
-        <div class="center" fusePerfectScrollbar>
+    <!-- WIDGET GROUP -->
+    <div class="widget-group" fxLayout="row" fxFlex="100" fxLayoutWrap fxLayoutAlign="start start" *fuseIfOnDom [@animateStagger]="{value:'50'}">
 
-            <!-- HEADER -->
-            <div class="header mat-accent-bg p-24 pb-0" fxLayout="column" fxLayoutAlign="space-between">
+      <!-- WIDGET 4 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
-                <div fxLayout="row" fxLayoutAlign="space-between start">
+        <!-- Front -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+          <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-form-field>
+              <mat-select class="simplified font-size-16" [(ngModel)]="widget4.currentRange" (change)="widget4.onSelectionChange($event.value)"
+                aria-label="Change range">
+                <mat-option *ngFor="let range of widget4.ranges | keys" [value]="range.key">
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-icon-button fuseWidgetToggle aria-label="more">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
 
-                    <span class="mat-display-1 mb-0 welcome-message" *fuseIfOnDom
-                          [@animate]="{value:'*',params:{x:'50px'}}">Welcome back, John!
-                    </span>
-
-                    <button mat-icon-button fuseMatSidenavToggler="dashboards-right-sidenav" fxHide.gt-md>
-                        <mat-icon>menu</mat-icon>
-                    </button>
-                </div>
-
-                <div fxLayout="row">
-
-                    <div class="selected-project">{{selectedProject.name}}</div>
-
-                    <button mat-icon-button class="project-selector" [matMenuTriggerFor]="projectsMenu"
-                            aria-label="Select project">
-                        <mat-icon>more_horiz</mat-icon>
-                    </button>
-
-                    <mat-menu #projectsMenu="matMenu">
-                        <button mat-menu-item *ngFor="let project of projects" (click)="selectedProject = project">
-                            <span>{{project.name}}</span>
-                        </button>
-                    </mat-menu>
-                </div>
+          <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
+            <div class="red-fg font-size-72 line-height-72">
+              {{ widget4.alerts }}
             </div>
-            <!-- / HEADER -->
-
-            <!-- CONTENT -->
-            <div class="content">
-
-                <mat-tab-group dynamicHeight>
-
-                    <mat-tab label="Home">
-
-                        <div class="widget-group grey-100-bg p-12" fxLayout="row" fxFlex="100" fxLayoutWrap *fuseIfOnDom
-                             [@animateStagger]="{value:'50'}">
-
-                            <!-- WIDGET 1 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-                                    <div class="pl-16 pr-8 py-16 h-52" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <mat-form-field>
-                                            <mat-select class="simplified font-size-16"
-                                                        [(ngModel)]="widgets.widget1.currentRange"
-                                                        aria-label="Change range">
-                                                <mat-option *ngFor="let range of widgets.widget1.ranges | keys"
-                                                            [value]="range.key">
-                                                    {{range.value}}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                        <button mat-icon-button fuseWidgetToggle aria-label="more">
-                                            <mat-icon>more_vert</mat-icon>
-                                        </button>
-                                    </div>
-
-                                    <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
-                                        <div class="light-blue-fg font-size-72 line-height-72">
-                                            {{widgets.widget1.data.count[widgets.widget1.currentRange]}}
-                                        </div>
-                                        <div class="h3 secondary-text font-weight-500">{{widgets.widget1.data.label}}
-                                        </div>
-                                    </div>
-
-                                    <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-                                        <span class="h4 secondary-text text-truncate">
-                                            {{widgets.widget1.data.extra.label}}:
-                                        </span>
-                                        <span class="h4 ml-8">
-                                            {{widgets.widget1.data.extra.count[widgets.widget1.currentRange]}}
-                                        </span>
-                                    </div>
-                                </div>
-                                <!-- / Front -->
-
-                                <!-- Back -->
-                                <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2">
-                                    <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button"
-                                            aria-label="Flip widget">
-                                        <mat-icon class="s-16">close</mat-icon>
-                                    </button>
-
-                                    <div>
-                                        {{widgets.widget1.detail}}
-                                    </div>
-                                </div>
-                                <!-- / Back -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 1 -->
-
-                            <!-- WIDGET 2 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-                                    <div class="pl-16 pr-8 py-16 h-52" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <div class="h3">{{widgets.widget2.title}}</div>
-
-                                        <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button"
-                                                aria-label="more">
-                                            <mat-icon>more_vert</mat-icon>
-                                        </button>
-                                    </div>
-
-                                    <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
-                                        <div class="red-fg font-size-72 line-height-72">
-                                            {{widgets.widget2.data.count}}
-                                        </div>
-                                        <div class="h3 secondary-text font-weight-500">{{widgets.widget2.data.label}}
-                                        </div>
-                                    </div>
-
-                                    <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-                                        <span class="h4 secondary-text text-truncate">
-                                            {{widgets.widget2.data.extra.label}}:
-                                        </span>
-                                        <span class="h4 ml-8">{{widgets.widget2.data.extra.count}}</span>
-                                    </div>
-                                </div>
-                                <!-- / Front -->
-
-                                <!-- Back -->
-                                <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2">
-                                    <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button"
-                                            aria-label="Flip widget">
-                                        <mat-icon class="s-16">close</mat-icon>
-                                    </button>
-
-                                    <div>
-                                        {{widgets.widget2.detail}}
-                                    </div>
-                                </div>
-                                <!-- / Back -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 2 -->
-
-                            <!-- WIDGET 3 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-                                    <div class="pl-16 pr-8 py-16 h-52" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <div class="h3">{{widgets.widget3.title}}</div>
-
-                                        <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button"
-                                                aria-label="more">
-                                            <mat-icon>more_vert</mat-icon>
-                                        </button>
-                                    </div>
-
-                                    <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
-                                        <div class="orange-fg font-size-72 line-height-72">
-                                            {{widgets.widget3.data.count}}
-                                        </div>
-                                        <div class="h3 secondary-text font-weight-500">{{widgets.widget3.data.label}}
-                                        </div>
-                                    </div>
-
-                                    <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-                                        <span class="h4 secondary-text text-truncate">
-                                            {{widgets.widget3.data.extra.label}}:
-                                        </span>
-                                        <span class="h4 ml-8">{{widgets.widget3.data.extra.count}}</span>
-                                    </div>
-                                </div>
-                                <!-- / Front -->
-
-                                <!-- Back -->
-                                <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2">
-                                    <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button"
-                                            aria-label="Flip widget">
-                                        <mat-icon class="s-16">close</mat-icon>
-                                    </button>
-
-                                    <div>
-                                        {{widgets.widget3.detail}}
-                                    </div>
-                                </div>
-                                <!-- / Back -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 3 -->
-
-                            <!-- WIDGET 4 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-                                    <div class="pl-16 pr-8 py-16 h-52" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <div class="h3">{{widgets.widget4.title}}</div>
-
-                                        <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button"
-                                                aria-label="more">
-                                            <mat-icon>more_vert</mat-icon>
-                                        </button>
-                                    </div>
-
-                                    <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
-                                        <div class="blue-grey-fg font-size-72 line-height-72">
-                                            {{widgets.widget4.data.count}}
-                                        </div>
-                                        <div class="h3 secondary-text font-weight-500">{{widgets.widget4.data.label}}
-                                        </div>
-                                    </div>
-
-                                    <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
-                                        <span class="h4 secondary-text text-truncate">
-                                            {{widgets.widget4.data.extra.label}}:
-                                        </span>
-                                        <span class="h4 ml-8">{{widgets.widget4.data.extra.count}}</span>
-                                    </div>
-                                </div>
-                                <!-- / Front -->
-
-                                <!-- Back -->
-                                <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2">
-                                    <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button"
-                                            aria-label="Flip widget">
-                                        <mat-icon class="s-16">close</mat-icon>
-                                    </button>
-
-                                    <div>
-                                        {{widgets.widget4.detail}}
-                                    </div>
-                                </div>
-                                <!-- / Back -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 4 -->
-
-                            <!-- WIDGET 5 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" fxLayout="row" fxFlex="100"
-                                         class="widget widget5">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-
-                                    <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center"
-                                         fxLayoutWrap>
-
-                                        <div fxFlex class="py-16 h3">{{widgets.widget5.title}}</div>
-
-                                        <div fxFlex="0 1 auto" class="py-16" fxLayout="row">
-                                            <button mat-button class="px-16"
-                                                    *ngFor="let range of widgets.widget5.ranges | keys"
-                                                    (click)="widget5.currentRange = range.key"
-                                                    [disabled]="widget5.currentRange == range.key">
-                                                {{range.value}}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div fxLayout="row" fxLayoutAlign="start start" fxLayoutWrap>
-
-                                        <div class="h-420 my-16" fxLayout="row" fxFlex="100" fxFlex.gt-sm="50">
-                                            <ngx-charts-bar-vertical-stacked
-                                                *fuseIfOnDom
-                                                [scheme]="widget5.scheme"
-                                                [results]="this.widgets.widget5.mainChart[this.widget5.currentRange]"
-                                                [gradient]="widget5.gradient"
-                                                [xAxis]="widget5.xAxis"
-                                                [yAxis]="widget5.yAxis"
-                                                [legend]="widget5.legend"
-                                                [showXAxisLabel]="widget5.showXAxisLabel"
-                                                [showYAxisLabel]="widget5.showYAxisLabel"
-                                                [xAxisLabel]="widget5.xAxisLabel"
-                                                [yAxisLabel]="widget5.yAxisLabel"
-                                                (select)="widget5.onSelect($event)">
-                                            </ngx-charts-bar-vertical-stacked>
-                                        </div>
-
-                                        <div class="my-16" fxFlex="100" fxFlex.gt-sm="50" fxLayoutAlign="row"
-                                             fxLayoutWrap>
-
-                                            <div fxLayout="column" fxFlex="100" fxFlex.gt-sm="50" fxLayoutAlign="center"
-                                                 *ngFor="let widget of widgets.widget5.supporting | keys"
-                                                 class="mb-24">
-
-                                                <div class="px-24">
-                                                    <div class="h4 secondary-text">{{widget.value.label}}</div>
-                                                    <div class="mat-display-1 m-0">
-                                                        {{widget.value.count[widget5.currentRange]}}
-                                                    </div>
-                                                </div>
-
-                                                <div class="h-64">
-                                                    <ngx-charts-area-chart
-                                                        *fuseIfOnDom
-                                                        [results]="widget.value.chart[widget5.currentRange]"
-                                                        [scheme]="widget5.supporting.scheme"
-                                                        [gradient]="widget5.supporting.gradient"
-                                                        [xAxis]="widget5.supporting.xAxis"
-                                                        [yAxis]="widget5.supporting.yAxis"
-                                                        [legend]="widget5.supporting.legend"
-                                                        [showXAxisLabel]="widget5.supporting.showXAxisLabel"
-                                                        [showYAxisLabel]="widget5.supporting.showYAxisLabel"
-                                                        [xAxisLabel]="widget5.supporting.xAxisLabel"
-                                                        [yAxisLabel]="widget5.supporting.yAxisLabel"
-                                                        [curve]="widget5.supporting.curve">
-                                                    </ngx-charts-area-chart>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- / Front -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 5 -->
-
-                            <!-- WIDGET 6 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-sm="50">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-
-                                    <div class="px-16 py-8 border-bottom" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <div class="h3">{{widgets.widget6.title}}</div>
-                                        <mat-form-field>
-                                            <mat-select class="simplified" [(ngModel)]="widget6.currentRange"
-                                                        aria-label="Change range">
-                                                <mat-option *ngFor="let range of widgets.widget6.ranges | keys"
-                                                            [value]="range.key">
-                                                    {{range.value}}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                    </div>
-
-                                    <div class="h-400">
-                                        <ngx-charts-pie-chart
-                                            *fuseIfOnDom
-                                            [scheme]="widget6.scheme"
-                                            [results]="widgets.widget6.mainChart[widget6.currentRange]"
-                                            [legend]="widget6.showLegend"
-                                            [explodeSlices]="widget6.explodeSlices"
-                                            [labels]="widget6.labels"
-                                            [doughnut]="widget6.doughnut"
-                                            [gradient]="widget6.gradient"
-                                            (select)="widget6.onSelect($event)">
-                                        </ngx-charts-pie-chart>
-                                    </div>
-
-                                    <div class="py-8 mh-16 border-top" fxLayout="row" fxLayoutAlign="start center"
-                                         fxLayoutWrap>
-                                        <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center"
-                                             fxFlex="100" fxFlex.gt-sm="50">
-                                            <span class="mat-display-1 mb-0">
-                                                {{widgets.widget6.footerLeft.count[widget6.currentRange]}}
-                                            </span>
-                                            <span class="h4">{{widgets.widget6.footerLeft.title}}</span>
-                                        </div>
-
-                                        <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100"
-                                             fxFlex.gt-sm="50">
-                                            <span class="mat-display-1 mb-0">
-                                                {{widgets.widget6.footerRight.count[widget6.currentRange]}}
-                                            </span>
-                                            <span class="h4">{{widgets.widget6.footerRight.title}}</span>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <!-- / Front -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 6 -->
-
-                            <!-- WIDGET 7 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-sm="50">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-
-                                    <div class="px-16 py-8 border-bottom" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <div class="h3">{{widgets.widget7.title}}</div>
-                                        <mat-form-field>
-                                            <mat-select class="simplified" [(ngModel)]="widget7.currentRange"
-                                                        aria-label="Change range">
-                                                <mat-option *ngFor="let range of widgets.widget7.ranges | keys"
-                                                            [value]="range.key">
-                                                    {{range.value}}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                    </div>
-
-                                    <div class="p-16" fxLayout="row" fxLayoutAlign="space-between center"
-                                         *ngFor="let event of widgets.widget7.schedule[widget7.currentRange]">
-                                        <div>
-                                            <div class="h3">{{event.title}}</div>
-                                            <div>
-                                                <span class="secondary-text">{{event.time}}</span>
-                                                <span *ngIf="event.location">, {{event.location}}</span>
-                                            </div>
-                                        </div>
-
-                                        <button mat-icon-button aria-label="More information">
-                                            <mat-icon>more_vert</mat-icon>
-                                        </button>
-                                    </div>
-
-                                </div>
-                                <!-- / Front -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 7 -->
-
-                        </div>
-                        <!-- / WIDGET GROUP -->
-
-                    </mat-tab>
-
-                    <mat-tab label="Budget Summary">
-
-                        <!-- WIDGET GROUP -->
-                        <div class="widget-group grey-100-bg" fxLayout="row" fxFlex="100" fxLayoutWrap *fuseIfOnDom
-                             [@animateStagger]="{value:'50'}">
-
-                            <!-- WIDGET 8 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-sm="50">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-                                    <div class="h3 px-16 py-24">
-                                        {{widgets.widget8.title}}
-                                    </div>
-
-                                    <mat-divider></mat-divider>
-
-                                    <div class="h-400">
-                                        <ngx-charts-pie-chart
-                                            *fuseIfOnDom
-                                            [scheme]="widget8.scheme"
-                                            [results]="widgets.widget8.mainChart"
-                                            [legend]="widget8.legend"
-                                            [explodeSlices]="widget8.explodeSlices"
-                                            [labels]="widget8.labels"
-                                            [doughnut]="widget8.doughnut"
-                                            [gradient]="widget8.gradient"
-                                            (select)="widget8.onSelect($event)">
-                                        </ngx-charts-pie-chart>
-                                    </div>
-
-                                </div>
-                                <!-- / Front -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 8 -->
-
-                            <!-- WIDGET 9 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
-                                         fxFlex="100" fxFlex.gt-sm="50">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-                                    <div class="px-16 py-12 border-bottom" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <div class="h3">{{widgets.widget9.title}}</div>
-                                        <mat-form-field>
-                                            <mat-select [(ngModel)]="widget9.currentRange" aria-label="Change range">
-                                                <mat-option *ngFor="let range of widgets.widget9.ranges | keys"
-                                                            [value]="range.key">
-                                                    {{range.value}}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                    </div>
-
-                                    <div class="px-16 py-24" fxLayout="column" fxLayoutAlign="center" fxLayout.gt-xs="row"
-                                         fxLayoutAlign.gt-xs="space-between end">
-                                        <div fxFlex="0 1 auto">
-                                            <div class="h4 secondary-text">{{widgets.widget9.weeklySpent.title}}</div>
-                                            <div class="pt-8 mat-display-1 m-0 font-weight-300 text-nowrap">
-                                                <span class="secondary-text">$</span>
-                                                <span>{{widgets.widget9.weeklySpent.count[widget9.currentRange]}}</span>
-                                            </div>
-                                        </div>
-                                        <div class="h-52" fxFlex>
-                                            <ngx-charts-area-chart
-                                                *fuseIfOnDom
-                                                [results]="widgets.widget9.weeklySpent.chart[widget9.currentRange]"
-                                                [scheme]="widget9.scheme"
-                                                [gradient]="widget9.gradient"
-                                                [xAxis]="widget9.xAxis"
-                                                [yAxis]="widget9.yAxis"
-                                                [legend]="widget9.legend"
-                                                [showXAxisLabel]="widget9.showXAxisLabel"
-                                                [showYAxisLabel]="widget9.showYAxisLabel"
-                                                [xAxisLabel]="widget9.xAxisLabel"
-                                                [yAxisLabel]="widget9.yAxisLabel"
-                                                [curve]="widget9.curve">
-                                            </ngx-charts-area-chart>
-                                        </div>
-                                    </div>
-
-                                    <div class="px-16 py-24" fxLayout="column" fxLayoutAlign="center" fxLayout.gt-xs="row"
-                                         fxLayoutAlign.gt-xs="space-between end">
-                                        <div fxFlex="0 1 auto">
-                                            <div class="h4 secondary-text">{{widgets.widget9.totalSpent.title}}</div>
-                                            <div class="pt-8 mat-display-1 m-0 font-weight-300 text-nowrap">
-                                                <span class="secondary-text">$</span>
-                                                <span>{{widgets.widget9.totalSpent.count[widget9.currentRange]}}</span>
-                                            </div>
-                                        </div>
-                                        <div class="h-52" fxFlex>
-                                            <ngx-charts-area-chart
-                                                *fuseIfOnDom
-                                                [results]="widgets.widget9.totalSpent.chart[widget9.currentRange]"
-                                                [scheme]="widget9.scheme"
-                                                [gradient]="widget9.gradient"
-                                                [xAxis]="widget9.xAxis"
-                                                [yAxis]="widget9.yAxis"
-                                                [legend]="widget9.legend"
-                                                [showXAxisLabel]="widget9.showXAxisLabel"
-                                                [showYAxisLabel]="widget9.showYAxisLabel"
-                                                [xAxisLabel]="widget9.xAxisLabel"
-                                                [yAxisLabel]="widget9.yAxisLabel"
-                                                [curve]="widget9.curve">
-                                            </ngx-charts-area-chart>
-                                        </div>
-                                    </div>
-
-                                    <div class="px-16 py-24" fxLayout="column" fxLayoutAlign="center" fxLayout.gt-xs="row"
-                                         fxLayoutAlign.gt-xs="space-between end">
-                                        <div fxFlex="0 1 auto">
-                                            <div class="h4 secondary-text">{{widgets.widget9.remaining.title}}</div>
-                                            <div class="pt-8 mat-display-1 m-0 font-weight-300 text-nowrap">
-                                                <span class="secondary-text">$</span>
-                                                <span>{{widgets.widget9.remaining.count[widget9.currentRange]}}</span>
-                                            </div>
-                                        </div>
-                                        <div class="h-52" fxFlex>
-                                            <ngx-charts-area-chart
-                                                *fuseIfOnDom
-                                                [results]="widgets.widget9.remaining.chart[widget9.currentRange]"
-                                                [scheme]="widget9.scheme"
-                                                [gradient]="widget9.gradient"
-                                                [xAxis]="widget9.xAxis"
-                                                [yAxis]="widget9.yAxis"
-                                                [legend]="widget9.legend"
-                                                [showXAxisLabel]="widget9.showXAxisLabel"
-                                                [showYAxisLabel]="widget9.showYAxisLabel"
-                                                [xAxisLabel]="widget9.xAxisLabel"
-                                                [yAxisLabel]="widget9.yAxisLabel"
-                                                [curve]="widget9.curve">
-                                            </ngx-charts-area-chart>
-                                        </div>
-                                    </div>
-
-                                    <div class="px-16 py-24 border-top">
-                                        <div class="h4 secondary-text">{{widgets.widget9.totalBudget.title}}</div>
-                                        <div class="pt-8 mat-display-1 m-0 font-weight-300">
-                                            <span class="secondary-text">$</span>
-                                            <span>{{widgets.widget9.totalBudget.count}}</span>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <!-- / Front -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 9 -->
-
-                            <!-- WIDGET 10 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row"
-                                         fxFlex="100">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-
-                                    <div class="simple-table-container" ms-responsive-table>
-                                        <div class=" table-title">
-                                            {{widgets.widget10.title}}
-                                        </div>
-
-                                        <table class="simple">
-
-                                            <thead>
-                                                <tr>
-                                                    <th *ngFor="let column of widgets.widget10.table.columns">
-                                                        {{column.title}}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                <tr *ngFor="let row of widgets.widget10.table.rows">
-                                                    <td *ngFor="let cell of row">
-                                                        <span class="p-4" [ngClass]="cell.classes">
-                                                            {{cell.value}}
-                                                        </span>
-                                                        <mat-icon *ngIf="cell.icon" class="s-16">{{cell.icon}}
-                                                        </mat-icon>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                </div>
-                                <!-- / Front -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 10 -->
-
-                        </div>
-                        <!-- / WIDGET GROUP -->
-
-                    </mat-tab>
-
-                    <mat-tab label="Team Members">
-
-                        <!-- WIDGET GROUP -->
-                        <div class="widget-group grey-100-bg" fxLayout="row" fxFlex="100" fxLayoutWrap *fuseIfOnDom
-                             [@animateStagger]="{value:'50'}">
-
-                            <!-- WIDGET 11 -->
-                            <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row"
-                                         fxFlex="100">
-
-                                <!-- Front -->
-                                <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-
-                                    <div class="p-24 mb-8 border-bottom" fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <div class="h2">{{widgets.widget11.title}}</div>
-                                        <div class="text-boxed red-bg white-fg m-0">
-                                            {{widgets.widget11.table.rows.length}}
-                                            members
-                                        </div>
-                                    </div>
-
-                                    <mat-table #table [dataSource]="widget11.dataSource">
-
-                                        <!-- Avatar Column -->
-                                        <ng-container cdkColumnDef="avatar">
-                                            <mat-header-cell fxFlex="64px" *cdkHeaderCellDef></mat-header-cell>
-                                            <mat-cell fxFlex="64px" *cdkCellDef="let contact">
-                                                <img class="avatar" *ngIf="contact.avatar" [alt]="contact.name"
-                                                     [src]="contact.avatar"/>
-                                            </mat-cell>
-                                        </ng-container>
-
-                                        <!-- Name Column -->
-                                        <ng-container cdkColumnDef="name">
-                                            <mat-header-cell *cdkHeaderCellDef>Name</mat-header-cell>
-                                            <mat-cell *cdkCellDef="let contact">
-                                                <p class="text-truncate font-weight-600">{{contact.name}}
-                                                    {{contact.lastName}}</p>
-                                            </mat-cell>
-                                        </ng-container>
-
-                                        <!-- Position Column -->
-                                        <ng-container cdkColumnDef="position">
-                                            <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-sm>Position
-                                            </mat-header-cell>
-                                            <mat-cell *cdkCellDef="let contact" fxHide fxShow.gt-sm>
-                                                <p class="position text-truncate">
-                                                    {{contact.position}}
-                                                </p>
-                                            </mat-cell>
-                                        </ng-container>
-
-                                        <!-- Office Column -->
-                                        <ng-container cdkColumnDef="office">
-                                            <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-md>Office
-                                            </mat-header-cell>
-                                            <mat-cell *cdkCellDef="let contact" fxHide fxShow.gt-md>
-                                                <p class="office text-truncate">
-                                                    {{contact.office}}
-                                                </p>
-                                            </mat-cell>
-                                        </ng-container>
-
-                                        <!-- Email Column -->
-                                        <ng-container cdkColumnDef="email">
-                                            <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-sm>Email
-                                            </mat-header-cell>
-                                            <mat-cell *cdkCellDef="let contact" fxHide fxShow.gt-sm>
-                                                <p class="email text-truncate">
-                                                    {{contact.email}}
-                                                </p>
-                                            </mat-cell>
-                                        </ng-container>
-
-                                        <!-- Phone Column -->
-                                        <ng-container cdkColumnDef="phone">
-                                            <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-md>Phone
-                                            </mat-header-cell>
-                                            <mat-cell *cdkCellDef="let contact" fxHide fxShow.gt-md>
-                                                <p class="phone text-truncate">
-                                                    {{contact.phone}}
-                                                </p>
-                                            </mat-cell>
-                                        </ng-container>
-
-                                        <mat-header-row
-                                            *cdkHeaderRowDef="widgets.widget11.table.columns"></mat-header-row>
-                                        <mat-row *cdkRowDef="let contact; columns: widgets.widget11.table.columns;">
-                                        </mat-row>
-                                    </mat-table>
-                                </div>
-                                <!-- / Front -->
-
-                            </fuse-widget>
-                            <!-- / WIDGET 11 -->
-
-                        </div>
-                        <!-- / WIDGET GROUP -->
-
-                    </mat-tab>
-                </mat-tab-group>
-
+            <div class="h3 secondary-text font-weight-500">{{ 'DASHBOARD.MINI_WIDGET.ALERTS_BY_PROCESOR' | translate }}</div>
+          </div>
+
+          <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
+            <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
+            <span class="h4 ml-8"> {{widget4.reporterDevices}} </span>
+          </div>
+        </div>
+        <!-- / Front -->
+
+        <!-- Back -->
+        <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2" fxLayoutAlign="space-between center">
+          <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
+            <mat-icon class="s-16">close</mat-icon>
+          </button>
+          <mat-list>
+            <mat-list-item *ngFor="let item of widget1.listData">
+              {{item.name}} -- {{item.quantity}}
+            </mat-list-item>
+
+            <div class="card-divider full-width"></div>
+
+            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']"> {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }} </button>
             </div>
-            <!-- / CONTENT -->
+          </mat-list>
 
         </div>
-        <!-- / CENTER -->
+        <!-- / Back -->
 
-        <!-- SIDENAV -->
-        <mat-sidenav class="sidenav" align="end" mode="side" opened="true"
-                     fuseMatSidenavHelper="dashboards-right-sidenav" mat-is-locked-open="gt-md">
+      </fuse-widget>
+      <!-- / WIDGET 4 -->
 
-            <div class="sidenav-content" fusePerfectScrollbar>
+      <!-- WIDGET 2 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
-                <!-- WIDGET GROUP -->
-                <div class="widget-group" fxLayout="column" fxFlex="100" *fuseIfOnDom [@animateStagger]="{value:'50'}">
+        <!-- Front -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+          <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-form-field>
+              <mat-select class="simplified font-size-16" [(ngModel)]="widget2.currentRange" aria-label="Change range" (change)="widget2.onSelectionChange($event.value)">
+                <mat-option *ngFor="let range of widget2.ranges | keys" [value]="range.key">
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-icon-button fuseWidgetToggle aria-label="more">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
 
-                    <!-- NOW WIDGET -->
-                    <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="sidenav-widget p-0">
+          <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
+            <div class="red-fg font-size-72 line-height-72">
+              {{ widget2.alerts }}
+            </div>
+            <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_RAM' | translate}}</div>
+          </div>
 
-                        <!-- Front -->
-                        <div class="fuse-widget-front">
+          <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
+            <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
+            <span class="h4 ml-8"> {{widget2.reporterDevices}} </span>
+          </div>
+        </div>
+        <!-- / Front -->
 
-                            <div class="pl-16 pr-8 py-16" fxLayout="row" fxLayoutAlign="space-between center">
+        <!-- Back -->
+        <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2" fxLayoutAlign="space-between center">
+          <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
+            <mat-icon class="s-16">close</mat-icon>
+          </button>
+          <mat-list>
+            <mat-list-item *ngFor="let item of widget1.listData">
+              {{item.name}} -- {{item.quantity}}
+            </mat-list-item>
 
-                                <div class="h3">{{dateNow | date: 'EEEE, HH:mm:ss'}}</div>
+            <div class="card-divider full-width"></div>
 
-                                <div>
-                                    <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="more">
-                                        <mat-icon>more_vert</mat-icon>
-                                    </button>
+            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
+            </div>
+          </mat-list>
 
-                                    <mat-menu #moreMenu="matMenu">
-                                        <button mat-menu-item aria-label="Flip widget">
-                                            Details
-                                        </button>
-                                    </mat-menu>
-                                </div>
-                            </div>
+        </div>
+        <!-- / Back -->
 
-                            <div class="p-16 pb-24" fxLayout="column" fxLayoutAlign="center center">
-                                <div class="h1 secondary-text">
-                                    <span>{{dateNow | date: 'MMMM'}}</span>
-                                </div>
+      </fuse-widget>
+      <!-- / WIDGET 2 -->
 
-                                <div class="font-size-72 line-height-88 secondary-text font-weight-400">
-                                    {{dateNow | date: 'd'}}
-                                </div>
+      <!-- WIDGET 3 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
-                                <div class="h1 secondary-text">
-                                    <span>{{dateNow | date: 'y'}}</span>
-                                </div>
-                            </div>
+        <!-- Front -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+          <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-form-field>
+              <mat-select class="simplified font-size-16" [(ngModel)]="widget3.currentRange" aria-label="Change range" (change)="widget3.onSelectionChange($event.value)">
+                <mat-option *ngFor="let range of widget3.ranges | keys" [value]="range.key">
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-icon-button fuseWidgetToggle aria-label="more">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
 
-                            <mat-divider></mat-divider>
-                        </div>
-                        <!-- / Front -->
+          <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
+            <div class="red-fg font-size-72 line-height-72">
+              {{ widget3.alerts }}
+            </div>
+            <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_VOLTAGE' | translate}}</div>
+          </div>
 
-                    </fuse-widget>
-                    <!-- / NOW WIDGET -->
+          <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
+            <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
+            <span class="h4 ml-8"> {{widget3.reporterDevices}} </span>
+          </div>
+        </div>
+        <!-- / Front -->
 
-                    <!-- WEATHER WIDGET -->
-                    <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="sidenav-widget p-0">
+        <!-- Back -->
+        <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2" fxLayoutAlign="space-between center">
+          <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
+            <mat-icon class="s-16">close</mat-icon>
+          </button>
+          <mat-list>
+            <mat-list-item *ngFor="let item of widget1.listData">
+              {{item.name}} -- {{item.quantity}}
+            </mat-list-item>
 
-                        <!-- Front -->
-                        <div class="fuse-widget-front">
+            <div class="card-divider full-width"></div>
 
-                            <div class="pl-16 pr-8 py-16" fxLayout="row" fxLayoutAlign="space-between center">
+            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
+            </div>
+          </mat-list>
 
-                                <div class="h4" fxLayout="row" fxLayoutAlign="start center">
-                                    <mat-icon class="mr-8">place</mat-icon>
-                                    {{widgets.weatherWidget.locations[widgets.weatherWidget.currentLocation].name}}
-                                </div>
+        </div>
+        <!-- / Back -->
 
-                                <div>
-                                    <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="more">
-                                        <mat-icon>more_vert</mat-icon>
-                                    </button>
+      </fuse-widget>
+      <!-- / WIDGET 3 -->
 
-                                    <mat-menu #moreMenu="matMenu">
-                                        <button mat-menu-item aria-label="Flip widget">
-                                            Details
-                                        </button>
-                                    </mat-menu>
-                                </div>
-                            </div>
+      <!-- WIDGET 1 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
-                            <div class="p-16 pb-32" fxLayout="column" fxLayoutAlign="center center">
+        <!-- Front -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+          <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-form-field>
+              <mat-select class="simplified font-size-16" [(ngModel)]="widget1.currentRange" aria-label="Change range" (change)="widget1.onSelectionChange($event.value)">
+                <mat-option *ngFor="let range of widget1.ranges | keys" [value]="range.key">
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-icon-button fuseWidgetToggle aria-label="more">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
 
-                                <div fxLayout="row" fxLayoutAlign="center center">
-                                    <mat-icon fontSet="meteocons"
-                                              [fontIcon]="widgets.weatherWidget.locations[widgets.weatherWidget.currentLocation].icon"
-                                              class="icon s-40 mr-16"></mat-icon>
-                                    <span class="mat-display-2 m-0 font-weight-300 secondary-text">
-                                        {{widgets.weatherWidget.locations[widgets.weatherWidget.currentLocation].temp[widgets.weatherWidget.tempUnit]}}
-                                    </span>
-                                    <span class="font-size-48 font-weight-300 hint-text text-super ml-8">°</span>
-                                    <span class="mat-display-2 mb-0 font-weight-300 hint-text ng-binding">C</span>
-                                </div>
-                            </div>
+          <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
+            <div class="red-fg font-size-72 line-height-72">
+              {{ widget1.alerts }}
+            </div>
+            <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_TEMPERATURE' | translate}}</div>
+          </div>
 
-                            <div class="grey-300-bg p-16" fxLayout="row" fxLayoutAlign="space-between center">
-                                <div fxLayout="row" fxLayoutAlign="start center">
-                                    <mat-icon fontSet="meteocons" fontIcon="icon-windy" class="mr-8 s-16"></mat-icon>
-                                    <span>
-                                        {{widgets.weatherWidget.locations[widgets.weatherWidget.currentLocation].windSpeed[widgets.weatherWidget.speedUnit]}}
-                                    </span>
-                                    <span class="secondary-text ml-5">{{widgets.weatherWidget.speedUnit}}</span>
-                                </div>
+          <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
+            <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
+            <span class="h4 ml-8"> {{widget1.reporterDevices}} </span>
+          </div>
+        </div>
+        <!-- / Front -->
 
-                                <div fxLayout="row" fxLayoutAlign="start center">
-                                    <mat-icon fontSet="meteocons" fontIcon="icon-compass" class="mr-8 s-16"></mat-icon>
-                                    <span>
-                                        {{widgets.weatherWidget.locations[widgets.weatherWidget.currentLocation].windDirection}}
-                                    </span>
-                                </div>
+        <!-- Back -->
+        <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2" fxLayoutAlign="space-between center">
+          <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
+            <mat-icon class="s-16">close</mat-icon>
+          </button>
+          <mat-list>
+            <mat-list-item *ngFor="let item of widget1.listData">
+              {{item.name}} -- {{item.quantity}}
+            </mat-list-item>
 
-                                <div fxLayout="row" fxLayoutAlign="start center">
-                                    <mat-icon fontSet="meteocons" fontIcon="icon-rainy" class="mr-8 s-16"></mat-icon>
-                                    <span>
-                                        {{widgets.weatherWidget.locations[widgets.weatherWidget.currentLocation].rainProbability}}
-                                    </span>
-                                </div>
-                            </div>
+            <div class="card-divider full-width"></div>
 
-                            <div class="py-16">
-                                <div class="py-16 px-24" fxLayout="row" fxLayoutAlign="space-between center"
-                                     *ngFor="let day of widgets.weatherWidget.locations[widgets.weatherWidget.currentLocation].next3Days">
-                                    <span class="h4">{{day.name}}</span>
-                                    <div fxLayout="row" fxLayoutAlign="start center">
-                                        <mat-icon fontSet="meteocons" [fontIcon]="day.icon" class="mr-16"></mat-icon>
-                                        <span class="h2">{{day.temp[widgets.weatherWidget.tempUnit]}}</span>
-                                        <span class="h2 font-weight-300 secondary-text text-super">&deg;</span>
-                                        <span class="h2 font-weight-300 secondary-text">
-                                            {{widgets.weatherWidget.tempUnit}}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
+            </div>
+          </mat-list>
 
-                            <mat-divider></mat-divider>
+        </div>
+        <!-- / Back -->
 
-                        </div>
-                        <!-- / Front -->
+      </fuse-widget>
+      <!-- / WIDGET 1 -->
 
-                    </fuse-widget>
-                    <!-- / WEATHER WIDGET -->
+      <!-- WIDGET 5 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row" fxFlex="100">
 
-                </div>
-                <!-- / WIDGET GROUP -->
+        <!-- Front -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+
+          <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
+
+            <div fxFlex class="py-8 h2">
+              <strong style="text-align: center; float: center"> {{'DASHBOARD.DEVICES_BY_CUENCA' | translate}} </strong>
             </div>
 
-        </mat-sidenav>
-        <!-- / SIDENAV -->
+            <!-- <div fxFlex="0 1 auto" class="py-8" fxLayout="row">
+              <button mat-button class="px-16" *ngFor="let range of widgets.widget5.ranges | keys" (click)="widget5.currentRange = range.key"
+                [disabled]="widget5.currentRange == range.key">
+                {{range.value}}
+              </button>
+            </div> -->
+          </div>
 
-    </mat-sidenav-container>
+          <div class="h-420">
+            <ngx-charts-bar-vertical-stacked *fuseIfOnDom [scheme]="widget5.scheme"
+              [results]="widget5.data"
+              [gradient]="widget5.gradient"
+              [xAxis]="widget5.xAxis"
+              [yAxis]="widget5.yAxis"
+              [legend]="widget5.legend"
+              [showXAxisLabel]="widget5.showXAxisLabel"
+              [showYAxisLabel]="widget5.showYAxisLabel"
+              [xAxisLabel]="widget5.xAxisLabel"
+              [yAxisLabel]="'DASHBOARD.TOTAL_USAGES' | translate"
+              (select)="widget5.onSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+          </div>
+        </div>
+        <!-- / Front -->
+
+      </fuse-widget>
+      <!-- / WIDGET 5 -->
+
+      <!-- WIDGET 6 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-sm="50">
+
+        <!-- Front -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+
+          <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
+            <div class="h3">
+              <strong> {{ 'DASHBOARD.USAGES_VS_ERRORS' | translate }} </strong>
+            </div>
+            <mat-form-field>
+              <mat-select class="simplified" [(ngModel)]="widget6.currentTimeRange" (change)="widget6.onRangeChanged($event.value)" aria-label="Change range">
+                <mat-option *ngFor="let range of widget6.timeRanges | keys" [value]="range.key">
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="h-400">
+            <canvas baseChart [datasets]="widget6.datasets" [labels]="widget6.labels" [colors]="widget6.colors" [options]="widget6.options"
+              [chartType]="widget6.chartType">
+            </canvas>
+          </div>
+
+          <div class="py-8 mh-16 border-top" fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap>
+
+            <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
+              <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
+              <span class="h4"> {{ widget6.usagesCount | async}} </span>
+            </div>
+
+            <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
+              <span class="mat-display-1 mb-0">{{'DASHBOARD.ERRORS' | translate}}</span>
+              <span class="h4">{{widget6.errorsCount | async}}</span>
+            </div>
+          </div>
+
+        </div>
+        <!-- / Front -->
+
+      </fuse-widget>
+      <!-- / WIDGET 6 -->
+
+      <!-- WIDGET 7 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-sm="50">
+
+        <!-- Front -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+
+          <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
+            <div class="h3">
+              <strong> {{'DASHBOARD.USAGES_VS_ERRORS_by' | translate}} </strong>
+            </div>
+            <mat-form-field>
+              <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca" (change)="widget7.onCuencaFilterChanged($event.value)"
+                aria-label="Change range">
+                <mat-option *ngFor="let range of widget7.cuencas | keys" [value]="range.key">
+                  {{range.value}}
+                </mat-option>
+              </mat-select>
+
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select class="simplified" [(ngModel)]="widget7.currentTimeRange" (change)="widget7.onTimeRangeFilterChanged($event.value)"
+                aria-label="Change range">
+                <mat-option *ngFor="let range of widget7.timeRanges | keys" [value]="range.key">
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+
+          <!-- <div class="h-400">
+            <ngx-charts-pie-chart *fuseIfOnDom [scheme]="widget7.scheme" [results]="widget7.data" [legend]="widget7.showLegend" [explodeSlices]="widget7.explodeSlices"
+              [labels]="widget7.labels" [doughnut]="widget7.doughnut" [gradient]="widget7.gradient" (select)="widget7.onSelect($event)">
+            </ngx-charts-pie-chart>
+          </div> -->
+
+          <div class="h-400">
+            <canvas baseChart [datasets]="widget7.datasets" [labels]="widget7.labels"
+            [colors]="widget7.colors" [options]="widget7.options" [chartType]="widget7.chartType">
+            </canvas>
+          </div>
+
+
+
+          <div class="py-8 mh-16 border-top" fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap>
+
+            <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
+              <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
+              <span class="h4"> {{ widget7.datasets[1].total }} </span>
+            </div>
+
+            <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
+              <span class="mat-display-1 mb-0">{{ 'DASHBOARD.ERRORS' | translate }}</span>
+              <span class="h4"> {{ widget7.datasets[0].total }} </span>
+            </div>
+          </div>
+
+        </div>
+        <!-- / Front -->
+
+      </fuse-widget>
+      <!-- / WIDGET 7 -->
+
+      <!-- WIDGET 8 y 9 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row" fxFlex="100">
+
+        <!-- Front WIDGET 8 -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+
+          <div class="h-420">
+            <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+              <mat-form-field>
+                <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
+                  <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
+                    {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <h2 style="text-align: center; width: 100%; padding-right: 33%;"> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </h2>
+              <button mat-icon-button fuseWidgetToggle aria-label="more">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+
+            <ngx-charts-advanced-pie-chart
+              [results]="widget9.data"
+              [label]="'DASHBOARD.TOTAL_USAGES' | translate "
+              [scheme]="widget9.scheme" >
+            </ngx-charts-advanced-pie-chart>
+
+
+
+            <div style="height: 10px"></div>
+          </div>
+        </div>
+        <!-- / Front -->
+
+        <!-- Back WIDGET 9 -->
+        <div class="fuse-widget-back mat-white-bg mat-elevation-z2">
+
+          <div class="h-420">
+            <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+              <mat-form-field style="width: 25%">
+                <mat-select class="simplified font-size-16" [(ngModel)]="widget9.currentRange" aria-label="Change range">
+                  <mat-option *ngFor="let range of widget9.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget9()">
+                    {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <h2 style="text-align: center; width: 100%; padding-right: 33%;"> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </h2>
+
+              <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
+                  <mat-icon class="s-16">close</mat-icon>
+              </button>
+            </div>
+
+            <ngx-charts-gauge [results]="widget9.data" [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate" [max]="widget9.max" [units]=" 'DASHBOARD.TOTAL_USAGES' | translate "
+              [legend]="widget9.legend" [textValue]="widget9.textValue" [scheme]="widget9.scheme" (select)="widget9.toggleLegend()" >
+            </ngx-charts-gauge>
+          </div>
+        </div>
+        <!-- / Back -->
+
+      </fuse-widget>
+      <!-- WIDGET 8 y 9 -->
+
+      <!-- WIDGET 10 y 11 -->
+      <!-- <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row" fxFlex="100"> -->
+
+        <!-- Front widget 10 -->
+        <!-- <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+
+          <div class="h-420">
+            <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+              <mat-form-field>
+                <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
+                  <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
+                    {{range.value}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button mat-icon-button fuseWidgetToggle aria-label="more">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+
+            <div style="width: 100%; height: 80%">
+              <canvas baseChart [datasets]="widget10.datasets" [labels]="widget10.labels" [colors]="widget10.colors" [options]="widget10.options"
+                [chartType]="widget10.chartType">
+              </canvas>
+            </div>
+
+            <div style="height: 10px"></div>
+          </div>
+        </div> -->
+        <!-- / Front -->
+
+        <!-- Back WIDGET 9 -->
+        <!-- <div class="fuse-widget-back p-16 pt-32 mat-white-bg mat-elevation-z2">
+          <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
+            <mat-icon class="s-16">close</mat-icon>
+          </button>
+
+
+          <div class="h-420">
+            <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
+              <mat-form-field style="width: 25%">
+                <mat-select class="simplified font-size-16" [(ngModel)]="widgets.widget1.currentRange" aria-label="Change range">
+                  <mat-option *ngFor="let range of widget9.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget9()">
+                    {{range.value}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <h2 style="text-align: center; width: 100%; padding-right: 33%;"> Usos por cuenca </h2>
+            </div>
+
+            <div style="width: 100%; height: 50%">
+              <canvas baseChart [data]="widget11.data" [labels]="widget11.data.labels" [options]="widget11.options" [chartType]="widget11.type">
+              </canvas>
+            </div>
+          </div>
+        </div> -->
+        <!-- / Back -->
+
+      <!-- </fuse-widget> -->
+      <!-- WIDGET 8 y 9 -->
+      <!-- / WIDGET 8 USOS POR CUENCA -->
+    </div>
+    <!-- / WIDGET GROUP -->
+  </div>
+  <!-- / CONTENT -->
 
 </div>
