@@ -388,11 +388,11 @@
           <!-- header -->
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- text on header -->
-              <div fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap>
-                <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
+              <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100" fxFlex.gt-sm="95" fxLayoutWrap >
+                <div class="h3 px-8 py-8">
                   <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
                 </div>
-                <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50" >
+                <mat-form-field class="px-8 py-8">
                   <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
                     <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
                       {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
@@ -402,8 +402,8 @@
               </div>
               <!-- ends text on header -->
               <!-- toggle Button -->
-              <div>
-                <button mat-icon-button fuseWidgetToggle aria-label="more" fxLayoutAlign="end start" fxFlex="5" >
+              <div fxLayoutAlign="end start" fxFlex="5">
+                <button mat-icon-button fuseWidgetToggle aria-label="more"  >
                   <mat-icon>more_vert</mat-icon>
                 </button>
               </div>
