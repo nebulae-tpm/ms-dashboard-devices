@@ -7,7 +7,7 @@ type DashBoardDevicesTest {
 
 # the schema allows the following two queries:
 type Query {
-  DashBoardDevicesTest(): DashBoardDevicesTest
+  DashBoardDevicesTest(firstName: String): DashBoardDevicesTest
 }
 
 # this schema allows the following two mutations:
