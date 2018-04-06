@@ -2,7 +2,7 @@ module.exports = {
   Query: {
     DashBoardDevicesTest(root, args, context) {
       return context.broker
-        .forwardAndGetReply$('dashboard-devices', { root, args, jwt: {} })
+        .forwardAndGetReply$('Device','gateway.graphql.Query.DashBoardDevicesTest', { root, args, jwt: {} },2000)
         .toPromise();
     },
   },

@@ -8,3 +8,6 @@ dist/
 # IDE Files
 .history/
 .vscode/
+
+#SECRETS
+*service-key.json
