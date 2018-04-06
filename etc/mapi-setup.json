@@ -1,0 +1,8 @@
+[
+    {
+        "name": "dashboard-devices",
+        "type": "graphql",        
+        "src": "api/gateway/dashboard-devices/graphql",
+        "preBuildCommands": []
+    }
+]

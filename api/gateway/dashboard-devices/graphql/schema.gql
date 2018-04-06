@@ -1,0 +1,19 @@
+type DashBoardDevicesTest {
+  id: Int! # the ! means that every User object _must_ have an id
+  firstName: String
+  lastName: String
+}
+
+
+# the schema allows the following two queries:
+type Query {
+  DashBoardDevicesTest(): DashBoardDevicesTest
+}
+
+# this schema allows the following two mutations:
+type Mutation {
+  createDashBoardDevicesTest(
+    firstName: String!
+    lastName: String!
+  ): DashBoardDevicesTest
+}
