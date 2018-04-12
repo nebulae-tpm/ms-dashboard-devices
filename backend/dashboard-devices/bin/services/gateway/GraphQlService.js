@@ -36,8 +36,9 @@ class GraphQlService {
             //send response back if neccesary
             .subscribe(
                 ({ response, correlationId, replyTo }) => {
+                    broker.send$('MaterializedViewUpdates','gateway.graphql.Subscription.response',response);
                     if (replyTo) {
-                        broker.send$(replyTo, 'gateway.graphql.Query.response', response, { correlationId });
+                        broker.send$(replyTo, 'gateway.graphql.Query.response', response, { correlationId });                        
                     }
                 },
                 (error) => console.error('Error listening to messages', error),
