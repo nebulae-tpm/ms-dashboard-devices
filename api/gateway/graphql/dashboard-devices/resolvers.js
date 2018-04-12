@@ -1,13 +1,10 @@
 module.exports = {
   Query: {
-    DashBoardDevicesTest(root, args, context) {
+    getDashBoardDevicesAlarmReport(root, args, context) {
       return context.broker
-        .forwardAndGetReply$('Device','gateway.graphql.Query.DashBoardDevicesTest', { root, args, jwt: {} },2000)
+        .forwardAndGetReply$('Device','gateway.graphql.query.getDashBoardDevicesAlarmReport', { root, args, jwt: context.encodedToken },500)
         .toPromise();
     },
-  },
-  Mutation: {
-    createDashBoardDevicesTest: (root, args) => { return { id: 5, firstName: args.firstName, lastName: args.lastName }; },
   },
 }
 

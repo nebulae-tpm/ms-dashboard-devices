@@ -6,8 +6,28 @@ class DashBoardDevices {
     constructor() {
     }
 
-    static find({root,args,jwt}) {
-        return Rx.Observable.of({ id: 1, firstName: 'aaa', lastName: 'bbb' });
+    getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
+        return Rx.Observable.of({
+            type: 'RAM_MEMORY',
+            timeRanges: [
+                {
+                    timeRange: 'ONE_HOUR',
+                    alarmsCount: 123,
+                    devicesCount: 321,
+                    order: 0,
+                    topDevices: [
+                        {
+                            sn: '87654',
+                            hostname: 'myName',
+                            alarmsCount: 12,
+                            deviceDetailLink: 'htttp://www.google.com/87654'
+
+                        }
+                    ],
+                    fullDevicesListLink: 'htttp://www.google.com'
+                }
+            ]
+        });
     }
 }
 

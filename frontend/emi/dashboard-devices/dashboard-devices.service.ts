@@ -14,9 +14,11 @@ import {
 } from './dummyData/dummyData';
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs';
+import { GatewayService } from '../../../api/gateway.service';
+import {DashBoardDevicesTest}  from './gql/DashBoardDevicesTest';
 
 @Injectable()
-export class OnOffByRouteDashboardService implements Resolve<any> {
+export class DashboardDevicesService implements Resolve<any> {
   projects: any[];
   widgets: any[];
   widgets2: any[];
@@ -28,41 +30,9 @@ export class OnOffByRouteDashboardService implements Resolve<any> {
 
   dataReady = new Rx.Subject();
 
-  constructor(private http: HttpClient) {
-    // console.log('CREATING CUANCAS');
-    // for (let i = 0; i < 10; i++) {
-    //   this.cuencas.push(new DummyCuenca());
-    // }
-    // console.log('CREATIN DEVICES');
-    // for (let i = 0; i < 5000; i++) {
-    //   this.devices.push(new DummyDevice());
-    // }
-    // console.log('CREATING VEHICLES');
-    // for (let i = 0; i < 100; i++) {
-    //   this.vehicles.push(new DummyVehicle());
-    // }
+  constructor(private http: HttpClient, private gateway: GatewayService) {
 
-    // // simulating data 15 minutes ago
-    // console.log('simulating data 15 minutes ago');
-    // for (let i = 0; i < this.devices.length; i++) {
-    //   const now = Date.now();
-    //   for (let j = 300; j >= 0; j = j - 5) {
-    //     this.reportData.push(
-    //       new DummyReportData(
-    //         now * 1000 - j,
-    //         this.devices[i].deviceId,
-    //         this.cuencas[
-    //           Math.floor(Math.random() * this.cuencas.length - 1 + 1)
-    //         ].name,
-    //         Math.floor(Math.random() * 50 + 1),
-    //         Math.floor(Math.random() * 10 + 1),
-    //         Math.floor(Math.random() * 100 + 1),
-    //         'TKM909'
-    //       )
-    //     );
-    //   }
-    // }
-    console.log('Dummy data creada');
+    
   }
 
   /**
@@ -76,6 +46,7 @@ export class OnOffByRouteDashboardService implements Resolve<any> {
     state: RouterStateSnapshot
   ): Observable<any> | Promise<any> | any {
     return new Promise((resolve, reject) => {
+
       Promise.all([this.getProjects(), this.getWidgets(), this.getWidgets2()]).then(() => {
         resolve();
       }, reject);
@@ -101,18 +72,29 @@ export class OnOffByRouteDashboardService implements Resolve<any> {
       }, reject);
     });
   }
-  getWidgets2(): Promise<any>
-    {
-        return new Promise((resolve, reject) => {
-            this.http.get('emi/api/analytics-dashboard-widgets')
-                .subscribe((response: any) => {
-                    this.widgets2 = response;
-                    resolve(response);
-                }, reject);
-        });
-    }
+  getWidgets2(): Promise<any> {    
+    return new Promise((resolve, reject) => {
+      this.http.get('emi/api/analytics-dashboard-widgets')
+        .subscribe((response: any) => {
+          this.widgets2 = response;
+          resolve(response);
+        }, reject);
+    });
+  }
 
   getDummyData() {
+    console.log(`%%%%%%%%%%${JSON.stringify(DashBoardDevicesTest)}%%%%%%%%%%%%%`);
+    this.gateway.apollo.watchQuery<any>({
+      query: DashBoardDevicesTest
+    })
+      .valueChanges
+      .subscribe(
+        (data) => { console.log(JSON.stringify(data)) },
+        (error) => { console.error('@@@@@@@@@@@@@@@@@@@@@@@@@',error); },
+        () => { console.log('COMPLETED') },
+    );
     return this.reportData;
   }
 }
+
+

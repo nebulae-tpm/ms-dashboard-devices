@@ -1,16 +1,16 @@
-import { OnOffByRouteDashboardComponent } from './dashboard-devices.component';
+import { DashboardDevicesComponent } from './dashboard-devices.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../core/modules/shared.module';
 
 import { FuseWidgetModule } from '../../../core/components/widget/widget.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { OnOffByRouteDashboardService } from './dashboard-devices.service';
+import { DashboardDevicesService } from './dashboard-devices.service';
 
 const routes: Routes = [
   {
     path: '',
-    component: OnOffByRouteDashboardComponent,
+    component: DashboardDevicesComponent,
   }
 ];
 
@@ -21,7 +21,7 @@ const routes: Routes = [
     FuseWidgetModule,
     NgxChartsModule
   ],
-  declarations: [ OnOffByRouteDashboardComponent ],
-  providers: [ OnOffByRouteDashboardService ]
+  declarations: [ DashboardDevicesComponent ],
+  providers: [ DashboardDevicesService ]
 })
 export class DashboardDevicesModule {}

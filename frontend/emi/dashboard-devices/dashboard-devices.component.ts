@@ -1,5 +1,5 @@
 import { FuseTranslationLoaderService } from './../../../core/services/translation-loader.service';
-import { OnOffByRouteDashboardService } from './dashboard-devices.service';
+import { DashboardDevicesService } from './dashboard-devices.service';
 import { Component, OnDestroy, OnInit, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { fuseAnimations } from '../../../core/animations';
 import {
@@ -34,7 +34,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations
 })
-export class OnOffByRouteDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   projects: any[];
   selectedProject: any;
@@ -62,7 +62,7 @@ export class OnOffByRouteDashboardComponent implements OnInit, OnDestroy, AfterV
   widget11: any = {};
 
   constructor(
-    private onOffByRouteDashboardService: OnOffByRouteDashboardService,
+    private onOffByRouteDashboardService: DashboardDevicesService,
     private translationLoader: FuseTranslationLoaderService) {
 
     this.translationLoader.loadTranslations(english, spanish);

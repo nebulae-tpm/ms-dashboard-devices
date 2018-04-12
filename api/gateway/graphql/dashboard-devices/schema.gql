@@ -1,19 +1,62 @@
-type DashBoardDevicesTest {
-  id: Int! # the ! means that every User object _must_ have an id
-  firstName: String
-  lastName: String
+"Types of Data ranges for the alarm report response"
+enum DashBoardDevicesAlarmReportTimeRangeType{
+  "Last hour"
+  ONE_HOUR,
+  "Last two hours"
+  TWO_HOURS,
+  "Last three hours"
+  THREE_HOURS
+}
+"Types of alarm reports"
+enum DashBoardDevicesAlarmReportType{
+  "Ram usage alarms"
+  RAM_MEMORY,
+  "CPU usage alarms"
+  CPU_USAGE,
+  "Voltage alarms"
+  VOLTAGE,
+  "Device temperature alarms"
+  TEMPERATURE
+}
+
+"Top n Devices list for the DashBoardDevicesAlarmReport"
+type DashBoardDevicesAlarmReportTopDevices{
+  "device Serial Number"
+  sn: String!
+  "Device hostname"
+  hostname: String!
+  "Number of alarms reported by the device"
+  alarmsCount: Int!
+  "Link to navigate to the device info page"
+  deviceDetailLink: String
+}
+
+"TimeRange description DashBoardDevicesAlarmReportTimeRange"
+type DashBoardDevicesAlarmReportTimeRange{
+    "Time range type"
+    timeRange: DashBoardDevicesAlarmReportTimeRangeType!
+    "Total alarm count"
+    alarmsCount: Int!
+    "Total number of alarmed devices"
+    devicesCount: Int!
+    "Order within list, lowest is first"
+    order: Int!
+    "Top alarmed devices "
+    topDevices: [DashBoardDevicesAlarmReportTopDevices]
+    "Link to browse all the alarmed devices"
+    fullDevicesListLink: String
+  }
+
+"Alarm report type used for DashBoardDevices"
+type DashBoardDevicesAlarmReport {
+  "Report type"
+  type: DashBoardDevicesAlarmReportType!
+  "Time ranges"
+  timeRanges: [DashBoardDevicesAlarmReportTimeRange]
 }
 
 
-# the schema allows the following two queries:
 type Query {
-  DashBoardDevicesTest(firstName: String): DashBoardDevicesTest
-}
-
-# this schema allows the following two mutations:
-type Mutation {
-  createDashBoardDevicesTest(
-    firstName: String!
-    lastName: String!
-  ): DashBoardDevicesTest
+  "Get a report summary of alarmed devices.  this is used on DashBoardDevices section"
+  getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
 }
