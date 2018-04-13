@@ -11,9 +11,9 @@ export const locale = {
             'DEVICES_BY_ROUTE': 'Dispositivos por cuenca',
             'VIEW_COMPLETE_LIST': 'Ver Listado Completo',
             'TIMERANGES':{
-              h0_1: 'Última hora',
-              h0_2: 'Últimas dos horas',
-              h0_3: 'Últimas tres horas'
+              ONE_HOUR: 'Última hora',
+              TWO_HOURS: 'Últimas dos horas',
+              THREE_HOURS: 'Últimas tres horas'
             }
           },
           'DEVICES_BY_CUENCA': 'Dispositivos por cuenca',

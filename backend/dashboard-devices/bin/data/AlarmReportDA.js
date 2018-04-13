@@ -2,6 +2,7 @@
 
 const mongoDB = require('./MongoDB')();
 const Rx = require('rxjs');
+const CollectionName = "AlarmReports";
 
 class AlarmReportDA {
 
@@ -10,7 +11,7 @@ class AlarmReportDA {
      * @param {string} type 
      */
     static getDashBoardDevicesAlarmReport$(type) {        
-        const collection = mongoDB.db.collection('AlarmReports');
+        const collection = mongoDB.db.collection(CollectionName);
         return Rx.Observable.fromPromise(collection.findOne({ type }));    
     }
 

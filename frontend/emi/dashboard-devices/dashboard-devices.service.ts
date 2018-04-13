@@ -1,3 +1,4 @@
+import { query } from '@angular/animations';
 import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
@@ -15,7 +16,9 @@ import {
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs';
 import { GatewayService } from '../../../api/gateway.service';
-import {DashBoardDevicesTest}  from './gql/DashBoardDevicesTest';
+import {
+  getDashBoardDevicesAlarmReport
+}  from './gql/DashBoardDevices';
 
 @Injectable()
 export class DashboardDevicesService implements Resolve<any> {
@@ -30,9 +33,7 @@ export class DashboardDevicesService implements Resolve<any> {
 
   dataReady = new Rx.Subject();
 
-  constructor(private http: HttpClient, private gateway: GatewayService) {
-
-    
+  constructor( private http: HttpClient, private gateway: GatewayService ) {
   }
 
   /**
@@ -46,54 +47,33 @@ export class DashboardDevicesService implements Resolve<any> {
     state: RouterStateSnapshot
   ): Observable<any> | Promise<any> | any {
     return new Promise((resolve, reject) => {
-
-      Promise.all([this.getProjects(), this.getWidgets(), this.getWidgets2()]).then(() => {
+      Promise.all([]).then(() => {
         resolve();
       }, reject);
     });
   }
 
-  getProjects(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.http
-        .get('emi/api/project-dashboard-projects')
-        .subscribe((response: any) => {
-          this.projects = response;
-          resolve(response);
-        }, reject);
-    });
-  }
+  // getDummyData() {
+  //   console.log(`%%%%%%%%%%${JSON.stringify(DashBoardDevices)}%%%%%%%%%%%%%`);
+  //   this.gateway.apollo.watchQuery<any>({
+  //     query: DashBoardDevices
+  //   })
+  //     .valueChanges
+  //     .subscribe(
+  //       (result) => { console.log(result.data.getDashBoardDevicesAlarmReport) },
+  //       (error) => { console.error('@@@@@@@@@@@@@@@@@@@@@@@@@',error); },
+  //       () => { console.log('COMPLETED') },
+  //   );
+  //   return this.reportData;
+  // }
 
-  getWidgets(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.http.get('emi/api/e-commerce-dashboard').subscribe((response: any) => {
-        this.widgets = response;
-        resolve(response);
-      }, reject);
-    });
-  }
-  getWidgets2(): Promise<any> {    
-    return new Promise((resolve, reject) => {
-      this.http.get('emi/api/analytics-dashboard-widgets')
-        .subscribe((response: any) => {
-          this.widgets2 = response;
-          resolve(response);
-        }, reject);
-    });
-  }
-
-  getDummyData() {
-    console.log(`%%%%%%%%%%${JSON.stringify(DashBoardDevicesTest)}%%%%%%%%%%%%%`);
-    this.gateway.apollo.watchQuery<any>({
-      query: DashBoardDevicesTest
-    })
-      .valueChanges
-      .subscribe(
-        (data) => { console.log(JSON.stringify(data)) },
-        (error) => { console.error('@@@@@@@@@@@@@@@@@@@@@@@@@',error); },
-        () => { console.log('COMPLETED') },
-    );
-    return this.reportData;
+  getDashboardDeviceAlertsBy(alarmType: string) {
+   return this.gateway.apollo.watchQuery<any>({
+      query: getDashBoardDevicesAlarmReport,
+      variables: {
+        type: alarmType
+      }
+    }).valueChanges;
   }
 }
 

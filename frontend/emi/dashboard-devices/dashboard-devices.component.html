@@ -6,16 +6,17 @@
     <!-- WIDGET GROUP -->
     <div class="widget-group" fxLayout="row" fxFlex="100" fxLayoutWrap fxLayoutAlign="start start" *fuseIfOnDom [@animateStagger]="{value:'50'}">
 
-      <!-- WIDGET 4 -->
+      <!-- ALERTS BY CPU WIDGET -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
             <mat-form-field>
-              <mat-select class="simplified font-size-16" [(ngModel)]="widget4.currentRange" (change)="widget4.onSelectionChange($event.value)"
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByCpu.currentTimeRange"
+                (change)="alertsByCpu.onChangeTimeRange($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget4.ranges | keys" [value]="range.key">
+                <mat-option *ngFor="let range of alertsByCpu.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -27,14 +28,14 @@
 
           <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
             <div class="red-fg font-size-72 line-height-72">
-              {{ widget4.alerts }}
+              {{ alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].alarmsCount }}
             </div>
             <div class="h3 secondary-text font-weight-500">{{ 'DASHBOARD.MINI_WIDGET.ALERTS_BY_PROCESOR' | translate }}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
-            <span class="h4 ml-8"> {{widget4.reporterDevices}} </span>
+            <span class="h4 ml-8"> {{ alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].devicesCount }} </span>
           </div>
         </div>
         <!-- / Front -->
@@ -45,14 +46,16 @@
             <mat-icon class="s-16">close</mat-icon>
           </button>
           <mat-list>
-            <mat-list-item *ngFor="let item of widget1.listData">
-              {{item.name}} -- {{item.quantity}}
+            <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[0].topDevices">
+              <p [routerLink]="[item.deviceDetailLink]" >
+                {{item.sn}} -- {{item.hostname}}
+              </p>
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']"> {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }} </button>
+              <button mat-button color="accent" [routerLink]="[alertsByCpu.timeRanges[0].fullDevicesListLink]"> {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }} </button>
             </div>
           </mat-list>
 
@@ -60,9 +63,9 @@
         <!-- / Back -->
 
       </fuse-widget>
-      <!-- / WIDGET 4 -->
+      <!-- ALERTS BY CPU WIDGET -->
 
-      <!-- WIDGET 2 -->
+      <!-- ALERT BY RAM MEMORY -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
@@ -115,7 +118,7 @@
         <!-- / Back -->
 
       </fuse-widget>
-      <!-- / WIDGET 2 -->
+      <!-- ALERT BY RAM MEMORY -->
 
       <!-- WIDGET 3 -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
@@ -226,6 +229,7 @@
 
       </fuse-widget>
       <!-- / WIDGET 1 -->
+
 
       <!-- WIDGET 5 -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row" fxFlex="100">
