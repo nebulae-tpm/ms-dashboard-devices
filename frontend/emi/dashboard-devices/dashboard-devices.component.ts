@@ -1,6 +1,6 @@
 import { FuseTranslationLoaderService } from './../../../core/services/translation-loader.service';
 import { DashboardDevicesService } from './dashboard-devices.service';
-import { Component, OnDestroy, OnInit, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '../../../core/animations';
 import {
   data,
@@ -14,18 +14,8 @@ import { Subscription } from 'rxjs/Subscription';
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs';
 import * as Util from 'util';
-import { from } from 'rxjs/observable/from';
 import { locale as english } from './i18n/en';
 import { locale as spanish } from './i18n/es';
-import {
-  map,
-  groupBy,
-  mergeMap,
-  toArray,
-  partition,
-  first,
-  count
-} from 'rxjs/operators';
 
 @Component({
   selector: 'fuse-dashboard-devices',
@@ -34,7 +24,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations
 })
-export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   projects: any[];
   selectedProject: any;
@@ -49,9 +39,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
 
   widgets: any;
   widgets2: any;
-  widget1: any = {};
-  widget2: any = {};
-  widget3: any = {};
+
   widget5: any = {};
   widget6: any = {};
   widget7: any = {};
@@ -64,6 +52,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
   alertsByCpuSubscription: Subscription;
   alertsByTemperatureSubscription: Subscription;
   alertsByVoltageSubscription: Subscription;
+  deviceOnlineSubscription: Subscription;
+  deviceOfflineSubscription: Subscription;
+
 
   alertsByRamMemory: any;
   alertsByCpu: any;
@@ -77,57 +68,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
 
     this.translationLoader.loadTranslations(english, spanish);
 
-    this.widget1 = {
-      'alerts': Math.floor(Math.random() * 200 + 90),
-      'reporterDevices': Math.floor(Math.random() * 50 + 30),
-      'label': 'Alertas por temperatura',
-      listData: topDeviceList,
-      ranges: {
-        h0_1: 'Última hora',
-        h0_2: 'Últimas dos horas',
-        h0_3: 'Últimas tres horas'
-      },
-      currentRange: 'h0_1',
-      onSelectionChange : () => {
-        console.log('widget1');
-        this.widget1.alerts = Math.floor(Math.random() * 100 + 20);
-        this.widget1.reporterDevices = Math.floor(Math.random() * 70);
-      }
-    };
-    this.widget2 = {
-      'alerts': Math.floor(Math.random() * 200 + 90),
-      'reporterDevices': Math.floor(Math.random() * 50 + 30),
-      'label': 'Alertas por RAM',
-      listData: topDeviceList,
-      ranges: {
-        h0_1: 'Última hora',
-        h0_2: 'Últimas dos horas',
-        h0_3: 'Últimas tres horas'
-      },
-      currentRange: 'h0_1',
-      onSelectionChange : () => {
-        console.log('widget2');
-        this.widget2.alerts = Math.floor(Math.random() * 100 + 20);
-        this.widget2.reporterDevices = Math.floor(Math.random() * 70);
-      }
-    };
-    this.widget3 = {
-      'alerts': Math.floor(Math.random() * 200 + 90),
-      'reporterDevices': Math.floor(Math.random() * 50 + 30),
-      'label': 'Alertas de voltaje',
-      listData: topDeviceList,
-      ranges: {
-        h0_1: 'Última hora',
-        h0_2: 'Últimas dos horas',
-        h0_3: 'Últimas tres horas'
-      },
-      currentRange: 'h0_1',
-      onSelectionChange : () => {
-        console.log('widget2');
-        this.widget3.alerts = Math.floor(Math.random() * 100 + 20);
-        this.widget3.reporterDevices = Math.floor(Math.random() * 70);
-      }
-    };
     this.widget5 = {
       data: dataDevicesOnVsOff,
       currentRange: 'TW',
@@ -539,46 +479,27 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
 
   ngOnInit() {
     console.log('On constructor...');
-
-    // this.dummyData = this.graphQlGatewayService.getDummyData();
-
     this.alertsByCpuSubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('CPU_USAGE')
     .subscribe(
-      response => {
-        this.alertsByCpu = Object.assign({}, response.data.getDashBoardDevicesAlarmReport);
-        this.alertsByCpu.timeRanges = this.alertsByCpu.timeRanges.sort((a, b) =>  a.order - b.order);
-        this.alertsByCpu.currentTimeRange = 0;
-        // this.alertsByCpu.onChangeTimeRange = (ev: any) => this.alertsByCpu.currentTimeRange = ev
-      },
+      response => this.buildWidget('alertsByCpu', response.data.getDashBoardDevicesAlarmReport),
       error => console.log(error)
     );
+
     this.alertsByRamMemorySubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('RAM_MEMORY')
     .subscribe(
-      response => {
-        this.alertsByRamMemory= Object.assign({}, response.data.getDashBoardDevicesAlarmReport);
-        this.alertsByRamMemory.timeRanges = this.alertsByRamMemory.timeRanges.sort((a, b) =>  a.order - b.order);
-        this.alertsByRamMemory.currentTimeRange = 0;
-        // this.alertsByRamMemory.onChangeTimeRange = (ev: any) => this.alertsByRamMemory.currentTimeRange = ev
-
-      },
+      response => this.buildWidget('alertsByRamMemory', response.data.getDashBoardDevicesAlarmReport),
       error => console.log(error)
     );
+
     this.alertsByVoltageSubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('VOLTAGE')
     .subscribe(
-      response => {
-        this.alertsByVoltage= Object.assign({}, response.data.getDashBoardDevicesAlarmReport);
-        this.alertsByVoltage.currentTimeRange = this.alertsByVoltage.timeRanges[0].timeRange;
-        this.alertsByVoltage.timeRanges = this.alertsByVoltage.timeRanges.sort((a, b) =>  a.order - b.order);
-        },
+      response => this.buildWidget('alertsByVoltage', response.data.getDashBoardDevicesAlarmReport),
       error => console.log(error)
     );
+
     this.alertsByTemperatureSubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('TEMPERATURE')
     .subscribe(
-      response => {
-        this.alertsByTemperature = Object.assign({}, response.data.getDashBoardDevicesAlarmReport);
-        this.alertsByTemperature.currentTimeRange = this.alertsByTemperature.timeRanges[0].timeRange;
-        this.alertsByTemperature.timeRanges = this.alertsByTemperature.timeRanges.sort((a, b) =>  a.order - b.order);
-      },
+      response => this.buildWidget('alertsByTemperature', response.data.getDashBoardDevicesAlarmReport),
       error => console.log(error)
     );
 
@@ -587,23 +508,23 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
 
 
 
-    Rx.Observable.interval(5000).subscribe(t => {
-      const newData = this.widget5.data.slice();
-      let cIndex = 0;
-      newData.forEach(c => {
-        let iIndex = 0;
-        c.series.forEach(i => {
-          const random = Math.floor(Math.random() * 200 + 50);
-          newData[cIndex].series[iIndex].value = random;
-          iIndex++;
-        });
-        cIndex++;
-      });
-      this.widget5.data = newData;
+    // Rx.Observable.interval(5000).subscribe(t => {
+    //   const newData = this.widget5.data.slice();
+    //   let cIndex = 0;
+    //   newData.forEach(c => {
+    //     let iIndex = 0;
+    //     c.series.forEach(i => {
+    //       const random = Math.floor(Math.random() * 200 + 50);
+    //       newData[cIndex].series[iIndex].value = random;
+    //       iIndex++;
+    //     });
+    //     cIndex++;
+    //   });
+    //   this.widget5.data = newData;
 
-      this.onChangeValueWidget9();
+    //   this.onChangeValueWidget9();
 
-    });
+    // });
 
     Rx.Observable.interval(3000).subscribe(t => {
       this.widget7.datasets[1].data = this.getRandomArray(7, 1800, 4000);
@@ -612,15 +533,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
     });
 
   }
-  ngAfterViewInit(): void {
-    console.log();
-  }
 
   ngOnDestroy() {
     this.alertsByVoltageSubscription.unsubscribe();
     this.alertsByTemperatureSubscription.unsubscribe();
     this.alertsByRamMemorySubscription.unsubscribe();
     this.alertsByCpuSubscription.unsubscribe();
+    this.deviceOfflineSubscription.unsubscribe();
+    this.deviceOnlineSubscription.unsubscribe();
   }
 
   onSelectChart(e) {
@@ -629,28 +549,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   getOnlineOffline() {
-    //   const now = Date.now();
-    //   const source = from(this.dummyData).pipe(
-    //     groupBy( report => report.deviceCuencaName ),
-    //     mergeMap( group => group.pipe(
-    //       toArray(),
-    //       mergeMap(rawData => from(rawData)),
-    //       groupBy(groupByTimestamp =>  (groupByTimestamp.timestamp >  now - (6000))),
-    //       mergeMap(merge => {
-    //         const coun = merge.pipe(count());
-    //         return new Promise((resolve, reject) => {
-    //           coun.subscribe(value => resolve(value));
-    //         });
-    //       })
-    //       ))
-    //   );
-    //   return new Promise((resolve, reject) => {
-    //     source.subscribe(r => {
-    //       console.log('RESPUESTA DE  LA PROMESA');
-    //       console.log(r);
-    //       resolve(r);
-    //     });
-    //   });
   }
 
   print(args: any) {
@@ -710,6 +608,18 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy, AfterViewIn
       counter = counter + item;
     });
     return counter;
+  }
+
+  orderTimeRanges(array: any[]){
+    return array.sort((a, b) => a.order - b.order);
+  }
+
+  buildWidget(widgetName: string, widgetContent: any): void{
+    console.log(widgetContent);
+    this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
+    this[widgetName].timeRanges = this.orderTimeRanges(this[widgetName].timeRanges);
+    this[widgetName].currentTimeRange = 0;
+    this[widgetName].onChangeTimeRange = (ev: any) => this[widgetName].currentTimeRange = ev;
   }
 
 

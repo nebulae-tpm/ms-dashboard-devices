@@ -46,7 +46,7 @@
             <mat-icon class="s-16">close</mat-icon>
           </button>
           <mat-list>
-            <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[0].topDevices">
+            <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices">
               <p [routerLink]="[item.deviceDetailLink]" >
                 {{item.sn}} -- {{item.hostname}}
               </p>
@@ -55,7 +55,10 @@
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="[alertsByCpu.timeRanges[0].fullDevicesListLink]"> {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }} </button>
+              <button mat-button color="accent"
+                [routerLink]="[alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].fullDevicesListLink]">
+                 {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+              </button>
             </div>
           </mat-list>
 
@@ -72,8 +75,9 @@
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
             <mat-form-field>
-              <mat-select class="simplified font-size-16" [(ngModel)]="widget2.currentRange" aria-label="Change range" (change)="widget2.onSelectionChange($event.value)">
-                <mat-option *ngFor="let range of widget2.ranges | keys" [value]="range.key">
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByRamMemory.currentTimeRange"
+              aria-label="Change range" (change)="alertsByRamMemory.onChangeTimeRange($event.value)">
+                <mat-option *ngFor="let range of alertsByRamMemory.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -85,14 +89,14 @@
 
           <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
             <div class="red-fg font-size-72 line-height-72">
-              {{ widget2.alerts }}
+              {{ alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].alarmsCount }}
             </div>
             <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_RAM' | translate}}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
-            <span class="h4 ml-8"> {{widget2.reporterDevices}} </span>
+            <span class="h4 ml-8"> {{alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].devicesCount}} </span>
           </div>
         </div>
         <!-- / Front -->
@@ -103,14 +107,19 @@
             <mat-icon class="s-16">close</mat-icon>
           </button>
           <mat-list>
-            <mat-list-item *ngFor="let item of widget1.listData">
-              {{item.name}} -- {{item.quantity}}
+            <mat-list-item *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices">
+              <p [routerLink]="[item.deviceDetailLink]" >
+                {{item.sn}} -- {{item.hostname}}
+              </p>
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
+              <button mat-button color="accent"
+                [routerLink]="[alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].fullDevicesListLink]">
+                  {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+              </button>
             </div>
           </mat-list>
 
@@ -120,15 +129,16 @@
       </fuse-widget>
       <!-- ALERT BY RAM MEMORY -->
 
-      <!-- WIDGET 3 -->
+      <!-- ALERTS BY VOLTAGE WIDGET -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
             <mat-form-field>
-              <mat-select class="simplified font-size-16" [(ngModel)]="widget3.currentRange" aria-label="Change range" (change)="widget3.onSelectionChange($event.value)">
-                <mat-option *ngFor="let range of widget3.ranges | keys" [value]="range.key">
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByVoltage.currentTimeRange"
+                aria-label="Change range" (change)="alertsByVoltage.onChangeTimeRange($event.value)">
+                <mat-option *ngFor="let range of alertsByVoltage.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -140,14 +150,14 @@
 
           <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
             <div class="red-fg font-size-72 line-height-72">
-              {{ widget3.alerts }}
+              {{ alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].alarmsCount }}
             </div>
             <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_VOLTAGE' | translate}}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
-            <span class="h4 ml-8"> {{widget3.reporterDevices}} </span>
+            <span class="h4 ml-8"> {{alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].devicesCount}} </span>
           </div>
         </div>
         <!-- / Front -->
@@ -158,14 +168,19 @@
             <mat-icon class="s-16">close</mat-icon>
           </button>
           <mat-list>
-            <mat-list-item *ngFor="let item of widget1.listData">
-              {{item.name}} -- {{item.quantity}}
+            <mat-list-item *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices">
+              <p [routerLink]="[item.deviceDetailLink]" >
+                {{item.sn}} -- {{item.hostname}}
+              </p>
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
+              <button mat-button color="accent"
+                [routerLink]="[alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].fullDevicesListLink]">
+                {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+              </button>
             </div>
           </mat-list>
 
@@ -173,17 +188,18 @@
         <!-- / Back -->
 
       </fuse-widget>
-      <!-- / WIDGET 3 -->
+      <!-- ALERTS BY VOLTAGE WIDGET -->
 
-      <!-- WIDGET 1 -->
+      <!-- ALERTS BY TEMPERATURE WIDGET -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
             <mat-form-field>
-              <mat-select class="simplified font-size-16" [(ngModel)]="widget1.currentRange" aria-label="Change range" (change)="widget1.onSelectionChange($event.value)">
-                <mat-option *ngFor="let range of widget1.ranges | keys" [value]="range.key">
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByTemperature.currentTimeRange"
+                aria-label="Change range" (change)="alertsByTemperature.onChangeTimeRange($event.value)">
+                <mat-option *ngFor="let range of alertsByTemperature.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -195,14 +211,14 @@
 
           <div class="pt-8 pb-32" fxLayout="column" fxLayoutAlign="center center">
             <div class="red-fg font-size-72 line-height-72">
-              {{ widget1.alerts }}
+              {{ alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].alarmsCount }}
             </div>
             <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_TEMPERATURE' | translate}}</div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
-            <span class="h4 ml-8"> {{widget1.reporterDevices}} </span>
+            <span class="h4 ml-8"> {{alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].devicesCount}} </span>
           </div>
         </div>
         <!-- / Front -->
@@ -213,14 +229,19 @@
             <mat-icon class="s-16">close</mat-icon>
           </button>
           <mat-list>
-            <mat-list-item *ngFor="let item of widget1.listData">
-              {{item.name}} -- {{item.quantity}}
+            <mat-list-item *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices">
+              <p [routerLink]="[item.deviceDetailLink]" >
+                {{item.sn}} -- {{item.hostname}}
+              </p>
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent" [routerLink]="['/apps/e-commerce/products']">{{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}</button>
+              <button mat-button color="accent"
+                [routerLink]="[alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].fullDevicesListLink]">
+                {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+              </button>
             </div>
           </mat-list>
 
@@ -228,7 +249,7 @@
         <!-- / Back -->
 
       </fuse-widget>
-      <!-- / WIDGET 1 -->
+      <!-- ALERTS BY TEMPERATURE WIDGET -->
 
 
       <!-- WIDGET 5 -->

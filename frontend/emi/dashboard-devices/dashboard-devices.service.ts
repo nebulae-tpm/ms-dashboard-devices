@@ -33,6 +33,7 @@ export class DashboardDevicesService implements Resolve<any> {
 
   dataReady = new Rx.Subject();
 
+
   constructor( private http: HttpClient, private gateway: GatewayService ) {
   }
 
