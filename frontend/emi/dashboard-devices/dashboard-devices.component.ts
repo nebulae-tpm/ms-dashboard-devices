@@ -1,7 +1,8 @@
-import { FuseTranslationLoaderService } from './../../../core/services/translation-loader.service';
-import { DashboardDevicesService } from './dashboard-devices.service';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { fuseAnimations } from '../../../core/animations';
+import { Observable } from "rxjs/Observable";
+import { FuseTranslationLoaderService } from "./../../../core/services/translation-loader.service";
+import { DashboardDevicesService } from "./dashboard-devices.service";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { fuseAnimations } from "../../../core/animations";
 import {
   data,
   dataDevicesOnVsOff,
@@ -9,28 +10,27 @@ import {
   topDeviceList,
   writeErrosVsUsages,
   stressData
-} from './dummyData/data';
-import { Subscription } from 'rxjs/Subscription';
+} from "./dummyData/data";
+import { Subscription } from "rxjs/Subscription";
 // tslint:disable-next-line:import-blacklist
-import * as Rx from 'rxjs';
-import * as Util from 'util';
-import { locale as english } from './i18n/en';
-import { locale as spanish } from './i18n/es';
+import * as Rx from "rxjs";
+import * as Util from "util";
+import { locale as english } from "./i18n/en";
+import { locale as spanish } from "./i18n/es";
 
 @Component({
-  selector: 'fuse-dashboard-devices',
-  templateUrl: './dashboard-devices.component.html',
-  styleUrls: ['./dashboard-devices.component.scss'],
+  selector: "fuse-dashboard-devices",
+  templateUrl: "./dashboard-devices.component.html",
+  styleUrls: ["./dashboard-devices.component.scss"],
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations
 })
 export class DashboardDevicesComponent implements OnInit, OnDestroy {
-
   projects: any[];
   selectedProject: any;
 
-  widget1SelectedYear = '2016';
-  widget5SelectedDay = 'today';
+  widget1SelectedYear = "2016";
+  widget5SelectedDay = "today";
 
   vehicles = [];
   devices = [];
@@ -49,38 +49,38 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   widget11: any = {};
 
   alertsByRamMemorySubscription: Subscription;
-  alertsByCpuSubscription: Subscription;
   alertsByTemperatureSubscription: Subscription;
   alertsByVoltageSubscription: Subscription;
   deviceOnlineSubscription: Subscription;
   deviceOfflineSubscription: Subscription;
+  DeviceNetworkStatusEventsSubscription: Subscription;
 
+  allSubscriptions: Subscription[] = [];
 
   alertsByRamMemory: any;
   alertsByCpu: any;
   alertsByTemperature: any;
   alertsByVoltage: any;
 
-
   constructor(
     private graphQlGatewayService: DashboardDevicesService,
-    private translationLoader: FuseTranslationLoaderService) {
-
+    private translationLoader: FuseTranslationLoaderService
+  ) {
     this.translationLoader.loadTranslations(english, spanish);
 
     this.widget5 = {
       data: dataDevicesOnVsOff,
-      currentRange: 'TW',
+      currentRange: "TW",
       xAxis: true,
       yAxis: true,
       gradient: false,
       legend: false,
       showXAxisLabel: false,
-      xAxisLabel: 'Cuenca',
+      xAxisLabel: "Cuenca",
       showYAxisLabel: true,
-      yAxisLabel: 'Número de dispositivos',
+      yAxisLabel: "Número de dispositivos",
       scheme: {
-        domain: ['#a84a4a', '#c0ffa8']
+        domain: ["#a84a4a", "#c0ffa8"]
       },
       onSelect: ev => {
         console.log(ev);
@@ -88,66 +88,75 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     };
     this.widget6 = {
       timeRanges: {
-        h0_1: 'Última hora',
-        h0_2: 'Últimas dos horas',
-        h0_3: 'Últimas tres horas'
+        h0_1: "Última hora",
+        h0_2: "Últimas dos horas",
+        h0_3: "Últimas tres horas"
       },
-      currentTimeRange: 'h0_1',
+      currentTimeRange: "h0_1",
       datasets: [
-        { label: 'Errores',
+        {
+          label: "Errores",
           data: this.getRandomArray(12, 100, 300),
           total: 0,
-          fill: 'start'
+          fill: "start"
         },
-        { label: 'Usos',
+        {
+          label: "Usos",
           data: this.getRandomArray(12, 200, 2000),
           total: 0,
-          fill: 'start'
+          fill: "start"
         }
       ],
-      labels: [ '12:00', '12:10', '12:20', '12:30', '12:40', '12:50', '13:00' ],
+      labels: ["12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "13:00"],
       colors: [
         {
-          borderColor: '#3949ab',
-          backgroundColor: '#3949ab',
-          pointBackgroundColor: '#3949ab',
-          pointHoverBackgroundColor: '#3949ab',
-          pointBorderColor: '#ffffff',
-          pointHoverBorderColor: '#ffffff'
+          borderColor: "#3949ab",
+          backgroundColor: "#3949ab",
+          pointBackgroundColor: "#3949ab",
+          pointHoverBackgroundColor: "#3949ab",
+          pointBorderColor: "#ffffff",
+          pointHoverBorderColor: "#ffffff"
         },
         {
-          borderColor: 'rgba(30, 136, 229, 0.87)',
-          backgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointBackgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointHoverBackgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointBorderColor: '#ffffff',
-          pointHoverBorderColor: '#ffffff'
+          borderColor: "rgba(30, 136, 229, 0.87)",
+          backgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointBackgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointHoverBackgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointBorderColor: "#ffffff",
+          pointHoverBorderColor: "#ffffff"
         }
       ],
       options: {
         spanGaps: false,
         legend: { display: false },
         maintainAspectRatio: false,
-        tooltips: { position: 'nearest', mode: 'index', intersect: false },
+        tooltips: { position: "nearest", mode: "index", intersect: false },
         layout: { padding: { left: 24, right: 32 } },
-        elements: { point: { radius: 4, borderWidth: 2, hoverRadius: 4, hoverBorderWidth: 2 } },
-        scales:
-         { xAxes:
-            [ {
-                gridLines: { display: false },
-                ticks: { fontColor: 'rgba(0,0,0,0.54)' }
-              }
-            ],
-           yAxes:
-            [ {
-                gridLines: { tickMarkLength: 16 },
-                ticks: { stepSize: 1000 }
-              }
-            ]
-         },
+        elements: {
+          point: {
+            radius: 4,
+            borderWidth: 2,
+            hoverRadius: 4,
+            hoverBorderWidth: 2
+          }
+        },
+        scales: {
+          xAxes: [
+            {
+              gridLines: { display: false },
+              ticks: { fontColor: "rgba(0,0,0,0.54)" }
+            }
+          ],
+          yAxes: [
+            {
+              gridLines: { tickMarkLength: 16 },
+              ticks: { stepSize: 1000 }
+            }
+          ]
+        },
         plugins: { filler: { propagate: false } }
       },
-      chartType: 'line',
+      chartType: "line",
       usagesCount: new Rx.Subject(),
       errorsCount: new Rx.Subject(),
       onSelect: ev => {
@@ -155,98 +164,135 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       },
       onRangeChanged: (range: any) => {
         this.print(range);
-        console.log(range, ' Selected');
-        switch (range){
-          case 'h0_1':
-            this.widget6.labels = [ '12:00', '12:10', '12:20', '12:30', '12:40', '12:50', '13:00' ];
+        console.log(range, " Selected");
+        switch (range) {
+          case "h0_1":
+            this.widget6.labels = [
+              "12:00",
+              "12:10",
+              "12:20",
+              "12:30",
+              "12:40",
+              "12:50",
+              "13:00"
+            ];
             this.widget6.datasets[0].data = this.getRandomArray(7, 500, 1500);
             this.widget6.datasets[1].data = this.getRandomArray(7, 1800, 4000);
             break;
-          case 'h0_2':
-            this.widget6.labels = [ '12:00', '12:20', '12:40', '13:00', '13:20', '13:40', '14:00' ];
+          case "h0_2":
+            this.widget6.labels = [
+              "12:00",
+              "12:20",
+              "12:40",
+              "13:00",
+              "13:20",
+              "13:40",
+              "14:00"
+            ];
             this.widget6.datasets[0].data = this.getRandomArray(13, 500, 1500);
             this.widget6.datasets[1].data = this.getRandomArray(13, 1800, 4000);
             break;
-          case 'h0_3':
-            this.widget6.labels = [ '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00' ];
+          case "h0_3":
+            this.widget6.labels = [
+              "12:00",
+              "12:30",
+              "13:00",
+              "13:30",
+              "14:00",
+              "14:30",
+              "15:00"
+            ];
             this.widget6.datasets[0].data = this.getRandomArray(7, 500, 1500);
             this.widget6.datasets[1].data = this.getRandomArray(7, 1800, 4000);
             break;
         }
-        this.widget6.usagesCount.next(this.getCountInArray(this.widget6.datasets[1].data));
-        this.widget6.errorsCount.next(this.getCountInArray(this.widget6.datasets[0].data));
+        this.widget6.usagesCount.next(
+          this.getCountInArray(this.widget6.datasets[1].data)
+        );
+        this.widget6.errorsCount.next(
+          this.getCountInArray(this.widget6.datasets[0].data)
+        );
       }
     };
     this.widget7 = {
       cuencas: {
-        C1: 'Cuenca 1',
-        C2: 'Cuenca 2',
-        C3: 'Cuenca 3',
-        C4: 'Cuenca 4',
-        C5: 'Cuenca 5'
+        C1: "Cuenca 1",
+        C2: "Cuenca 2",
+        C3: "Cuenca 3",
+        C4: "Cuenca 4",
+        C5: "Cuenca 5"
       },
       datasets: [
-        { label: 'Errores',
+        {
+          label: "Errores",
           data: this.getRandomArray(12, 100, 400),
           total: 0,
-          fill: 'start'
+          fill: "start"
         },
-        { label: 'Usos',
+        {
+          label: "Usos",
           data: this.getRandomArray(12, 400, 4000),
           total: 0,
-          fill: 'start'
+          fill: "start"
         }
       ],
-      labels: [ '12:00', '12:10', '12:20', '12:30', '12:40', '12:50', '13:00' ],
-      currentCuenca: 'C1',
+      labels: ["12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "13:00"],
+      currentCuenca: "C1",
       timeRanges: {
-        h0_1: 'Última hora',
-        h0_2: 'Últimas dos horas',
-        h0_3: 'Últimas tres horas'
+        h0_1: "Última hora",
+        h0_2: "Últimas dos horas",
+        h0_3: "Últimas tres horas"
       },
-      currentTimeRange: 'h0_1',
+      currentTimeRange: "h0_1",
       colors: [
         {
-          borderColor: '#3949ab',
-          backgroundColor: '#3949ab',
-          pointBackgroundColor: '#3949ab',
-          pointHoverBackgroundColor: '#3949ab',
-          pointBorderColor: '#ffffff',
-          pointHoverBorderColor: '#ffffff'
+          borderColor: "#3949ab",
+          backgroundColor: "#3949ab",
+          pointBackgroundColor: "#3949ab",
+          pointHoverBackgroundColor: "#3949ab",
+          pointBorderColor: "#ffffff",
+          pointHoverBorderColor: "#ffffff"
         },
         {
-          borderColor: 'rgba(30, 136, 229, 0.87)',
-          backgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointBackgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointHoverBackgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointBorderColor: '#ffffff',
-          pointHoverBorderColor: '#ffffff'
+          borderColor: "rgba(30, 136, 229, 0.87)",
+          backgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointBackgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointHoverBackgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointBorderColor: "#ffffff",
+          pointHoverBorderColor: "#ffffff"
         }
       ],
       options: {
         spanGaps: false,
         legend: { display: false },
         maintainAspectRatio: false,
-        tooltips: { position: 'nearest', mode: 'index', intersect: false },
+        tooltips: { position: "nearest", mode: "index", intersect: false },
         layout: { padding: { left: 24, right: 32 } },
-        elements: { point: { radius: 4, borderWidth: 2, hoverRadius: 4, hoverBorderWidth: 2 } },
-        scales:
-         { xAxes:
-            [ {
-                gridLines: { display: false },
-                ticks: { fontColor: 'rgba(0,0,0,0.54)' }
-              }
-            ],
-           yAxes:
-            [ {
-                gridLines: { tickMarkLength: 16 },
-                ticks: { stepSize: 1000 }
-              }
-            ]
-         },
+        elements: {
+          point: {
+            radius: 4,
+            borderWidth: 2,
+            hoverRadius: 4,
+            hoverBorderWidth: 2
+          }
+        },
+        scales: {
+          xAxes: [
+            {
+              gridLines: { display: false },
+              ticks: { fontColor: "rgba(0,0,0,0.54)" }
+            }
+          ],
+          yAxes: [
+            {
+              gridLines: { tickMarkLength: 16 },
+              ticks: { stepSize: 1000 }
+            }
+          ]
+        },
         plugins: { filler: { propagate: false } }
       },
-      chartType: 'line',
+      chartType: "line",
 
       legend: true,
       explodeSlices: false,
@@ -254,10 +300,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       doughnut: true,
       gradient: false,
       scheme: {
-        domain: ['#f44336', '#35c922', '#03a9f4', '#e91e63']
+        domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63"]
       },
       onCuencaFilterChanged: ev => {
-        console.log(ev, 'Selected');
+        console.log(ev, "Selected");
         const length = this.widget7.datasets[0].data.length;
         this.widget7.datasets[0].data = this.getRandomArray(length, 300, 400);
         this.widget7.datasets[1].data = this.getRandomArray(length, 600, 1000);
@@ -268,30 +314,52 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         });
       },
       onTimeRangeFilterChanged: ev => {
-        console.log(ev, 'Selected');
-        switch (ev){
-          case 'h0_1':
-            this.widget7.labels = [ '12:00', '12:10', '12:20', '12:30', '12:40', '12:50', '13:00' ];
+        console.log(ev, "Selected");
+        switch (ev) {
+          case "h0_1":
+            this.widget7.labels = [
+              "12:00",
+              "12:10",
+              "12:20",
+              "12:30",
+              "12:40",
+              "12:50",
+              "13:00"
+            ];
             this.widget7.datasets[0].data = this.getRandomArray(7, 300, 400);
             this.widget7.datasets[1].data = this.getRandomArray(7, 600, 1000);
             break;
-          case 'h0_2':
-            this.widget7.labels = [ '12:00', '12:20', '12:40', '13:00', '13:20', '13:40', '14:00' ];
+          case "h0_2":
+            this.widget7.labels = [
+              "12:00",
+              "12:20",
+              "12:40",
+              "13:00",
+              "13:20",
+              "13:40",
+              "14:00"
+            ];
             this.widget7.datasets[0].data = this.getRandomArray(7, 300, 400);
             this.widget7.datasets[1].data = this.getRandomArray(7, 600, 1000);
             break;
-          case 'h0_3':
-            this.widget7.labels = [ '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00' ];
+          case "h0_3":
+            this.widget7.labels = [
+              "12:00",
+              "12:30",
+              "13:00",
+              "13:30",
+              "14:00",
+              "14:30",
+              "15:00"
+            ];
             this.widget7.datasets[0].data = this.getRandomArray(7, 300, 400);
             this.widget7.datasets[1].data = this.getRandomArray(7, 600, 1000);
             break;
-
         }
 
         this.widget7.datasets.forEach(d => {
           d.total = this.getCountInArray(d.data);
         });
-
       },
       onSelect: ev => {
         console.log(ev);
@@ -300,33 +368,33 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this.widget8 = {
       view: [700, 400],
       ranges: {
-        h0_1: 'Última hora',
-        h0_2: 'Últimas dos horas',
-        h0_3: 'Últimas tres horas'
+        h0_1: "Última hora",
+        h0_2: "Últimas dos horas",
+        h0_3: "Últimas tres horas"
       },
-      currentRange: 'h0_1',
+      currentRange: "h0_1",
       scolorScheme: {
-        domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+        domain: ["#5AA454", "#A10A28", "#C7B42C", "#AAAAAA"]
       },
       data: [
         {
-          name: 'Cuenca 5',
+          name: "Cuenca 5",
           value: 1000
         },
         {
-          name: 'Cuenca 4',
+          name: "Cuenca 4",
           value: 2695
         },
         {
-          name: 'Cuenca 3',
+          name: "Cuenca 3",
           value: 3598
         },
         {
-          name: 'Cuenca 2',
+          name: "Cuenca 2",
           value: 745
         },
         {
-          name: 'Cuenca 1',
+          name: "Cuenca 1",
           value: 2569
         }
       ],
@@ -337,176 +405,272 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this.widget9 = {
       data: [
         {
-          name: 'Cuenca 5',
-          color: '#f44336',
+          name: "Cuenca 5",
+          color: "#f44336",
           value: 45
         },
         {
-          name: 'Cuenca 4',
-          color: '#35c922',
+          name: "Cuenca 4",
+          color: "#35c922",
           value: 45
         },
         {
-          name: 'Cuenca 3',
-          color: '#03a9f4',
+          name: "Cuenca 3",
+          color: "#03a9f4",
           value: 34
         },
         {
-          name: 'Cuenca 2',
-          color: '#03a9f4',
+          name: "Cuenca 2",
+          color: "#03a9f4",
           value: 67
         },
         {
-          name: 'Cuenca 1',
-          color: '#533599',
+          name: "Cuenca 1",
+          color: "#533599",
           value: 89
         }
       ],
       ranges: {
-        h0_1: 'Última hora',
-        h0_2: 'Últimas dos horas',
-        h0_3: 'Últimas tres horas'
+        h0_1: "Última hora",
+        h0_2: "Últimas dos horas",
+        h0_3: "Últimas tres horas"
       },
-      currentRange: 'h0_1',
+      currentRange: "h0_1",
       scheme: {
-        domain: ['#f44336', '#35c922', '#03a9f4', '#e91e63', '#533599']
+        domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63", "#533599"]
       },
-      units: 'Usos totales',
+      units: "Usos totales",
       max: 100,
       min: 0,
-      textValue: '',
+      textValue: "",
       legend: true,
       toggleLegend: () => {
-        console.log('toggleLegend...');
+        console.log("toggleLegend...");
         this.widget9.legend = !this.widget9.legend;
       }
     };
     this.widget10 = {
       datasets: [
-        { label: 'Cuenca 1',
+        {
+          label: "Cuenca 1",
           data: [410, 380, 320, 290, 190, 390, 250, 380, 300, 340, 220, 290],
-          fill: 'start'
+          fill: "start"
         },
-        { label: 'Cuenca 2',
-          data: [3000, 3400, 4100, 3800, 2200, 3200, 2900, 1900, 2900, 3900, 2500, 3800],
-          fill: 'start'
+        {
+          label: "Cuenca 2",
+          data: [
+            3000,
+            3400,
+            4100,
+            3800,
+            2200,
+            3200,
+            2900,
+            1900,
+            2900,
+            3900,
+            2500,
+            3800
+          ],
+          fill: "start"
         }
       ],
-      labels: [ '12am', '2am', '4am', '6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm' ],
+      labels: [
+        "12am",
+        "2am",
+        "4am",
+        "6am",
+        "8am",
+        "10am",
+        "12pm",
+        "2pm",
+        "4pm",
+        "6pm",
+        "8pm",
+        "10pm"
+      ],
       colors: [
         {
-          borderColor: '#3949ab',
-          backgroundColor: '#3949ab',
-          pointBackgroundColor: '#3949ab',
-          pointHoverBackgroundColor: '#3949ab',
-          pointBorderColor: '#ffffff',
-          pointHoverBorderColor: '#ffffff'
+          borderColor: "#3949ab",
+          backgroundColor: "#3949ab",
+          pointBackgroundColor: "#3949ab",
+          pointHoverBackgroundColor: "#3949ab",
+          pointBorderColor: "#ffffff",
+          pointHoverBorderColor: "#ffffff"
         },
         {
-          borderColor: 'rgba(30, 136, 229, 0.87)',
-          backgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointBackgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointHoverBackgroundColor: 'rgba(30, 136, 229, 0.87)',
-          pointBorderColor: '#ffffff',
-          pointHoverBorderColor: '#ffffff'
+          borderColor: "rgba(30, 136, 229, 0.87)",
+          backgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointBackgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointHoverBackgroundColor: "rgba(30, 136, 229, 0.87)",
+          pointBorderColor: "#ffffff",
+          pointHoverBorderColor: "#ffffff"
         }
       ],
-      options:
-      {
+      options: {
         spanGaps: false,
         legend: { display: false },
         maintainAspectRatio: false,
-        tooltips: { position: 'nearest', mode: 'index', intersect: false },
+        tooltips: { position: "nearest", mode: "index", intersect: false },
         layout: { padding: { left: 24, right: 32 } },
-        elements: { point: { radius: 4, borderWidth: 2, hoverRadius: 4, hoverBorderWidth: 2 } },
-        scales:
-         { xAxes:
-            [ {
-                gridLines: { display: false },
-                ticks: { fontColor: 'rgba(0,0,0,0.54)' }
-              }
-            ],
-           yAxes:
-            [ {
-                gridLines: { tickMarkLength: 16 },
-                ticks: { stepSize: 1000 }
-              }
-            ]
-         },
+        elements: {
+          point: {
+            radius: 4,
+            borderWidth: 2,
+            hoverRadius: 4,
+            hoverBorderWidth: 2
+          }
+        },
+        scales: {
+          xAxes: [
+            {
+              gridLines: { display: false },
+              ticks: { fontColor: "rgba(0,0,0,0.54)" }
+            }
+          ],
+          yAxes: [
+            {
+              gridLines: { tickMarkLength: 16 },
+              ticks: { stepSize: 1000 }
+            }
+          ]
+        },
         plugins: { filler: { propagate: false } }
       },
-      chartType: 'line'
-
+      chartType: "line"
     };
     this.widget11 = {
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
+        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        datasets: [
+          {
+            label: "# of Votes",
             data: [12, 19, 3, 5, 2, 3],
             backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)"
             ],
             borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
+              "rgba(255,99,132,1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)"
             ],
             borderWidth: 1
-        }],
+          }
+        ]
       },
       options: {
         scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true
+              }
+            }
+          ]
         }
       },
-      type: 'bar'
+      type: "bar"
     };
-
   }
 
   ngOnInit() {
-    console.log('On constructor...');
-    this.alertsByCpuSubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('CPU_USAGE')
-    .subscribe(
-      response => this.buildWidget('alertsByCpu', response.data.getDashBoardDevicesAlarmReport),
-      error => console.log(error)
+    console.log("On constructor...");
+    //  online Vs offline devices subscription
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getDevicesOnlineVsOffline()
+        .subscribe(d => (this.widget5.data = d))
     );
 
-    this.alertsByRamMemorySubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('RAM_MEMORY')
-    .subscribe(
-      response => this.buildWidget('alertsByRamMemory', response.data.getDashBoardDevicesAlarmReport),
-      error => console.log(error)
+    /**
+     * CPU_USAGE subcriptions
+     */
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getDashboardDeviceAlertsBy("CPU_USAGE")
+        .map(response => response.data.getDashBoardDevicesAlarmReport)
+        .subscribe(
+          (response) => {
+            this.buildWidget(
+              "alertsByCpu",
+              response
+            );
+          },
+          error => console.log(error)
+        ),
+      this.graphQlGatewayService
+        .listenDashboardDeviceCpuAlarmsEvents()
+        .subscribe(
+          resp => this.buildWidget("alertsByCpu", resp),
+          err => console.log(err)
+        )
     );
 
-    this.alertsByVoltageSubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('VOLTAGE')
-    .subscribe(
-      response => this.buildWidget('alertsByVoltage', response.data.getDashBoardDevicesAlarmReport),
-      error => console.log(error)
+    /**
+     * RAM MEMORY subcriptions
+     */
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getDashboardDeviceAlertsBy("RAM_MEMORY")
+        .map(respond => respond.data.getDashBoardDevicesAlarmReport)
+        .subscribe(
+          response => this.buildWidget("alertsByRamMemory", response),
+          error => console.log(error)
+        ),
+      this.graphQlGatewayService
+        .listenDashboardDeviceRamMemoryAlarmsEvents()
+        .subscribe(
+          response => this.buildWidget("alertsByRamMemory", response),
+          error => console.log(error)
+        )
     );
 
-    this.alertsByTemperatureSubscription = this.graphQlGatewayService.getDashboardDeviceAlertsBy('TEMPERATURE')
-    .subscribe(
-      response => this.buildWidget('alertsByTemperature', response.data.getDashBoardDevicesAlarmReport),
-      error => console.log(error)
+    /**
+     * VOLTAGE subscriptions
+     */
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getDashboardDeviceAlertsBy("VOLTAGE")
+        .map(response => response.data.getDashBoardDevicesAlarmReport)
+        .subscribe(
+          response => this.buildWidget("alertsByVoltage", response),
+          error => console.log(error)
+        )
     );
 
+    /**
+     * TEMPERATURE subscriptions
+     */
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getDashboardDeviceAlertsBy("TEMPERATURE")
+        .map(response => response.data.getDashBoardDevicesAlarmReport )
+        .subscribe(
+          response => this.buildWidget( "alertsByTemperature", response ),
+          error => console.log(error)
+        ),
+      this.graphQlGatewayService
+        .listenDashboardDeviceTemperatureAlarmsEvents()
+        .subscribe(
+          response => this.buildWidget("alertsByVoltage", response),
+          error => console.log(error)
+        )
+    );
 
-
-
-
+    /**
+     * subscription to update device on Vs device Off on bar Vertical bar
+     */
+    this.DeviceNetworkStatusEventsSubscription = this.graphQlGatewayService
+      .getDashboardDeviceNetworkStatusEvents()
+      .subscribe(result => (this.widget5.data = result));
 
     // Rx.Observable.interval(5000).subscribe(t => {
     //   const newData = this.widget5.data.slice();
@@ -528,19 +692,18 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
     Rx.Observable.interval(3000).subscribe(t => {
       this.widget7.datasets[1].data = this.getRandomArray(7, 1800, 4000);
-      this.widget6.usagesCount.next(this.getCountInArray(this.widget6.datasets[1].data));
-      this.widget6.errorsCount.next(this.getCountInArray(this.widget6.datasets[0].data));
+      this.widget6.usagesCount.next(
+        this.getCountInArray(this.widget6.datasets[1].data)
+      );
+      this.widget6.errorsCount.next(
+        this.getCountInArray(this.widget6.datasets[0].data)
+      );
     });
-
   }
 
   ngOnDestroy() {
-    this.alertsByVoltageSubscription.unsubscribe();
-    this.alertsByTemperatureSubscription.unsubscribe();
-    this.alertsByRamMemorySubscription.unsubscribe();
-    this.alertsByCpuSubscription.unsubscribe();
-    this.deviceOfflineSubscription.unsubscribe();
-    this.deviceOnlineSubscription.unsubscribe();
+    console.log("ngOnDestroy ...");
+    this.allSubscriptions.forEach(s => s.unsubscribe());
   }
 
   onSelectChart(e) {
@@ -548,11 +711,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     console.log(dataDevicesOnVsOff);
   }
 
-  getOnlineOffline() {
-  }
+  getOnlineOffline() {}
 
   print(args: any) {
-    console.log(Util.inspect(args, {showHidden: false, depth: null}));
+    console.log(Util.inspect(args, { showHidden: false, depth: null }));
   }
 
   onUsageVsErrosSelectionChange() {}
@@ -576,33 +738,37 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   getMaxUsageMeter(realMax: number): number {
-    let resp  = Math.floor(realMax + (realMax / 20 ));
-    if ((resp % 2) !== 0) {
-      resp  = resp + 1;
+    let resp = Math.floor(realMax + realMax / 20);
+    if (resp % 2 !== 0) {
+      resp = resp + 1;
     }
-    while ((resp % 10) !== 0 ){
+    while (resp % 10 !== 0) {
       resp = resp + 2;
     }
-    while ((resp % 100) !== 0 ){
+    while (resp % 100 !== 0) {
       resp = resp + 10;
     }
-    while ((resp % 1000) !== 0 ){
+    while (resp % 1000 !== 0) {
       resp = resp + 100;
     }
     return resp;
   }
 
-  getRandomArray(size: number, itemMinLimit: number, itemMaxLimit: number ): number[] {
+  getRandomArray(
+    size: number,
+    itemMinLimit: number,
+    itemMaxLimit: number
+  ): number[] {
     let i = 0;
     const result = [];
-    while (i < size){
+    while (i < size) {
       result.push(Math.floor(Math.random() * itemMaxLimit + itemMinLimit));
       i++;
     }
     return result;
   }
 
-  getCountInArray(array: number[]): number{
+  getCountInArray(array: number[]): number {
     let counter = 0;
     array.forEach(item => {
       counter = counter + item;
@@ -610,17 +776,18 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     return counter;
   }
 
-  orderTimeRanges(array: any[]){
+  orderTimeRanges(array: any[]) {
     return array.sort((a, b) => a.order - b.order);
   }
 
-  buildWidget(widgetName: string, widgetContent: any): void{
-    console.log(widgetContent);
+  buildWidget(widgetName: string, widgetContent: any): void {
+    console.log(JSON.stringify(widgetContent));
     this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
-    this[widgetName].timeRanges = this.orderTimeRanges(this[widgetName].timeRanges);
+    this[widgetName].timeRanges = this.orderTimeRanges(
+      this[widgetName].timeRanges
+    );
     this[widgetName].currentTimeRange = 0;
-    this[widgetName].onChangeTimeRange = (ev: any) => this[widgetName].currentTimeRange = ev;
+    this[widgetName].onChangeTimeRange = (ev: any) =>
+      (this[widgetName].currentTimeRange = ev);
   }
-
-
 }

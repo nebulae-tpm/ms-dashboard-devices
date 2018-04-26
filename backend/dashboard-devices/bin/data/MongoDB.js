@@ -21,6 +21,7 @@ class MongoDB {
      * Returns an Obserable that resolve to the DB client
      */
     init$() {
+        console.log("MongoDB.init$()... ");
         return Rx.Observable.bindNodeCallback(MongoClient.connect)(this.url)
             .map(client => {
                 this.client = client;

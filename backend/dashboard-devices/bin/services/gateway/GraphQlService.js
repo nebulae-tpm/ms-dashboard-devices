@@ -1,6 +1,6 @@
 'use strict'
 
-const DashBoardDevices = require('../../domain/DashBoardDevices');
+const dashBoardDevices = require('../../domain/DashBoardDevices')();
 const broker = require('../../tools/broker/BrokerFactory')();
 const Rx = require('rxjs');
 const jsonwebtoken = require('jsonwebtoken');
@@ -11,32 +11,35 @@ let instance;
 class GraphQlService {
 
     constructor() {
-        this.dashBoardDevices = new DashBoardDevices();
         this.functionMap = this.generateFunctionMap();        
     }
 
     generateFunctionMap() {
         return {
-            'gateway.graphql.query.getDashBoardDevicesAlarmReport': this.dashBoardDevices.getDashBoardDevicesAlarmReport
+            'gateway.graphql.query.getDashBoardDevicesAlarmReport': dashBoardDevices.getDashBoardDevicesAlarmReport,
+            'gateway.graphql.query.DeviceOnlineReported' : dashBoardDevices.updateDeviceNetworkStatus,
+            'gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus' : dashBoardDevices.getDashBoardDevicesCurrentNetworkStatus
         };
     }
 
     start() {
-        broker.getMessageListener$(['Device'], Object.keys(this.functionMap)
-        )
+        broker.getMessageListener$(['Device'], Object.keys(this.functionMap))
             //decode and verify the jwt token
-            .map(message => { return { authToken: jsonwebtoken.verify(message.data.jwt, jwtPublicKey), message }; })
+            .map(message => { 
+                return { authToken: jsonwebtoken.verify(message.data.jwt, jwtPublicKey), message };
+             })
             //ROUTE MESSAGE TO RESOLVER
-            .mergeMap(({ authToken, message }) =>
-                this.functionMap[message.type](message.data, authToken)
-                    .map(response => {
-                        return { response, correlationId: message.id, replyTo: message.attributes.replyTo };
-                    })
+            .mergeMap(({ authToken, message }) => 
+              this.functionMap[message.type](message.data, authToken)
+                .map(response => {
+                    return { response, correlationId: message.id, replyTo: message.attributes.replyTo };
+                })
+                
             )
             //send response back if neccesary
             .subscribe(
                 ({ response, correlationId, replyTo }) => {
-                    broker.send$('MaterializedViewUpdates','gateway.graphql.Subscription.response',response);
+                    broker.send$('MaterializedViewUpdates','gateway.graphql.Subscription.response', response);
                     if (replyTo) {
                         broker.send$(replyTo, 'gateway.graphql.Query.response', response, { correlationId });                        
                     }

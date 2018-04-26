@@ -7,6 +7,13 @@ enum DashBoardDevicesAlarmReportTimeRangeType{
   "Last three hours"
   THREE_HOURS
 }
+"type of network status"
+enum DeviceNetworkStatus{
+  "online status"
+  ONLINE,
+  "offline status"
+  OFFLINE
+}
 "Types of alarm reports"
 enum DashBoardDevicesAlarmReportType{
   "Ram usage alarms"
@@ -55,8 +62,44 @@ type DashBoardDevicesAlarmReport {
   timeRanges: [DashBoardDevicesAlarmReportTimeRange]
 }
 
+"Device Network status event type used for DashBoardDevices"
+type DashBoardDevicesNetworkEvent{
+  "Network status"
+  state: DeviceNetworkStatus!
+  "Serial of device"
+  serial: String!
+  "hostname of device"
+  hostname: String!
+  "Cuenca to Device belongs"
+  cuenca: String!
+}
+
+"Object used to represents data on Dashboard chart"
+type DashBoardDeviceNetworkStatusSubSerie{
+  "serie name"
+  name: String!
+  "serie value"
+  value: Int!
+}
+
+type DashBoardDeviceNetworkStatus{
+  "Cuenca name used to show in devices on Vs devices off chart"
+  name: String!
+  series: [DashBoardDeviceNetworkStatusSubSerie]!
+}
+
 
 type Query {
   "Get a report summary of alarmed devices.  this is used on DashBoardDevices section"
   getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
+  getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
+}
+
+type Subscription {
+  onDashBoardDevicesAlarmReportChanged(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
+  onDeviceOnlineReported: [DashBoardDeviceNetworkStatus]!
+  onDeviceOfflineReported: [DashBoardDeviceNetworkStatus]!
+  onDeviceCpuUsageAlarmActivated: DashBoardDevicesAlarmReport!
+  onDeviceRamMemoryAlarmActivated: DashBoardDevicesAlarmReport!
+  onDeviceTemperatureAlarmActivated: DashBoardDevicesAlarmReport!
 }
