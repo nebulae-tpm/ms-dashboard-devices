@@ -96,10 +96,11 @@ type Query {
 }
 
 type Subscription {
-  onDashBoardDevicesAlarmReportChanged(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
-  onDeviceOnlineReported: [DashBoardDeviceNetworkStatus]!
-  onDeviceOfflineReported: [DashBoardDeviceNetworkStatus]!
-  onDeviceCpuUsageAlarmActivated: DashBoardDevicesAlarmReport!
-  onDeviceRamMemoryAlarmActivated: DashBoardDevicesAlarmReport!
-  onDeviceTemperatureAlarmActivated: DashBoardDevicesAlarmReport!
+  onDashBoardDeviceOnlineReported: [DashBoardDeviceNetworkStatus]!
+  onDashBoardDeviceOfflineReported: [DashBoardDeviceNetworkStatus]!
+  onDashBoardDeviceCpuUsageAlarmActivated: DashBoardDevicesAlarmReport!
+  onDashBoardDeviceRamMemoryAlarmActivated: DashBoardDevicesAlarmReport!
+  onDashBoardDeviceTemperatureAlarmActivated: DashBoardDevicesAlarmReport!
+  onDashBoardDeviceLowVoltageAlarmReported: DashBoardDevicesAlarmReport!
+  onDashBoardDeviceHighVoltageAlarmReported: DashBoardDevicesAlarmReport!
 }

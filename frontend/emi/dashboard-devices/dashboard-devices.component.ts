@@ -598,11 +598,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceAlertsBy("CPU_USAGE")
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          (response) => {
-            this.buildWidget(
-              "alertsByCpu",
-              response
-            );
+          response => {
+            this.buildWidget("alertsByCpu", response);
           },
           error => console.log(error)
         ),
@@ -643,6 +640,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .subscribe(
           response => this.buildWidget("alertsByVoltage", response),
           error => console.log(error)
+        ),
+      this.graphQlGatewayService
+        .listenDashboardDeviceVoltageAlarmsEvents()
+        .subscribe(
+          response => this.buildWidget("alertsByVoltage", response),
+          err => console.log(err)
         )
     );
 
@@ -652,15 +655,15 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this.allSubscriptions.push(
       this.graphQlGatewayService
         .getDashboardDeviceAlertsBy("TEMPERATURE")
-        .map(response => response.data.getDashBoardDevicesAlarmReport )
+        .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          response => this.buildWidget( "alertsByTemperature", response ),
+          response => this.buildWidget("alertsByTemperature", response),
           error => console.log(error)
         ),
       this.graphQlGatewayService
         .listenDashboardDeviceTemperatureAlarmsEvents()
         .subscribe(
-          response => this.buildWidget("alertsByVoltage", response),
+          response => this.buildWidget("alertsByTemperature", response),
           error => console.log(error)
         )
     );
@@ -671,24 +674,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this.DeviceNetworkStatusEventsSubscription = this.graphQlGatewayService
       .getDashboardDeviceNetworkStatusEvents()
       .subscribe(result => (this.widget5.data = result));
-
-    // Rx.Observable.interval(5000).subscribe(t => {
-    //   const newData = this.widget5.data.slice();
-    //   let cIndex = 0;
-    //   newData.forEach(c => {
-    //     let iIndex = 0;
-    //     c.series.forEach(i => {
-    //       const random = Math.floor(Math.random() * 200 + 50);
-    //       newData[cIndex].series[iIndex].value = random;
-    //       iIndex++;
-    //     });
-    //     cIndex++;
-    //   });
-    //   this.widget5.data = newData;
-
-    //   this.onChangeValueWidget9();
-
-    // });
 
     Rx.Observable.interval(3000).subscribe(t => {
       this.widget7.datasets[1].data = this.getRandomArray(7, 1800, 4000);
@@ -781,12 +766,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   buildWidget(widgetName: string, widgetContent: any): void {
-    console.log(JSON.stringify(widgetContent));
+    console.log(JSON.parse(JSON.stringify(widgetContent)).timeRanges[0]);
     this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
     this[widgetName].timeRanges = this.orderTimeRanges(
       this[widgetName].timeRanges
     );
-    this[widgetName].currentTimeRange = 0;
+    this[widgetName].currentTimeRange = this[widgetName].currentTimeRange ? this[widgetName].currentTimeRange : 0;
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
   }

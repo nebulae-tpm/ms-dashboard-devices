@@ -17,7 +17,6 @@ class GraphQlService {
     generateFunctionMap() {
         return {
             'gateway.graphql.query.getDashBoardDevicesAlarmReport': dashBoardDevices.getDashBoardDevicesAlarmReport,
-            'gateway.graphql.query.DeviceOnlineReported' : dashBoardDevices.updateDeviceNetworkStatus,
             'gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus' : dashBoardDevices.getDashBoardDevicesCurrentNetworkStatus
         };
     }

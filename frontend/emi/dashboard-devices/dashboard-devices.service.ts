@@ -12,7 +12,9 @@ import {
   getDevicesOnlineVsOffline,
   onDeviceCpuUsageAlarmActivated,
   onDeviceRamMemoryAlarmActivated,
-  onDeviceTemperatureAlarmActivated
+  onDeviceTemperatureAlarmActivated,
+  onDeviceLowVoltageAlarmActivated,
+  onDeviceHighVoltageAlarmActivated
 } from "./gql/DashBoardDevices";
 
 @Injectable()
@@ -25,53 +27,79 @@ export class DashboardDevicesService {
       variables: {
         type: alarmType
       }
-    }).valueChanges;
+    }).valueChanges
   }
 
+  /**
+   * Listen the changes on devices network status
+   */
   getDashboardDeviceNetworkStatusEvents(): Observable<any> {
     return Rx.Observable.merge(
-      this.gateway.apollo.subscribe({
-        query: onDasboardDeviceOnlineReported
-      })
-      .map(resp => resp.data.onDeviceOnlineReported),
-      this.gateway.apollo.subscribe({
-        query: onDasboardDeviceOfflineReported
-      })
-      .map(resp => resp.data.onDeviceOfflineReported)
-    ).throttleTime(2000);
+      this.gateway.apollo
+        .subscribe({
+          query: onDasboardDeviceOnlineReported
+        })
+        .map(resp => resp.data.onDashBoardDeviceOnlineReported),
+      this.gateway.apollo
+        .subscribe({
+          query: onDasboardDeviceOfflineReported
+        })
+        .map(resp => resp.data.onDashBoardDeviceOfflineReported)
+    )
   }
 
   getDevicesOnlineVsOffline() {
-    return this.gateway.apollo.watchQuery<any>({
-      query: getDevicesOnlineVsOffline
-    }).valueChanges.map(result => result.data.getDashBoardDevicesCurrentNetworkStatus)
-  }
-
-  listenDashboardDeviceCpuAlarmsEvents(): Observable<any>{
-    return Rx.Observable.merge(
-      this.gateway.apollo.subscribe({
-        query: onDeviceCpuUsageAlarmActivated
+    return this.gateway.apollo
+      .watchQuery<any>({
+        query: getDevicesOnlineVsOffline
       })
-      .map(resp => resp.data.onDeviceCpuUsageAlarmActivated)
-    ).throttleTime(2000);
+      .valueChanges.map(
+        result => result.data.getDashBoardDevicesCurrentNetworkStatus
+      );
   }
 
-  listenDashboardDeviceRamMemoryAlarmsEvents(): Observable<any>{
+  listenDashboardDeviceCpuAlarmsEvents(): Observable<any> {
     return Rx.Observable.merge(
-      this.gateway.apollo.subscribe({
-        query: onDeviceRamMemoryAlarmActivated
-      })
-      .map(resp => resp.data.onDeviceRamMemoryAlarmActivated)
-    ).throttleTime(2000);
+      this.gateway.apollo
+        .subscribe({
+          query: onDeviceCpuUsageAlarmActivated
+        })
+        .map(resp => resp.data.onDashBoardDeviceCpuUsageAlarmActivated)
+    )
   }
 
-  listenDashboardDeviceTemperatureAlarmsEvents(): Observable<any>{
+  listenDashboardDeviceRamMemoryAlarmsEvents(): Observable<any> {
     return Rx.Observable.merge(
-      this.gateway.apollo.subscribe({
-        query: onDeviceTemperatureAlarmActivated
-      })
-      .map(resp => resp.data.onDeviceTemperatureAlarmActivated)
-    ).throttleTime(2000);
+      this.gateway.apollo
+        .subscribe({
+          query: onDeviceRamMemoryAlarmActivated
+        })
+        .map(resp => resp.data.onDashBoardDeviceRamMemoryAlarmActivated)
+    )
   }
 
+  listenDashboardDeviceTemperatureAlarmsEvents(): Observable<any> {
+    return Rx.Observable.merge(
+      this.gateway.apollo
+        .subscribe({
+          query: onDeviceTemperatureAlarmActivated
+        })
+        .map(resp => resp.data.onDashBoardDeviceTemperatureAlarmActivated)
+    )
+  }
+
+  listenDashboardDeviceVoltageAlarmsEvents(): Observable<any> {
+    return Rx.Observable.merge(
+      this.gateway.apollo
+        .subscribe({
+          query: onDeviceLowVoltageAlarmActivated
+        })
+        .map(resp => resp.data.onDashBoardDeviceLowVoltageAlarmReported),
+      this.gateway.apollo
+        .subscribe({
+          query: onDeviceHighVoltageAlarmActivated
+        })
+        .map(resp => resp.data.onDashBoardDeviceHighVoltageAlarmReported)
+    )
+  }
 }

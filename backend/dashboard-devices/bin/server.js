@@ -36,7 +36,9 @@ const start = () => {
         eventStoreService.start$(),
         mongoDB.init$()
     ).subscribe(
-        (evt) => console.log("Starting backend ====> ", evt),
+        (evt) => {
+            // console.log(evt)
+        },
         (error) => {
             console.error('Failed to start', error);
             process.exit(1);

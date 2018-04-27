@@ -11,32 +11,23 @@ class DashBoardDevices {
   constructor() {}
 
   /**
-   * give data to the Dashborad CPU alarm widget
-   * @param {*} param0 
-   * @param {*} authToken 
+   * delivers the current status of the alarm by type
+   * @param {*} param0
+   * @param {*} authToken
    */
   getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
-    console.log("getDashBoardDevicesAlarmReport");
+    console.log("getDashBoardDevicesAlarmReport", args.type);
     return AlarmReportDA.getDashBoardDevicesAlarmReport$(args.type)
-    .mergeMap(array => instance.mapToAlarmsWidget$(array) )
-    .toArray()
-    .map(timeranges => {
-      return {
-        type: args.type ,
-        timeRanges: timeranges
-      }
-    })
-    
+      .mergeMap(array => instance.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges => {
+        return {
+          type: args.type,
+          timeRanges: timeranges
+        };
+      });
   }
 
-  getDashBoardDeviceDeviceState({ root, args, jwt }, authToken) {
-    return DeviceStatus.getDashBoardDevicesStatus$(args.snDevice);
-  }
-
-  updateDeviceNetworkStatus({ root, args, jwt }, authToken) {
-    console.log("on updateDeviceNetworkStatus ...", root, args);
-    return DeviceStatus.getDashBoardDevicesStatus$("2526");
-  }
 
   /**
    * Get the current device on Vs device off chart status
@@ -45,19 +36,17 @@ class DashBoardDevices {
    */
   getDashBoardDevicesCurrentNetworkStatus({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
-    // return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
-    // .mergeMap(response => this.mapToCharBarData$(response))
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
-    .mergeMap(devices => instance.mapToCharBarData$(devices))
-    .toArray();
+      .mergeMap(devices => instance.mapToCharBarData$(devices))
+      .toArray();
   }
 
   /**
    * Reaction to deviceOnlineReported
    */
-  onDeviceOnlineReported$(event) {
-    console.log(event.data.device);
-    return DeviceStatus.onDeviceOnlineReported(event.data.device)
+  handleDeviceConnectedEvent$(evt) {
+    console.log("handleDeviceConnectedEvent", evt);
+    return DeviceStatus.onDeviceOnlineReported(evt.aid)
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
@@ -68,8 +57,9 @@ class DashBoardDevices {
   /**
    * Reaction to deviceofflineReported
    */
-  onDeviceDisconnected$(event) {
-    return DeviceStatus.onDeviceOfflineReported(event.data.device)
+  handleDeviceDisconnectedEvent$(evt) {
+    console.log("handleDeviceDisconnectedEvent", evt);
+    return DeviceStatus.onDeviceOfflineReported(evt.aid)
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
@@ -82,7 +72,6 @@ class DashBoardDevices {
       .groupBy(cuenca => cuenca._id.cuenca)
       .mergeMap(group => group.toArray())
       .map(group => {
-        console.log(group);
         return {
           name: group[0]._id.cuenca,
           series: [
@@ -99,109 +88,194 @@ class DashBoardDevices {
       });
   }
 
-  mapToAlarmsWidget$(array){
+  mapToAlarmsWidget$(array) {
     const result = [];
-      const timeRanges = ["ONE_HOUR", "TWO_HOURS", "THREE_HOURS"];      
-      array.forEach((item, index) => {
-        result.push({
-          timeRange: timeRanges[index],
-          alarmsCount: item[0].value,
-          devicesCount: 321,
-          order: index,
-          topDevices: [],          
-          fullDevicesListLink: "htttp://www.google.com"
-        });
-      })
-      return result;    
-  }
-
- /**
-  * Reaction to  DeviceCpuUsageAlarmActivated
-  * @param {Object} evt 
-  */
-  DeviceCpuUsageAlarmActivated$(evt){
-    const alarmType = 'CPU_USAGE';
-    const now = new Date();
-    const lastHourLimit = ( Date.now() - ( ((now.getMinutes()* 60 ) + now.getSeconds() ) * 1000 ));
-    const lastTwoHoursLimit = lastHourLimit - 3600000;
-    const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
-    evt.timeRanges = [ lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit ];
-    console.log(evt);  
-    return AlarmReportDA.onDeviceCpuUsageAlarmActivated(evt)
-    .mergeMap(array => this.mapToAlarmsWidget$(array))
-    .toArray()
-    .map(timeranges => {
-      return {
-        type: alarmType ,
-        timeRanges: timeranges
-      }
-    })
-    .do(r => console.log(JSON.stringify(r)))
-    .mergeMap(msg =>
-      broker.send$("MaterializedViewUpdates", "DeviceCpuUsageAlarmActivated", msg)
-    );
+    const timeRanges = ["ONE_HOUR", "TWO_HOURS", "THREE_HOURS"];
+    array.forEach((item, index) => {
+      result.push({
+        timeRange: timeRanges[index],
+        alarmsCount: item[0].value,
+        devicesCount: 321,
+        order: index,
+        topDevices: item[0].topDevices,
+        fullDevicesListLink: "htttp://www.google.com"
+      });
+    });
+    return result;
   }
 
   /**
-   * 
+   * Reaction to  DeviceCpuUsageAlarmActivated
+   * @param {Object} evt
    */
-  onDeviceRamuUsageAlarmActivated$(evt){
-    const now = new Date();
-    const lastHourLimit = ( Date.now() - ( ((now.getMinutes()* 60 ) + now.getSeconds() ) * 1000 ));
-    const lastTwoHoursLimit = lastHourLimit - 3600000;
-    const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
-    evt.timeRanges = [ lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit ];
-    evt.alarmType = 'RAM_MEMORY';
-    console.log(evt);  
-    return AlarmReportDA.onDeviceRamuUsageAlarmActivated$(evt)
-    .mergeMap(array => this.mapToAlarmsWidget$(array))
-    .toArray()
-    .map(timeranges => {
-      return {
-        type: evt.alarmType,
-        timeRanges: timeranges
-      }
-    })
-    .do(r => console.log(JSON.stringify(r)))
-    .mergeMap(msg =>
-      broker.send$("MaterializedViewUpdates", "DeviceRamMemoryAlarmActivated", msg)
-    );
+  DeviceCpuUsageAlarmActivated$(evt) {
+    return this.getTimeRangesToLimit$(evt, "CPU_USAGE")
+      .mergeMap(evt => AlarmReportDA.onDeviceCpuUsageAlarmActivated(evt))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(array => this.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges => {
+        return { type: evt.alarmType, timeRanges: timeranges };
+      })
+      .mergeMap(msg =>
+        broker.send$(
+          "MaterializedViewUpdates",
+          "DeviceCpuUsageAlarmActivated",
+          msg
+        )
+      );
+  }
+
+  /**
+   * Reaction to Ram usage alarm
+   */
+  onDeviceRamuUsageAlarmActivated$(evt) {
+    return this.getTimeRangesToLimit$(evt, "RAM_MEMORY")
+      .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
+      .do( r => console.log("===> ", r, "<==="))
+      // aca se esta desordenando el array 
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))  
+      .do(r => console.log("===> ", r, "<==="))
+      .mergeMap(array => this.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges => {
+        return {
+          type: evt.alarmType,
+          timeRanges: timeranges
+        };
+      })
+      .mergeMap(msg =>
+        broker.send$(
+          "MaterializedViewUpdates",
+          "DeviceRamMemoryAlarmActivated",
+          msg
+        )
+      );
   }
 
   /**
    * Reaction to DeviceTemperatureAlarmActivated event
    */
-  onDeviceTemperatureAlarmActivated$(evt){
-    const now = new Date();
-    const lastHourLimit = ( Date.now() - ( ((now.getMinutes()* 60 ) + now.getSeconds() ) * 1000 ));
-    const lastTwoHoursLimit = lastHourLimit - 3600000;
-    const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
-    evt.timeRanges = [ lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit ];
-    evt.alarmType = 'TEMPERATURE';
-    console.log(evt);  
-    return AlarmReportDA.onDeviceRamuUsageAlarmActivated$(evt)
-    .mergeMap(array => this.mapToAlarmsWidget$(array))
-    .toArray()
-    .map(timeranges => {
-      return {
-        type: evt.alarmType,
-        timeRanges: timeranges
-      }
-    })
-    .do(r => console.log(JSON.stringify(r)))
-    .mergeMap(msg =>
-      broker.send$("MaterializedViewUpdates", "DeviceTemperatureAlarmActivated", msg)
-    );
+  onDeviceTemperatureAlarmActivated$(evt) {
+    return this.getTimeRangesToLimit$(evt, "TEMPERATURE")
+      .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(array => this.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges => {
+        return {
+          type: evt.alarmType,
+          timeRanges: timeranges
+        };
+      })
+      .mergeMap(msg =>
+        broker.send$(
+          "MaterializedViewUpdates",
+          "DeviceTemperatureAlarmActivated",
+          msg
+        )
+      );
+  }
+
+  /**
+   * gets array with datelimits in milliseconds to last one, two and three hours
+   */
+  getTimeRangesToLimit$(evt, eventType) {
+    return Rx.Observable.of(evt).map(evt => {
+      const now = new Date(1524864521082);
+      const lastHourLimit =
+      new Date(1524864521082) - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+      const lastTwoHoursLimit = lastHourLimit - 3600000;
+      const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
+      evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
+      evt.alarmType = eventType;
+      return evt;
+    });
   }
 
  
-  
-
-  generateAlarms__RANDOM__$(){
-    return AlarmReportDA.generateAlarms__RANDOM__()
+  /**
+   * Reaction to Low Voltage alarm
+   * @param {Object} evt 
+   */
+  handleDeviceLowVoltageAlarmEvent$(evt) {
+    return this.getTimeRangesToLimit$(evt, "VOLTAGE")
+      .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(array => this.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges => {
+        return {
+          type: evt.alarmType,
+          timeRanges: timeranges
+        };
+      })
+      .mergeMap(msg =>
+        broker.send$(
+          "MaterializedViewUpdates",
+          "DeviceLowVoltageAlarmReported",
+          msg
+        )
+      );
   }
 
-  generateDevices__RANDOM__$(){
+  /**
+   * Reaction to High Voltage alarm
+   * @param {Object} evt 
+   */
+  handleDeviceHighVoltageAlarmEvent$(evt) {
+    return this.getTimeRangesToLimit$(evt, "VOLTAGE")
+      .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(array => this.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges => {
+        return {
+          type: evt.alarmType,
+          timeRanges: timeranges
+        };
+      })
+      .mergeMap(msg =>
+        broker.send$(
+          "MaterializedViewUpdates",
+          "DeviceHighVoltageAlarmReported",
+          msg
+        )
+      );
+
+    // return this.getTimeRangesToLimit$(evt, "VOLTAGE")
+    //   .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
+    //   .mergeMap(array => this.mapToAlarmsWidget$(array))
+    //   .toArray()
+    //   .map(timeranges => {
+    //     return {
+    //       type: evt.alarmType,
+    //       timeRanges: timeranges
+    //     };
+    //   })
+    //   .mergeMap(msg =>
+    //     broker.send$(
+    //       "MaterializedViewUpdates",
+    //       "DeviceHighVoltageAlarmReported",
+    //       msg
+    //     )
+    //   );
+  }
+  /**
+   * Update the device state in mongo collection
+   * @param {Object} evt 
+   */
+  handleDeviceStateReportedEvent$(evt) {
+    console.log("handleDeviceStateReportedEvent", evt);
+   return  DeviceStatus.onDeviceStateReportedEvent$(evt.data)
+   .map(r => "");
+  }
+
+  generateAlarms__RANDOM__$() {
+    return AlarmReportDA.generateAlarms__RANDOM__();
+  }
+
+  generateDevices__RANDOM__$() {
     return DeviceStatus.generateDevices__RANDOM__$();
   }
 }

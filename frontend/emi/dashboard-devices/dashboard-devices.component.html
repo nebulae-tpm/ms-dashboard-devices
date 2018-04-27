@@ -48,7 +48,7 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices">
               <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.hostname}}
+                {{item.sn}} -- {{item.alarmsCount}}
               </p>
             </mat-list-item>
 
@@ -109,7 +109,7 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices">
               <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.hostname}}
+                {{item.sn}} -- {{item.alarmsCount}}
               </p>
             </mat-list-item>
 
@@ -170,7 +170,7 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices">
               <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.hostname}}
+                {{item.sn}} -- {{item.alarmsCount}}
               </p>
             </mat-list-item>
 
@@ -231,7 +231,7 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices">
               <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.hostname}}
+                {{item.sn}} -- {{item.alarmsCount}}
               </p>
             </mat-list-item>
 

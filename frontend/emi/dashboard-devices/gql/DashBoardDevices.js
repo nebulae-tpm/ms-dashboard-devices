@@ -22,32 +22,13 @@ export const getDashBoardDevicesAlarmReport = gql`
     }
   }
 `;
-export const onDashBoardDeviceAlarmChanged = gql `
-subscription onDashBoardDevicesAlarmReportChanged($type: DashBoardDevicesAlarmReportType!){
-  onDashBoardDevicesAlarmReportChanged(type: $type){
-    type,
-    timeRanges {
-      timeRange,
-      alarmsCount,
-      devicesCount,
-      order,
-      topDevices{
-        sn,
-        hostname,
-        alarmsCount,
-        deviceDetailLink
-      },
-      fullDevicesListLink
-    }
-  }
-}`;
 
 /**
  * DeviceConnected event subscription
  */
 export const onDasboardDeviceOnlineReported = gql`
   subscription{
-  onDeviceOnlineReported{
+    onDashBoardDeviceOnlineReported{
     name
     series{
       name value
@@ -60,14 +41,13 @@ export const onDasboardDeviceOnlineReported = gql`
  */
 export const onDasboardDeviceOfflineReported = gql`
   subscription{
-    onDeviceOfflineReported{
+    onDashBoardDeviceOfflineReported{
     name
     series{
       name value
     }
   }
 }`;
-
 
 export const getDevicesOnlineVsOffline = gql`
   query getDevicesOnlineVsOffline{
@@ -82,7 +62,7 @@ export const getDevicesOnlineVsOffline = gql`
 
 export const onDeviceCpuUsageAlarmActivated = gql`
   subscription {
-    onDeviceCpuUsageAlarmActivated {
+    onDashBoardDeviceCpuUsageAlarmActivated {
       type
       timeRanges {
         timeRange
@@ -103,7 +83,7 @@ export const onDeviceCpuUsageAlarmActivated = gql`
 
 export const onDeviceRamMemoryAlarmActivated = gql`
   subscription {
-    onDeviceRamMemoryAlarmActivated {
+    onDashBoardDeviceRamMemoryAlarmActivated {
       type
       timeRanges {
         timeRange
@@ -124,7 +104,7 @@ export const onDeviceRamMemoryAlarmActivated = gql`
 
 export const onDeviceTemperatureAlarmActivated = gql`
   subscription {
-    onDeviceTemperatureAlarmActivated {
+    onDashBoardDeviceTemperatureAlarmActivated {
       type
       timeRanges {
         timeRange
@@ -143,8 +123,44 @@ export const onDeviceTemperatureAlarmActivated = gql`
   }
 `;
 
+export const onDeviceLowVoltageAlarmActivated = gql`
+  subscription {
+    onDashBoardDeviceLowVoltageAlarmReported {
+      type
+      timeRanges {
+        timeRange
+        alarmsCount
+        devicesCount
+        order
+        topDevices {
+          sn
+          hostname
+          alarmsCount
+          deviceDetailLink
+        }
+        fullDevicesListLink
+      }
+    }
+  }
+`;
 
-
-
-
-
+export const onDeviceHighVoltageAlarmActivated = gql`
+  subscription {
+    onDashBoardDeviceHighVoltageAlarmReported {
+      type
+      timeRanges {
+        timeRange
+        alarmsCount
+        devicesCount
+        order
+        topDevices {
+          sn
+          hostname
+          alarmsCount
+          deviceDetailLink
+        }
+        fullDevicesListLink
+      }
+    }
+  }
+`;

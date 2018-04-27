@@ -6,28 +6,22 @@ const CollectionName = "deviceState";
 
 class DeviceStatusDA {
   /**
-   * gets DashboardDeviceStatus by sn
-   * @param {string} type
-   */
-  static getDashBoardDevicesStatus$(sn, hostname) {
-    const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(collection.findOne({ sn }));
-  }
-  /**
    * Updates the device state in DB and gets the new data for front-end chart interested
    * @param {String} sn device sn to update the state in DB
    */
-  static onDeviceOnlineReported(device) {
+  static onDeviceOnlineReported(deviceId) {
     return this.updateOne$(
-      { sn: device.sn },
-      { $set: { online: true } }
+      { deviceId: deviceId },
+      { $set: { online: true } },
+      { upsert: true}
     ).mergeMap((updateResult) =>  this.getTotalDeviceByCuencaAndNetworkState$());
   }
 
-  static onDeviceOfflineReported(device){
+  static onDeviceOfflineReported(deviceId){
     return this.updateOne$(
-      { sn: device.sn },
-      { $set: { online: false } }
+      { deviceId: deviceId  },
+      { $set: { online: false } },
+      { upsert: true }
     ).mergeMap((r) => this.getTotalDeviceByCuencaAndNetworkState$()
     );
   }
@@ -44,7 +38,7 @@ class DeviceStatusDA {
           { $match: { active: true } },
           {
             $group: {
-              _id: { cuenca: "$cuenca", online: "$online" },
+              _id: { cuenca: "$groupName", online: "$online" },
               value: { $sum: 1 }   
             }            
           },
@@ -72,17 +66,29 @@ class DeviceStatusDA {
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(collection.insertOne(
         {
-            active: false,
+            active: true,
             deviceId : `sn00${Math.floor((Math.random() * 10) )}-000${Math.floor((Math.random() * 9) )}-TEST`,
             hostname: `ABC${Math.floor((Math.random() * 999 ) + 100 )}`,
-            cuenca: `Cuenca${Math.floor((Math.random() * 5) + 1)}`,
+            groupName: `Cuenca${Math.floor((Math.random() * 5) + 1)}`,
             online: true,
-            ramMemoryAlert: true,
-            cpuAlert: true,
-            temperatureAlert: true,
-            voltageAlert: true
+            ramMemoryAlert: false,
+            cpuAlert: false,
+            temperatureAlert: false,
+            voltageAlert: false
         }
     ));
+}
+
+/**
+ * On device state Report event:
+ * update new values on collection
+ */
+static onDeviceStateReportedEvent$(info){
+  return this.updateOne$(
+    { deviceId: info.sn },
+    { $set :  info  },
+    { upsert: true }
+  )
 }
   
 }

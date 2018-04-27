@@ -14,11 +14,11 @@ class EventStoreService {
   generateFunctionMap() {
     return {
       "DeviceConnected": {
-        fn: dashBoardDevices.onDeviceOnlineReported$,
+        fn: dashBoardDevices.handleDeviceConnectedEvent$,
         obj: dashBoardDevices
       },
       "DeviceDisconnected": {
-        fn: dashBoardDevices.onDeviceDisconnected$,
+        fn: dashBoardDevices.handleDeviceDisconnectedEvent$,
         obj: dashBoardDevices
       },
       "DeviceCpuUsageAlarmActivated": {
@@ -31,6 +31,18 @@ class EventStoreService {
       },
       "DeviceTemperatureAlarmActivated":{
         fn: dashBoardDevices.onDeviceTemperatureAlarmActivated$,
+        obj: dashBoardDevices
+      },
+      "DeviceLowVoltageAlarmReported":{
+        fn: dashBoardDevices.handleDeviceLowVoltageAlarmEvent$,
+        obj: dashBoardDevices
+      },
+      "DeviceHighVoltageAlarmReported":{
+        fn: dashBoardDevices.handleDeviceHighVoltageAlarmEvent$,
+        obj: dashBoardDevices
+      },
+      "DeviceDeviceStateReported":{
+        fn: dashBoardDevices.handleDeviceStateReportedEvent$,
         obj: dashBoardDevices
       }
     };
@@ -46,11 +58,11 @@ class EventStoreService {
     ////##################################################################
     ///######## SOLO PARA GENERAR  REGISTROS DE ALARMAS##############
     ////##################################################################
-    Rx.Observable.interval(10000).subscribe(() => {
-      dashBoardDevices.generateAlarms__RANDOM__$()
-      .subscribe(r => {});
-    });
-    // Rx.Observable.interval(500).subscribe(() => {
+    // Rx.Observable.interval(10000).subscribe(() => {
+    //   dashBoardDevices.generateAlarms__RANDOM__$()
+    //   .subscribe(r => {});
+    // });
+    // Rx.Observable.interval(5000).subscribe(() => {
     //   dashBoardDevices.generateDevices__RANDOM__$()
     //   .subscribe(
     //     r => {},
@@ -90,6 +102,12 @@ class EventStoreService {
         },
         {
           aggregateType: "Device",
+          eventType: "DeviceDeviceStateReported",
+          onErrorHandler,
+          onCompleteHandler
+        },
+        {
+          aggregateType: "Device",
           eventType: "DeviceCpuUsageAlarmActivated",
           onErrorHandler,
           onCompleteHandler
@@ -103,6 +121,18 @@ class EventStoreService {
         {
           aggregateType: "Device",
           eventType: "DeviceTemperatureAlarmActivated",
+          onErrorHandler,
+          onCompleteHandler
+        },
+        {
+          aggregateType: "Device",
+          eventType: "DeviceLowVoltageAlarmReported",
+          onErrorHandler,
+          onCompleteHandler
+        },
+        {
+          aggregateType: "Device",
+          eventType: "DeviceHighVoltageAlarmReported",
           onErrorHandler,
           onCompleteHandler
         }
@@ -139,7 +169,7 @@ class EventStoreService {
       .mergeMap(evt => handler.fn.call(handler.obj, evt))
       .subscribe(
         evt => {
-          console.log(`EventStoreService: ${eventType} process: ${evt}`);
+           console.log(`EventStoreService: ${eventType} process: ${evt}`);
         },
         onErrorHandler,
         onCompleteHandler
