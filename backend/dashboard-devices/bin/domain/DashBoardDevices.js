@@ -39,8 +39,7 @@ class DashBoardDevices {
   getDashBoardDevicesCurrentNetworkStatus({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
-    .map(results => results.filter(result => result._id.cuenca))
-    .do(r => console.log(":::", r, ":::"))
+      .map(results => results.filter(result => result._id.cuenca))  
       .mergeMap(devices => instance.mapToCharBarData$(devices))
       .toArray();
   }
