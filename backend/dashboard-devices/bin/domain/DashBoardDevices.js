@@ -18,7 +18,8 @@ class DashBoardDevices {
    */
   getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesAlarmReport", args.type);
-    return AlarmReportDA.getDashBoardDevicesAlarmReport$(args.type)
+    return instance.getTimeRangesToLimit$({}, args.type)
+    .mergeMap(result => AlarmReportDA.getDashBoardDevicesAlarmReport$(result) )   
       .mergeMap(array => instance.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
@@ -46,8 +47,9 @@ class DashBoardDevices {
    * Reaction to deviceOnlineReported
    */
   handleDeviceConnectedEvent$(evt) {
-    console.log("handleDeviceConnectedEvent", evt);
+    console.log("handleDeviceConnectedEvent", evt, evt.aid);
     return DeviceStatus.onDeviceOnlineReported(evt.aid)
+    .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
@@ -61,6 +63,7 @@ class DashBoardDevices {
   handleDeviceDisconnectedEvent$(evt) {
     console.log("handleDeviceDisconnectedEvent", evt);
     return DeviceStatus.onDeviceOfflineReported(evt.aid)
+    .map(results => results.filter(result => result._id.cuenca))   
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
@@ -78,11 +81,11 @@ class DashBoardDevices {
           series: [
             {
               name: "Offline",
-              value: group.filter(c => !c._id.online)[0].value || 0
+              value: group.filter(c => !c._id.online)[0] ? group.filter(c => !c._id.online)[0].value : 0
             },
             {
               name: "Online",
-              value: group.filter(c => c._id.online)[0].value || 0
+              value: group.filter(c => c._id.online)[0] ? group.filter(c => c._id.online)[0].value : 0
             }
           ]
         };
@@ -96,12 +99,12 @@ class DashBoardDevices {
       result.push({
         timeRange: timeRanges[index],
         alarmsCount: item[0].value,
-        devicesCount: 321,
+        devicesCount: item[0].informers,
         order: index,
         topDevices: item[0].topDevices,
         fullDevicesListLink: "htttp://www.google.com"
       });
-    });
+    })
     return result;
   }
 
@@ -131,12 +134,11 @@ class DashBoardDevices {
    * Reaction to Ram usage alarm
    */
   onDeviceRamuUsageAlarmActivated$(evt) {
-    return this.getTimeRangesToLimit$(evt, "RAM_MEMORY")
+    console.log(JSON.stringify(evt));
+    return this.getTimeRangesToLimit$(evt, "RAM_MEMORY")    
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-      .do(r => console.log("===> ", r, "<==="))
       // aca se esta desordenando el array 
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
-      .do(r => console.log("===> ", r, "<==="))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))  
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
@@ -183,9 +185,9 @@ class DashBoardDevices {
    */
   getTimeRangesToLimit$(evt, eventType) {
     return Rx.Observable.of(evt).map(evt => {
-      const now = new Date(1524864521082);
+      const now = new Date();
       const lastHourLimit =
-        new Date(1524864521082) - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+      Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
       const lastTwoHoursLimit = lastHourLimit - 3600000;
       const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
       evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
@@ -243,24 +245,6 @@ class DashBoardDevices {
           msg
         )
       );
-
-    // return this.getTimeRangesToLimit$(evt, "VOLTAGE")
-    //   .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-    //   .mergeMap(array => this.mapToAlarmsWidget$(array))
-    //   .toArray()
-    //   .map(timeranges => {
-    //     return {
-    //       type: evt.alarmType,
-    //       timeRanges: timeranges
-    //     };
-    //   })
-    //   .mergeMap(msg =>
-    //     broker.send$(
-    //       "MaterializedViewUpdates",
-    //       "DeviceHighVoltageAlarmReported",
-    //       msg
-    //     )
-    //   );
   }
 
   /**
@@ -336,8 +320,7 @@ class DashBoardDevices {
    */
   handleDeviceStateReportedEvent$(evt) {
     console.log("handleDeviceStateReportedEvent", evt);
-    return DeviceStatus.onDeviceStateReportedEvent$(evt.data)
-      .map(r => "");
+   return  DeviceStatus.onDeviceStateReportedEvent$(evt.data)
   }
 
   generateAlarms__RANDOM__$() {

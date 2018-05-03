@@ -52,7 +52,7 @@ class DeviceStatusDA {
     return Rx.Observable.fromPromise(
       collection
         .aggregate([
-          { $match: { active: true } },
+          // { $match: { active: true } },
           {
             $group: {
               _id: { cuenca: "$groupName", online: "$online" },
@@ -103,7 +103,7 @@ class DeviceStatusDA {
 static onDeviceStateReportedEvent$(info){
   return this.updateOne$(
     { deviceId: info.sn },
-    { $set :  info  },
+    { $set :  Object.assign(info, {online: false})  },
     { upsert: true }
   )
 }

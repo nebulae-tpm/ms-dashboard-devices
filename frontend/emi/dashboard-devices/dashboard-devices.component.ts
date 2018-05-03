@@ -766,12 +766,17 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   buildWidget(widgetName: string, widgetContent: any): void {
-    console.log(JSON.parse(JSON.stringify(widgetContent)).timeRanges[0]);
+    const isNew = this[widgetName] ? false: true;
+    let lastTimeRange = 0;
+    if(!isNew){
+      lastTimeRange  = this[widgetName].currentTimeRange;
+      this[widgetName].timeRanges[this[widgetName].currentTimeRange].topDevices
+    }
     this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
     this[widgetName].timeRanges = this.orderTimeRanges(
       this[widgetName].timeRanges
     );
-    this[widgetName].currentTimeRange = this[widgetName].currentTimeRange ? this[widgetName].currentTimeRange : 0;
+    this[widgetName].currentTimeRange = lastTimeRange
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
   }

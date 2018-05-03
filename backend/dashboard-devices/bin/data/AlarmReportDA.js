@@ -8,18 +8,11 @@ class AlarmReportDA {
    * gets DashBoardDevicesAlarmReport by type
    * @param {string} type
    */
-  static getDashBoardDevicesAlarmReport$(type) {
-
-    const now = new Date();
-    const lastHourLimit =
-      Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
-    const lastTwoHoursLimit = lastHourLimit - 3600000;
-    const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
-    const timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
+  static getDashBoardDevicesAlarmReport$(evt) {
     return Rx.Observable.forkJoin(
-      AlarmReportDA.getAlarmsInRangeOfTime(timeRanges[0], type),
-      AlarmReportDA.getAlarmsInRangeOfTime(timeRanges[1], type),
-      AlarmReportDA.getAlarmsInRangeOfTime(timeRanges[2], type)
+      AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[0], evt.alarmType),
+      AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[1], evt.alarmType),
+      AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[2], evt.alarmType)
     );
   }
   /**
@@ -93,10 +86,32 @@ class AlarmReportDA {
         ])
         .toArray()
     )
+    .mergeMap(result => this.getDistinctDevicesOnAlarm$(result, lowestLimit, alarmType))
     .map(item => {
       item[0].startTime = lowestLimit;
       item[0].alarmType = alarmType;
       return item;
+    })
+  }
+
+
+  static getDistinctDevicesOnAlarm$(result, lowestLimit, alarmType){
+    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    return Rx.Observable.fromPromise(
+      collection
+        .aggregate([
+          { $match: { timestamp: { $gte: lowestLimit }, type: alarmType } },
+          {
+            $group: {
+              _id: "$deviceId",
+            }
+          }
+        ])
+        .toArray()
+    )
+    .map(res => {
+      result[0].informers = res.length
+      return result;
     })
   }
 
@@ -128,11 +143,12 @@ class AlarmReportDA {
       .map(aggregateResult => {
         const result =[];
         aggregateResult.forEach((item, index) => {
+          if(item._id.deviceId == null) {return}          
           result.push({
             sn: item._id.deviceId,
-            hostname: "Santa",
+            hostname: "",
             alarmsCount: item.value,
-            aggregateResult: "www.google.com"
+            deviceDetailLink: ''
           })
         });
         return result;
@@ -143,7 +159,8 @@ class AlarmReportDA {
       })      
     );
     } )
-    .toArray();
+    .toArray()
+    .map(timeranges => timeRanges)
   }
 
   static generateAlarms__RANDOM__() {
@@ -151,13 +168,12 @@ class AlarmReportDA {
     const types = ["VOLTAGE", "TEMPERATURE", "CPU_USAGE", "RAM_MEMORY"];
     const units = ["V", "C", "%", "%"];
     const selection = Math.floor(Math.random() * 4);
+    const id = `sn00${Math.floor(Math.random() * 10)}-000${Math.floor(Math.random() * 9)}-TEST`;
     return Rx.Observable.fromPromise(
       collection.insertOne({
         timestamp: Date.now(),
         type: types[selection],
-        deviceId: `sn00${Math.floor(Math.random() * 10)}-000${Math.floor(
-          Math.random() * 9
-        )}-TEST`,
+        deviceId: id,
         value: Math.floor(Math.random() * 100 + 5),
         unit: units[selection]
       })
