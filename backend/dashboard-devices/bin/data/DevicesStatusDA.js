@@ -5,6 +5,23 @@ const Rx = require("rxjs");
 const CollectionName = "deviceState";
 
 class DeviceStatusDA {
+
+
+  /**
+   * gets DashboardDeviceStatus by sn
+   * @param {string} type
+   */
+  static getDeviceStatusByID$(deviceId, projection) {
+    const collection = mongoDB.db.collection(CollectionName);
+    let observ = null;
+    if(projection){
+      observ = Rx.Observable.fromPromise(collection.findOne({ deviceId }, projection));
+    }else{
+      observ = Rx.Observable.fromPromise(collection.findOne({ deviceId }));
+    }
+    return observ;
+  }
+
   /**
    * Updates the device state in DB and gets the new data for front-end chart interested
    * @param {String} sn device sn to update the state in DB

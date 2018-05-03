@@ -17,7 +17,8 @@ class GraphQlService {
     generateFunctionMap() {
         return {
             'gateway.graphql.query.getDashBoardDevicesAlarmReport': dashBoardDevices.getDashBoardDevicesAlarmReport,
-            'gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus' : dashBoardDevices.getDashBoardDevicesCurrentNetworkStatus
+            'gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus' : dashBoardDevices.getDashBoardDevicesCurrentNetworkStatus,
+            'gateway.graphql.query.getDeviceTransactionsGroupByIntervalAndGroupName': dashBoardDevices.getDeviceTransactionsGroupByIntervalAndGroupName$,
         };
     }
 
@@ -38,7 +39,7 @@ class GraphQlService {
             //send response back if neccesary
             .subscribe(
                 ({ response, correlationId, replyTo }) => {
-                    broker.send$('MaterializedViewUpdates','gateway.graphql.Subscription.response', response);
+                    // broker.send$('MaterializedViewUpdates','gateway.graphql.Subscription.response', response);
                     if (replyTo) {
                         broker.send$(replyTo, 'gateway.graphql.Query.response', response, { correlationId });                        
                     }

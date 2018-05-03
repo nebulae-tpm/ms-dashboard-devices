@@ -3,12 +3,13 @@
 const Rx = require("rxjs");
 const AlarmReportDA = require("../data/AlarmReportDA");
 const DeviceStatus = require("../data/DevicesStatusDA");
+const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
 const broker = require("../tools/broker/BrokerFactory.js")();
 
 let instance;
 
 class DashBoardDevices {
-  constructor() {}
+  constructor() { }
 
   /**
    * delivers the current status of the alarm by type
@@ -132,9 +133,9 @@ class DashBoardDevices {
   onDeviceRamuUsageAlarmActivated$(evt) {
     return this.getTimeRangesToLimit$(evt, "RAM_MEMORY")
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-      .do( r => console.log("===> ", r, "<==="))
+      .do(r => console.log("===> ", r, "<==="))
       // aca se esta desordenando el array 
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))  
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
       .do(r => console.log("===> ", r, "<==="))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
@@ -184,7 +185,7 @@ class DashBoardDevices {
     return Rx.Observable.of(evt).map(evt => {
       const now = new Date(1524864521082);
       const lastHourLimit =
-      new Date(1524864521082) - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+        new Date(1524864521082) - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
       const lastTwoHoursLimit = lastHourLimit - 3600000;
       const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
       evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
@@ -193,7 +194,7 @@ class DashBoardDevices {
     });
   }
 
- 
+
   /**
    * Reaction to Low Voltage alarm
    * @param {Object} evt 
@@ -261,14 +262,82 @@ class DashBoardDevices {
     //     )
     //   );
   }
+
+  /**
+   * gets the device transactions group by group name and time interval of 10 minutes
+   * @param {*} param0
+   * @param {*} authToken
+   */
+  getDeviceTransactionsGroupByIntervalAndGroupName$({ root, args, jwt }, authToken) {
+    console.log("------------ getDeviceTransactionsGroupByIntervalAndGroupName", args);
+    return DeviceTransactionsDA.getDeviceTransactionGroupByTimeIntervalAndGroupName$(args.startDate, args.endDate);
+  }
+
+  /**
+   * gets the device transactions group by time intervals of 10 minutes
+   * @param {*} param0
+   * @param {*} authToken
+   */
+  getDeviceTransactionsGroupByIntervalTime$({ root, args, jwt }, authToken) {
+    console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
+    return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(args.startDate, args.endDate);
+  }
+
+  /**
+   * Persists the amount of successful transactions reported by a device with a timestamp
+   * @param {*} data Reported transaction event
+   */
+  persistSuccessDeviceTransaction$(data) {
+    console.log('persistSuccessDeviceTransaction ==> ', data);
+    return this.handleDeviceMainAppUsosTranspCountReported$(data, true);
+  }
+
+  /**
+   * Persists the amount of failed transactions reported by a device with a timestamp
+   * @param {*} data Reported transaction event
+   */
+  persistFailedDeviceTransaction$(data) {
+    return this.handleDeviceMainAppUsosTranspCountReported$(data, false);
+  }
+
+    /**
+   * Persists the amount of transactions reported by a device with a timestamp
+   * @param {*} data Reported transaction event
+   * @param {*} success boolean that indicates if the transactions were failed or successful
+   */
+  handleDeviceMainAppUsosTranspCountReported$(data, success) {
+    return DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
+      .map(device => {
+        const deviceTransaction = {
+          deviceId: data.aid,
+          timestamp: data.data.timestamp,
+          quantity: data.data.count,
+          success: success,
+          groupName: device.groupName
+        };
+        return deviceTransaction;
+      })
+      .mergeMap(transaction => DeviceTransactionsDA.insertDeviceTransaction$(transaction))
+      .throttleTime(15000)
+      .map(deviceTransaction => {
+        const deviceTransactionUpdatedEvent = {
+          timestamp: (new Date).getTime()
+        }
+        return deviceTransactionUpdatedEvent;
+      })
+      .mergeMap(deviceTransactionsUpdatedEvent => {
+        return broker.send$("MaterializedViewUpdates", "deviceTransactionsUpdatedEvent", deviceTransactionsUpdatedEvent);
+      });
+  }
+
   /**
    * Update the device state in mongo collection
    * @param {Object} evt 
    */
   handleDeviceStateReportedEvent$(evt) {
     console.log("handleDeviceStateReportedEvent", evt);
-   return  DeviceStatus.onDeviceStateReportedEvent$(evt.data)
-   .map(r => "");
+    return DeviceStatus.onDeviceStateReportedEvent$(evt.data)
+      .map(r => "");
   }
 
   generateAlarms__RANDOM__$() {

@@ -88,11 +88,24 @@ type DashBoardDeviceNetworkStatus{
   series: [DashBoardDeviceNetworkStatusSubSerie]!
 }
 
+type DashboardDeviceTransaction{
+  "Device transactions group by interval and groupName"
+  interval: BigInt!
+  groupName: String!
+  transactions: Int!
+  errors: Int!
+}
+
+type DeviceTransactionsUpdatedEvent{
+  "Event that informs when it's necessary to update the device transaction stats"
+  timestamp: BigInt!
+}
 
 type Query {
   "Get a report summary of alarmed devices.  this is used on DashBoardDevices section"
   getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
   getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
+  getDeviceTransactionsGroupByIntervalAndGroupName(startDate: BigInt, endDate: BigInt): [DashboardDeviceTransaction]!
 }
 
 type Subscription {
@@ -103,4 +116,5 @@ type Subscription {
   onDashBoardDeviceTemperatureAlarmActivated: DashBoardDevicesAlarmReport!
   onDashBoardDeviceLowVoltageAlarmReported: DashBoardDevicesAlarmReport!
   onDashBoardDeviceHighVoltageAlarmReported: DashBoardDevicesAlarmReport!
+  deviceTransactionsUpdatedEvent: DeviceTransactionsUpdatedEvent!
 }

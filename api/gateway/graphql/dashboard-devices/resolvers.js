@@ -24,7 +24,18 @@ module.exports = {
           500
         )
         .toPromise();
-    }
+    },
+    getDeviceTransactionsGroupByIntervalAndGroupName(root, args, context) {
+      console.log('getDeviceTransactionsGroupByIntervalAndGroupName', args);
+      return context.broker
+        .forwardAndGetReply$(
+          "Device",
+          "gateway.graphql.query.getDeviceTransactionsGroupByIntervalAndGroupName",
+          { root, args, jwt: context.encodedToken },
+          500
+        )
+        .toPromise();
+    },
   },
   Subscription: {
     onDashBoardDeviceOnlineReported: {
@@ -251,6 +262,40 @@ module.exports = {
             observer.complete();
           });
           return pubsub.asyncIterator("onDashBoardDeviceHighVoltageAlarmReported");
+        },
+        (payload, variables, context, info) => {
+          //return payload.authorEvent.lastName === variables.lastName;
+          return true;
+        }
+      )
+    },
+
+    deviceTransactionsUpdatedEvent: {
+      subscribe: withFilter(
+        (payload, variables, context, info) => {
+          const subscription = context.broker
+            .getMaterializedViewsUpdates$(["deviceTransactionsUpdatedEvent"])
+            .subscribe(
+              evt => {
+                console.log({
+                  type: evt.type,
+                  data: evt.data
+                });
+                pubsub.publish("deviceTransactionsUpdatedEvent", {
+                  deviceTransactionsUpdatedEvent: evt.data
+                });
+              },
+              error =>
+                console.error("Error listening deviceTransactionsUpdatedEvent", error),
+              () => console.log("deviceTransactionsUpdatedEvent listener STOPED :D")
+            );
+
+          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
+            subscription.unsubscribe();
+            observer.next("rxjs subscription had been terminated");
+            observer.complete();
+          });
+          return pubsub.asyncIterator("deviceTransactionsUpdatedEvent");
         },
         (payload, variables, context, info) => {
           //return payload.authorEvent.lastName === variables.lastName;

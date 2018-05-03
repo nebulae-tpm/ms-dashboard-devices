@@ -44,6 +44,14 @@ class EventStoreService {
       "DeviceDeviceStateReported":{
         fn: dashBoardDevices.handleDeviceStateReportedEvent$,
         obj: dashBoardDevices
+      },
+      "DeviceMainAppUsosTranspCountReported":{
+        fn: dashBoardDevices.persistSuccessDeviceTransaction$,
+        obj: dashBoardDevices
+      },
+      "DeviceMainAppErrsTranspCountReported":{
+        fn: dashBoardDevices.persistFailedDeviceTransaction$,
+        obj: dashBoardDevices
       }
     };
   }
@@ -133,6 +141,18 @@ class EventStoreService {
         {
           aggregateType: "Device",
           eventType: "DeviceHighVoltageAlarmReported",
+          onErrorHandler,
+          onCompleteHandler
+        },
+        {
+          aggregateType: "Device",
+          eventType: "DeviceMainAppUsosTranspCountReported",
+          onErrorHandler,
+          onCompleteHandler
+        },
+        {
+          aggregateType: "Device",
+          eventType: "DeviceMainAppErrsTranspCountReported",
           onErrorHandler,
           onCompleteHandler
         }

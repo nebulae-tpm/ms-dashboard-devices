@@ -43,7 +43,7 @@ const start = () => {
             console.error('Failed to start', error);
             process.exit(1);
         },
-        () => console.log('devices-report-handler started')
+        () => console.log('dashboard-devices started')
     );
 };
 
