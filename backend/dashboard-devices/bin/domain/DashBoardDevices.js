@@ -39,6 +39,8 @@ class DashBoardDevices {
   getDashBoardDevicesCurrentNetworkStatus({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
+    .map(results => results.filter(result => result._id.cuenca))
+    .do(r => console.log(":::", r, ":::"))
       .mergeMap(devices => instance.mapToCharBarData$(devices))
       .toArray();
   }
@@ -63,7 +65,7 @@ class DashBoardDevices {
   handleDeviceDisconnectedEvent$(evt) {
     console.log("handleDeviceDisconnectedEvent", evt);
     return DeviceStatus.onDeviceOfflineReported(evt.aid)
-    .map(results => results.filter(result => result._id.cuenca))   
+    .map(results => results.filter(result => result._id.cuenca))    
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
@@ -75,7 +77,7 @@ class DashBoardDevices {
     return Rx.Observable.from(devices)
       .groupBy(cuenca => cuenca._id.cuenca)
       .mergeMap(group => group.toArray())
-      .map(group => {
+      .map(group => {        
         return {
           name: group[0]._id.cuenca,
           series: [
