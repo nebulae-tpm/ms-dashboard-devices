@@ -110,6 +110,13 @@ class AlarmReportDA {
         .toArray()
     )
     .map(res => {
+      // if in the last hour there are not alarms it will create a empty registry 
+      if(result[0] == undefined){
+        result[0] = {
+           _id: alarmType, 
+           value: 0 
+        }
+      }
       result[0].informers = res.length
       return result;
     })

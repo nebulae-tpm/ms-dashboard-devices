@@ -123,6 +123,53 @@ class DeviceTransactionsDA {
     )
     .do(val => console.log('RESULT ===========> ', val));
   }
+
+  static getDeviceTransactionGroupByGroupName$(evt){
+      console.log("======",evt, "====")
+      return Rx.Observable.forkJoin(
+        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[0], "ONE_HOUR"),
+        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[1], "TWO_HOURS"),
+        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[2], "THREE_HOURS")
+      );
+  }
+
+
+  static getDeviceTransactionGroupByGroupNameInInterval$(startDate, timeInterval){
+    const collection = mongoDB.db.collection(CollectionName);
+    return Rx.Observable.fromPromise(collection.aggregate([
+        { $match: { timestamp: { $gte: startDate }, success: true } },
+        {
+          $project: {
+            groupName: 1,
+            transactions: 1,
+            value: 1
+          }
+        },
+        {
+            $group: {
+              _id: { cuenca: "$groupName" },
+              value: { $sum: "$value" }   
+            }            
+        },
+        {
+            $project: {
+                _id: 0,
+                name: "$_id.cuenca",
+                value: 1
+            }
+        },
+        { $sort: { _id: 1 } }
+      ])
+      .toArray()
+    )
+    .map(result => {
+        return {
+            timeRange: timeInterval,
+            data: result
+        }
+    })
+   
+  }
   
 }
 

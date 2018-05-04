@@ -164,3 +164,14 @@ export const onDeviceHighVoltageAlarmActivated = gql`
     }
   }
 `;
+export const getSucessDeviceTransactionsGroupByGroupName = gql`
+query getSucessDeviceTransactionsGroupByGroupName{
+  getSucessDeviceTransactionsGroupByGroupName{
+    timeRange
+    data{
+      name
+      value
+    }
+  }
+}
+`;

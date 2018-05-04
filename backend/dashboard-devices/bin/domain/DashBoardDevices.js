@@ -9,7 +9,7 @@ const broker = require("../tools/broker/BrokerFactory.js")();
 let instance;
 
 class DashBoardDevices {
-  constructor() { }
+  constructor() {}
 
   /**
    * delivers the current status of the alarm by type
@@ -18,8 +18,9 @@ class DashBoardDevices {
    */
   getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesAlarmReport", args.type);
-    return instance.getTimeRangesToLimit$({}, args.type)
-    .mergeMap(result => AlarmReportDA.getDashBoardDevicesAlarmReport$(result) )   
+    return instance
+      .getTimeRangesToLimit$({}, args.type)
+      .mergeMap(result => AlarmReportDA.getDashBoardDevicesAlarmReport$(result))
       .mergeMap(array => instance.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
@@ -29,7 +30,6 @@ class DashBoardDevices {
         };
       });
   }
-
 
   /**
    * Get the current device on Vs device off chart status
@@ -64,9 +64,11 @@ class DashBoardDevices {
   handleDeviceDisconnectedEvent$(evt) {
     console.log("handleDeviceDisconnectedEvent", evt);
     return DeviceStatus.onDeviceOfflineReported(evt.aid)
-    .map(results => results.filter(result => result._id.cuenca))    
+    .map(results => results.filter(result => result._id.cuenca))
+    
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
+      .do(r => console.log("::", JSON.stringify(r), "::"))
       .mergeMap(msg =>
         broker.send$("MaterializedViewUpdates", "DeviceDisconnected", msg)
       );
@@ -82,11 +84,15 @@ class DashBoardDevices {
           series: [
             {
               name: "Offline",
-              value: group.filter(c => !c._id.online)[0] ? group.filter(c => !c._id.online)[0].value : 0
+              value: group.filter(c => !c._id.online)[0]
+                ? group.filter(c => !c._id.online)[0].value
+                : 0
             },
             {
               name: "Online",
-              value: group.filter(c => c._id.online)[0] ? group.filter(c => c._id.online)[0].value : 0
+              value: group.filter(c => c._id.online)[0]
+                ? group.filter(c => c._id.online)[0].value
+                : 0
             }
           ]
         };
@@ -105,7 +111,7 @@ class DashBoardDevices {
         topDevices: item[0].topDevices,
         fullDevicesListLink: "htttp://www.google.com"
       });
-    })
+    });
     return result;
   }
 
@@ -136,7 +142,8 @@ class DashBoardDevices {
    */
   onDeviceRamuUsageAlarmActivated$(evt) {
     console.log(JSON.stringify(evt));
-    return this.getTimeRangesToLimit$(evt, "RAM_MEMORY")    
+    return (
+      this.getTimeRangesToLimit$(evt, "RAM_MEMORY")
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
       // aca se esta desordenando el array 
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))  
@@ -153,6 +160,7 @@ class DashBoardDevices {
           "MaterializedViewUpdates",
           "DeviceRamMemoryAlarmActivated",
           msg
+        )
         )
       );
   }
@@ -187,8 +195,8 @@ class DashBoardDevices {
   getTimeRangesToLimit$(evt, eventType) {
     return Rx.Observable.of(evt).map(evt => {
       const now = new Date();
-      const lastHourLimit =
-      Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+      const lastHourLimit = now - 3600000;
+        // Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
       const lastTwoHoursLimit = lastHourLimit - 3600000;
       const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
       evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
@@ -265,7 +273,20 @@ class DashBoardDevices {
    */
   getDeviceTransactionsGroupByIntervalTime$({ root, args, jwt }, authToken) {
     console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
-    return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(args.startDate, args.endDate);
+    return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(
+      args.startDate,
+      args.endDate
+    );
+  }
+
+  /**
+   * 
+   */
+  getDeviceTransactionsGroupByGroupName$({ root, args, jwt }, authToken){
+    console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
+    return instance.getTimeRangesToLimit$({}, undefined)
+    .mergeMap(evt => DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt))
+    .do(r => console.log("########", JSON.stringify(r), "########"))
   }
 
   /**
@@ -273,7 +294,7 @@ class DashBoardDevices {
    * @param {*} data Reported transaction event
    */
   persistSuccessDeviceTransaction$(data) {
-    console.log('persistSuccessDeviceTransaction ==> ', data);
+    // console.log("persistSuccessDeviceTransaction ==> ", data);
     return this.handleDeviceMainAppUsosTranspCountReported$(data, true);
   }
 
@@ -282,6 +303,7 @@ class DashBoardDevices {
    * @param {*} data Reported transaction event
    */
   persistFailedDeviceTransaction$(data) {
+    console.log("persistFailedDeviceTransaction ==> ", data);
     return this.handleDeviceMainAppUsosTranspCountReported$(data, false);
   }
 
@@ -296,22 +318,28 @@ class DashBoardDevices {
         const deviceTransaction = {
           deviceId: data.aid,
           timestamp: data.data.timestamp,
-          quantity: data.data.count,
+          value: data.data.count,
           success: success,
           groupName: device.groupName
         };
         return deviceTransaction;
       })
-      .mergeMap(transaction => DeviceTransactionsDA.insertDeviceTransaction$(transaction))
+      .mergeMap(transaction =>
+        DeviceTransactionsDA.insertDeviceTransaction$(transaction)
+      )
       .throttleTime(15000)
       .map(deviceTransaction => {
         const deviceTransactionUpdatedEvent = {
-          timestamp: (new Date).getTime()
-        }
+          timestamp: new Date().getTime()
+        };
         return deviceTransactionUpdatedEvent;
       })
       .mergeMap(deviceTransactionsUpdatedEvent => {
-        return broker.send$("MaterializedViewUpdates", "deviceTransactionsUpdatedEvent", deviceTransactionsUpdatedEvent);
+        return broker.send$(
+          "MaterializedViewUpdates",
+          "deviceTransactionsUpdatedEvent",
+          deviceTransactionsUpdatedEvent
+        );
       });
   }
 
@@ -321,7 +349,7 @@ class DashBoardDevices {
    */
   handleDeviceStateReportedEvent$(evt) {
     console.log("handleDeviceStateReportedEvent", evt);
-   return  DeviceStatus.onDeviceStateReportedEvent$(evt.data)
+    return DeviceStatus.onDeviceStateReportedEvent$(evt.data);
   }
 
   generateAlarms__RANDOM__$() {

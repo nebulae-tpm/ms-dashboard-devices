@@ -19,6 +19,8 @@ class GraphQlService {
             'gateway.graphql.query.getDashBoardDevicesAlarmReport': dashBoardDevices.getDashBoardDevicesAlarmReport,
             'gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus' : dashBoardDevices.getDashBoardDevicesCurrentNetworkStatus,
             'gateway.graphql.query.getDeviceTransactionsGroupByIntervalAndGroupName': dashBoardDevices.getDeviceTransactionsGroupByIntervalAndGroupName$,
+            'gateway.graphql.query.getDeviceTransactionsGroupByGroupName': dashBoardDevices.getDeviceTransactionsGroupByGroupName$,
+            
         };
     }
 

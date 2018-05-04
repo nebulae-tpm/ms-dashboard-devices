@@ -96,6 +96,17 @@ type DashboardDeviceTransaction{
   errors: Int!
 }
 
+type DashboardDeviceTransactionSucess{
+  "Device sucessfull transactions group and groupName"
+  name: String!
+  value: Int!
+}
+type DashboardDeviceTransactionSucessArray{
+  timeRange: DashBoardDevicesAlarmReportTimeRangeType!
+  data: [DashboardDeviceTransactionSucess]!
+}
+
+
 type DeviceTransactionsUpdatedEvent{
   "Event that informs when it's necessary to update the device transaction stats"
   timestamp: BigInt!
@@ -106,6 +117,7 @@ type Query {
   getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
   getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
   getDeviceTransactionsGroupByIntervalAndGroupName(startDate: BigInt, endDate: BigInt): [DashboardDeviceTransaction]!
+  getSucessDeviceTransactionsGroupByGroupName: [DashboardDeviceTransactionSucessArray]!
 }
 
 type Subscription {

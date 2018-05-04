@@ -14,7 +14,8 @@ import {
   onDeviceRamMemoryAlarmActivated,
   onDeviceTemperatureAlarmActivated,
   onDeviceLowVoltageAlarmActivated,
-  onDeviceHighVoltageAlarmActivated
+  onDeviceHighVoltageAlarmActivated,
+  getSucessDeviceTransactionsGroupByGroupName
 } from "./gql/DashBoardDevices";
 
 @Injectable()
@@ -101,5 +102,12 @@ export class DashboardDevicesService {
         })
         .map(resp => resp.data.onDashBoardDeviceHighVoltageAlarmReported)
     )
+  }
+
+  getSucessTransactionsGroupByGroupName(){
+    return this.gateway.apollo.watchQuery<any>({
+      query: getSucessDeviceTransactionsGroupByGroupName,
+    }).valueChanges
+    .map(result => result.data.getSucessDeviceTransactionsGroupByGroupName)
   }
 }

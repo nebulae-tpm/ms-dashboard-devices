@@ -275,6 +275,7 @@
           <div class="h-420">
             <ngx-charts-bar-vertical-stacked *fuseIfOnDom [scheme]="widget5.scheme"
               [results]="widget5.data"
+              [barPadding]= "widget5.barPadding"
               [gradient]="widget5.gradient"
               [xAxis]="widget5.xAxis"
               [yAxis]="widget5.yAxis"
@@ -340,15 +341,15 @@
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-
           <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap>
             <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <strong> {{'DASHBOARD.USAGES_VS_ERRORS_by' | translate}} </strong>
             </div>
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
-              <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca" (change)="widget7.onCuencaFilterChanged($event.value)"
+              <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca"
+                (change)="widget7.onCuencaFilterChanged($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.cuencas | keys" [value]="range.key">
+                <mat-option *ngFor="let range of widget7.cuencas | cuencaKeys" [value]="range.index">
                   {{range.value}}
                 </mat-option>
               </mat-select>
@@ -357,7 +358,7 @@
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25"  >
               <mat-select class="simplified" [(ngModel)]="widget7.currentTimeRange" (change)="widget7.onTimeRangeFilterChanged($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.timeRanges | keys" [value]="range.key">
+                <mat-option *ngFor="let range of widget7.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -394,22 +395,6 @@
 
         <!-- Front WIDGET 8 -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-          <!-- <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
-            <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="65">
-              <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
-            </div>
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="30" >
-              <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
-                <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
-                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <button mat-icon-button fuseWidgetToggle aria-label="more" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="5" >
-              <mat-icon>more_vert</mat-icon>
-            </button>
-          </div> -->
-
           <!-- header -->
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- text on header -->
@@ -419,7 +404,8 @@
                 </div>
                 <mat-form-field class="px-8 py-8">
                   <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
-                    <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
+                    <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key"
+                    (onSelectionChange)="widget8.onChangeTimeRange($event.value)">
                       {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                     </mat-option>
                   </mat-select>
@@ -435,8 +421,6 @@
               <!-- end toggle Button -->
           </div>
           <!--end header -->
-
-
           <!-- chart -->
           <div class="h-420">
             <ngx-charts-advanced-pie-chart

@@ -1,3 +1,4 @@
+import { transition } from '@angular/animations';
 import { Observable } from "rxjs/Observable";
 import { FuseTranslationLoaderService } from "./../../../core/services/translation-loader.service";
 import { DashboardDevicesService } from "./dashboard-devices.service";
@@ -14,9 +15,9 @@ import {
 import { Subscription } from "rxjs/Subscription";
 // tslint:disable-next-line:import-blacklist
 import * as Rx from "rxjs";
-import * as Util from "util";
 import { locale as english } from "./i18n/en";
 import { locale as spanish } from "./i18n/es";
+import { DataWidget7 } from "./dummyData/dummyData";
 
 @Component({
   selector: "fuse-dashboard-devices",
@@ -25,20 +26,13 @@ import { locale as spanish } from "./i18n/es";
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations
 })
+
+
+
+
 export class DashboardDevicesComponent implements OnInit, OnDestroy {
   projects: any[];
   selectedProject: any;
-
-  widget1SelectedYear = "2016";
-  widget5SelectedDay = "today";
-
-  vehicles = [];
-  devices = [];
-  cuencas = [];
-  dummyData = [];
-
-  widgets: any;
-  widgets2: any;
 
   widget5: any = {};
   widget6: any = {};
@@ -48,19 +42,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   widget10: any = {};
   widget11: any = {};
 
-  alertsByRamMemorySubscription: Subscription;
-  alertsByTemperatureSubscription: Subscription;
-  alertsByVoltageSubscription: Subscription;
-  deviceOnlineSubscription: Subscription;
-  deviceOfflineSubscription: Subscription;
-  DeviceNetworkStatusEventsSubscription: Subscription;
+  dataWidget7: DataWidget7[] = [];
+
+
+
 
   allSubscriptions: Subscription[] = [];
-
-  alertsByRamMemory: any;
-  alertsByCpu: any;
-  alertsByTemperature: any;
-  alertsByVoltage: any;
 
   constructor(
     private graphQlGatewayService: DashboardDevicesService,
@@ -70,6 +57,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
     this.widget5 = {
       data: dataDevicesOnVsOff,
+      barPadding : 16,
       currentRange: "TW",
       xAxis: true,
       yAxis: true,
@@ -86,6 +74,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         console.log(ev);
       }
     };
+
     this.widget6 = {
       timeRanges: {
         h0_1: "Última hora",
@@ -163,7 +152,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         console.log(ev);
       },
       onRangeChanged: (range: any) => {
-        this.print(range);
         console.log(range, " Selected");
         switch (range) {
           case "h0_1":
@@ -215,13 +203,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       }
     };
     this.widget7 = {
-      cuencas: {
-        C1: "Cuenca 1",
-        C2: "Cuenca 2",
-        C3: "Cuenca 3",
-        C4: "Cuenca 4",
-        C5: "Cuenca 5"
-      },
+      rawData: [],
       datasets: [
         {
           label: "Errores",
@@ -237,13 +219,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         }
       ],
       labels: ["12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "13:00"],
-      currentCuenca: "C1",
-      timeRanges: {
-        h0_1: "Última hora",
-        h0_2: "Últimas dos horas",
-        h0_3: "Últimas tres horas"
-      },
-      currentTimeRange: "h0_1",
+      cuencas: [],
+      currentCuenca: 0,
+      timeRanges: [],
+      currentTimeRange: 0,
       colors: [
         {
           borderColor: "#3949ab",
@@ -293,10 +272,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         plugins: { filler: { propagate: false } }
       },
       chartType: "line",
-
       legend: true,
       explodeSlices: false,
-      // labels: true,
       doughnut: true,
       gradient: false,
       scheme: {
@@ -304,6 +281,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       },
       onCuencaFilterChanged: ev => {
         console.log(ev, "Selected");
+        this.widget7.currentCuenca = ev;
         const length = this.widget7.datasets[0].data.length;
         this.widget7.datasets[0].data = this.getRandomArray(length, 300, 400);
         this.widget7.datasets[1].data = this.getRandomArray(length, 600, 1000);
@@ -312,6 +290,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         this.widget7.datasets.forEach(d => {
           d.total = this.getCountInArray(d.data);
         });
+        this.widget7.fillTimeRanges();
+
       },
       onTimeRangeFilterChanged: ev => {
         console.log(ev, "Selected");
@@ -363,10 +343,19 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       },
       onSelect: ev => {
         console.log(ev);
+      },
+      fillTimeRanges: () => {
+        console.log("fillingTimeRanges...");
+        console.log("this.widget7.rawData", this.widget7.rawData);
+        this.widget7.rawData.forEach(cuencaData => {
+          console.log("cuencaData", cuencaData)
+        })
       }
     };
+
     this.widget8 = {
       view: [700, 400],
+      rawData: [],
       ranges: {
         h0_1: "Última hora",
         h0_2: "Últimas dos horas",
@@ -400,6 +389,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       ],
       onSelect: ev => {
         console.log(ev);
+      },
+      onChangeTimeRange: (timeRange) => {
+
       }
     };
     this.widget9 = {
@@ -582,12 +574,75 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+      Rx.Observable.from(this.getRandomWidget7Data())
+      .groupBy(item => item.groupName)
+      .mergeMap(group => group.toArray())
+      .map(data => {
+        return {
+          cuenca: data[0].groupName,
+          data: data
+        }
+      })
+      .toArray()
+      .subscribe(r => {
+        const now = Date.now();
+        const lastHour = now - 60*60*1000;
+        const lastTwoHours = lastHour - 60*60*1000;
+        const lastThreeHours = lastTwoHours - 60*60*1000;
+        console.log(r);
+
+        r.forEach(item => {
+          this.widget8.rawData.push({
+            cuenca: item.cuenca,
+            ONE_HOUR: 0,
+            TWO_HOURS: 0,
+            THREE_HOURS: 0
+          })
+        });
+
+        console.log(this.widget8.rawData);
+
+        r.forEach(row => {
+          row.data.forEach(item => {
+            if (item.interval > lastHour ) {
+              const index = this.widget8.rawData.findIndex(i => i.cuenca === item.groupName);
+              this.widget8.rawData[index]["ONE_HOUR"] =  this.widget8.rawData[index]["ONE_HOUR"] + item.transactions;
+              return;
+            }
+            if (item.interval > lastTwoHours && item.interval < lastHour ) {
+              const index = this.widget8.rawData.findIndex(i => i.cuenca === item.groupName);
+              this.widget8.rawData[index]["TWO_HOURS"] = this.widget8.rawData[index]["TWO_HOURS"] + item.transactions;
+              return;
+            }
+            if (item.interval > lastThreeHours && item.interval < lastTwoHours ) {
+              const index = this.widget8.rawData.findIndex(i => i.cuenca === item.groupName);
+              this.widget8.rawData[index]["THREE_HOURS"] = this.widget8.rawData[index]["THREE_HOURS"] + item.transactions;
+              return;
+            }
+          });
+        });
+
+        console.log(this.widget8.rawData);
+
+
+
+
+      })
+
     console.log("On constructor...");
     //  online Vs offline devices subscription
     this.allSubscriptions.push(
       this.graphQlGatewayService
         .getDevicesOnlineVsOffline()
-        .subscribe(d => (this.widget5.data = d))
+        .subscribe(
+          (result) => {
+            this.widget5.data = result;
+            // this.widget5.barPadding = Math.floor(Math.random() * 300 + 100);
+
+          },
+          (error) => console.log(error)
+        )
     );
 
     /**
@@ -667,13 +722,30 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           error => console.log(error)
         )
     );
-
     /**
      * subscription to update device on Vs device Off on bar Vertical bar
      */
-    this.DeviceNetworkStatusEventsSubscription = this.graphQlGatewayService
-      .getDashboardDeviceNetworkStatusEvents()
-      .subscribe(result => (this.widget5.data = result));
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getDashboardDeviceNetworkStatusEvents()
+        .subscribe(
+          (result) => {
+          this.widget5.data = result;
+          // this.widget5.barPadding = (Math.floor(Math.random() * 300 + 100));
+          },
+          (err) => console.log(err)
+        )
+      );
+    this.allSubscriptions.push(
+      this.graphQlGatewayService.getSucessTransactionsGroupByGroupName()
+      .subscribe(result => {
+        console.log("====>", JSON.stringify(result));
+      })
+    );
+
+
+
+
 
     Rx.Observable.interval(3000).subscribe(t => {
       this.widget7.datasets[1].data = this.getRandomArray(7, 1800, 4000);
@@ -695,14 +767,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     console.log(e);
     console.log(dataDevicesOnVsOff);
   }
-
-  getOnlineOffline() {}
-
-  print(args: any) {
-    console.log(Util.inspect(args, { showHidden: false, depth: null }));
-  }
-
-  onUsageVsErrosSelectionChange() {}
 
   onChangeValueWidget8(): void {
     const cuencaRandom = Math.floor(Math.random() * 5);
@@ -766,18 +830,40 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   buildWidget(widgetName: string, widgetContent: any): void {
-    const isNew = this[widgetName] ? false: true;
+    const isNew = this[widgetName] ? false : true;
     let lastTimeRange = 0;
-    if(!isNew){
-      lastTimeRange  = this[widgetName].currentTimeRange;
-      this[widgetName].timeRanges[this[widgetName].currentTimeRange].topDevices
+    if (!isNew) {
+      lastTimeRange = this[widgetName].currentTimeRange;
+      this[widgetName].timeRanges[this[widgetName].currentTimeRange].topDevices;
     }
     this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
     this[widgetName].timeRanges = this.orderTimeRanges(
       this[widgetName].timeRanges
     );
-    this[widgetName].currentTimeRange = lastTimeRange
+    this[widgetName].currentTimeRange = lastTimeRange;
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
+  }
+
+  getRandomWidget7Data(){
+    const result = [];
+    const now = Date.now()
+    const date = new Date(now);
+    const cuencas = ["Cuenca 1", "Cuenca 2", "Cuenca 3"]
+    const infLimit = now - (3 * 60 * 60 * 1000) - ((date.getMinutes() % 10) * 60*1000) - (date.getSeconds() * 1000)
+    console.log(new Date(infLimit));
+    for (let j=0; j < cuencas.length; j++  ){
+      for(let i = 0; i < 18; i++){
+        result.push(
+          new DataWidget7(
+            infLimit + (i * 10*60*1000),
+            cuencas[j],
+            Math.floor(Math.random() * 200 + 20),
+            Math.floor(Math.random() * 120 + 15)
+           )
+        )
+      }
+    }
+    return result;
   }
 }

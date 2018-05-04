@@ -36,6 +36,17 @@ module.exports = {
         )
         .toPromise();
     },
+    getSucessDeviceTransactionsGroupByGroupName(root, args, context) {
+      console.log('getDeviceTransactionsGroupByGroupName', args);
+      return context.broker
+        .forwardAndGetReply$(
+          "Device",
+          "gateway.graphql.query.getDeviceTransactionsGroupByGroupName",
+          { root, args, jwt: context.encodedToken },
+          500
+        )
+        .toPromise();      
+    }
   },
   Subscription: {
     onDashBoardDeviceOnlineReported: {
