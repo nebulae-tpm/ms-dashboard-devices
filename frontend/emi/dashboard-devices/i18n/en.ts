@@ -11,9 +11,9 @@ export const locale = {
             'DEVICES_BY_ROUTE': 'Devices by cuenca',
             'VIEW_COMPLETE_LIST': 'View complete list',
             'TIMERANGES':{
-              ONE_HOUR: 'Last hour',
-              TWO_HOURS: 'Last two hours',
-              THREE_HOURS: 'Last three hours'
+              ONE_HOUR: 'One hour',
+              TWO_HOURS: 'Two hours',
+              THREE_HOURS: 'Three hours'
             }
           },
           'DEVICES_BY_CUENCA': 'Devices by Cuenca',

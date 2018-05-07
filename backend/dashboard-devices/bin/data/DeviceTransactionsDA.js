@@ -96,8 +96,7 @@ class DeviceTransactionsDA {
                     "date": { "$add": [new Date(0), "$timestamp"] },
                     "timestamp": 1,
                     "value": 1,
-                    "success": 1,
-                    "groupName": 1
+                    "success": 1
                 }
             },
             { 
@@ -112,7 +111,6 @@ class DeviceTransactionsDA {
             {
                 "$project":{
                     "interval": "$_id.interval",
-                    "groupName": "$_id.groupName",
                     "transactions": 1,
                     "errors": 1
                 }

@@ -303,7 +303,7 @@
             </div>
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
               <mat-select class="simplified" [(ngModel)]="widget6.currentTimeRange" (change)="widget6.onRangeChanged($event.value)" aria-label="Change range">
-                <mat-option *ngFor="let range of widget6.timeRanges | keys" [value]="range.key">
+                <mat-option *ngFor="let range of widget6.timeRanges | keys" [value]="range">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>

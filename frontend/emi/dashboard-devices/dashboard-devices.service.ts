@@ -14,12 +14,45 @@ import {
   onDeviceRamMemoryAlarmActivated,
   onDeviceTemperatureAlarmActivated,
   onDeviceLowVoltageAlarmActivated,
-  onDeviceHighVoltageAlarmActivated
+  onDeviceHighVoltageAlarmActivated,
+  getDeviceTransactionsGroupByTimeInterval,
+  getDeviceTransactionsGroupByIntervalAndGroupName
+  
 } from "./gql/DashBoardDevices";
 
 @Injectable()
 export class DashboardDevicesService {
   constructor(private http: HttpClient, private gateway: GatewayService) {}
+
+  /**
+   * Gets the devices transaction between two dates group by time intervals
+   * @param startDate Start date
+   * @param endDate End date
+   */
+  getDeviceTransactionsGroupByTimeInterval(startDate: number, endDate: number) {
+    return this.gateway.apollo.watchQuery<any>({
+      query: getDeviceTransactionsGroupByTimeInterval,
+      variables: {
+        startDate: startDate,
+        endDate: endDate
+      }
+    }).valueChanges
+  }
+
+   /**
+   * Gets the devices transaction between two dates group by group name and time intervals
+   * @param startDate Start date
+   * @param endDate End date
+   */
+  getDeviceTransactionsGroupByIntervalAndGroupName(startDate: number, endDate: number) {
+    return this.gateway.apollo.watchQuery<any>({
+      query: getDeviceTransactionsGroupByIntervalAndGroupName,
+      variables: {
+        startDate: startDate,
+        endDate: endDate
+      }
+    }).valueChanges
+  }
 
   getDashboardDeviceAlertsBy(alarmType: string) {
     return this.gateway.apollo.watchQuery<any>({

@@ -23,6 +23,29 @@ export const getDashBoardDevicesAlarmReport = gql`
   }
 `;
 
+// Gets the devices transactions group by time intervals of 10 minutes
+export const getDeviceTransactionsGroupByTimeInterval = gql`
+  query getDeviceTransactionsGroupByTimeInterval($startDate: BigInt, $endDate: BigInt){
+    getDeviceTransactionsGroupByTimeInterval(startDate: $startDate, endDate: $endDate){
+      interval
+      transactions
+      errors
+    }
+  }
+`;
+
+// Gets the devices transactions group by group name and time intervals of 10 minutes
+export const getDeviceTransactionsGroupByIntervalAndGroupName = gql`
+  query getDeviceTransactionsGroupByIntervalAndGroupName($startDate: BigInt, $endDate: BigInt){
+    getDeviceTransactionsGroupByIntervalAndGroupName(startDate: $startDate, endDate: $endDate){
+      interval
+      groupName
+      transactions
+      errors
+    }
+  }
+`;
+
 /**
  * DeviceConnected event subscription
  */
@@ -164,3 +187,4 @@ export const onDeviceHighVoltageAlarmActivated = gql`
     }
   }
 `;
+

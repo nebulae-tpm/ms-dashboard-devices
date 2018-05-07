@@ -263,7 +263,7 @@ class DashBoardDevices {
    * @param {*} param0
    * @param {*} authToken
    */
-  getDeviceTransactionsGroupByIntervalTime$({ root, args, jwt }, authToken) {
+  getDeviceTransactionsGroupByTimeInterval$({ root, args, jwt }, authToken) {
     console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
     return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(args.startDate, args.endDate);
   }
@@ -296,7 +296,7 @@ class DashBoardDevices {
         const deviceTransaction = {
           deviceId: data.aid,
           timestamp: data.data.timestamp,
-          quantity: data.data.count,
+          value: data.data.count,
           success: success,
           groupName: device.groupName
         };

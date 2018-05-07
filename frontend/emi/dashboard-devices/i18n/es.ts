@@ -11,15 +11,15 @@ export const locale = {
             'DEVICES_BY_ROUTE': 'Dispositivos por cuenca',
             'VIEW_COMPLETE_LIST': 'Ver Listado Completo',
             'TIMERANGES':{
-              ONE_HOUR: 'Última hora',
-              TWO_HOURS: 'Últimas dos horas',
-              THREE_HOURS: 'Últimas tres horas'
+              ONE_HOUR: 'Una hora',
+              TWO_HOURS: 'Dos horas',
+              THREE_HOURS: 'Tres horas'
             }
           },
           'DEVICES_BY_CUENCA': 'Dispositivos por cuenca',
           'NUMBER_OF_DEVICES': 'Número de dispositivos',
-          'USAGES_VS_ERRORS': 'Usos Vs Errores de escritura totales del sistema',
-          'USAGES_VS_ERRORS_by': 'Usos Vs Errores por:',
+          'USAGES_VS_ERRORS': 'N° Usos vs errores de escritura totales del sistema',
+          'USAGES_VS_ERRORS_by': 'N° Usos vs errores de escritura por:',
           'USAGES': 'Usos',
           'ERRORS': 'Errores',
           'INFLUX_OF_USERS': 'Afluencia de usuarios',
