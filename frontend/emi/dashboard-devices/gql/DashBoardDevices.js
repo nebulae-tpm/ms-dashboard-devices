@@ -175,3 +175,11 @@ query getSucessDeviceTransactionsGroupByGroupName{
   }
 }
 `;
+
+export const  deviceTransactionsUpdatedEvent = gql`
+  subscription {
+  deviceTransactionsUpdatedEvent{
+    timestamp
+  }
+}
+`;

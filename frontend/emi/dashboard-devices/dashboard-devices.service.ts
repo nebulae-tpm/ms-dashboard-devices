@@ -15,12 +15,15 @@ import {
   onDeviceTemperatureAlarmActivated,
   onDeviceLowVoltageAlarmActivated,
   onDeviceHighVoltageAlarmActivated,
-  getSucessDeviceTransactionsGroupByGroupName
+  getSucessDeviceTransactionsGroupByGroupName,
+  deviceTransactionsUpdatedEvent
 } from "./gql/DashBoardDevices";
 
 @Injectable()
 export class DashboardDevicesService {
   constructor(private http: HttpClient, private gateway: GatewayService) {}
+
+
 
   getDashboardDeviceAlertsBy(alarmType: string) {
     return this.gateway.apollo.watchQuery<any>({
@@ -102,6 +105,14 @@ export class DashboardDevicesService {
         })
         .map(resp => resp.data.onDashBoardDeviceHighVoltageAlarmReported)
     )
+  }
+
+  listenDeviceTransactionsUpdates(){
+   return this.gateway.apollo.subscribe({
+      query: deviceTransactionsUpdatedEvent
+    })
+    .map(response => response.data.deviceTransactionsUpdatedEvent)
+    // .mapTo(this.getSucessTransactionsGroupByGroupName())
   }
 
   getSucessTransactionsGroupByGroupName(){
