@@ -68,3 +68,22 @@ export class DummyVehicle {
 
 }
 
+export class DataWidget7 {
+  interval: number;
+  groupName: string;
+  transactions: number;
+  errors: number;
+
+  constructor(
+    interval: number,
+    groupName: string,
+    transactions: number,
+    errors: number
+  ) {
+    this.interval = interval;
+    this.groupName = groupName;
+    this.transactions = transactions;
+    this.errors = errors;
+  }
+}
+

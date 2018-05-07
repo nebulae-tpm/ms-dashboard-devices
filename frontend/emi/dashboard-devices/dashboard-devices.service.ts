@@ -16,8 +16,9 @@ import {
   onDeviceLowVoltageAlarmActivated,
   onDeviceHighVoltageAlarmActivated,
   getDeviceTransactionsGroupByTimeInterval,
-  getDeviceTransactionsGroupByIntervalAndGroupName
-  
+  getDeviceTransactionsGroupByIntervalAndGroupName,
+  getSucessDeviceTransactionsGroupByGroupName,
+  deviceTransactionsUpdatedEvent
 } from "./gql/DashBoardDevices";
 
 @Injectable()
@@ -134,5 +135,20 @@ export class DashboardDevicesService {
         })
         .map(resp => resp.data.onDashBoardDeviceHighVoltageAlarmReported)
     )
+  }
+
+  listenDeviceTransactionsUpdates(){
+   return this.gateway.apollo.subscribe({
+      query: deviceTransactionsUpdatedEvent
+    })
+    .map(response => response.data.deviceTransactionsUpdatedEvent)
+    // .mapTo(this.getSucessTransactionsGroupByGroupName())
+  }
+
+  getSucessTransactionsGroupByGroupName(){
+    return this.gateway.apollo.watchQuery<any>({
+      query: getSucessDeviceTransactionsGroupByGroupName,
+    }).valueChanges
+    .map(result => result.data.getSucessDeviceTransactionsGroupByGroupName)
   }
 }

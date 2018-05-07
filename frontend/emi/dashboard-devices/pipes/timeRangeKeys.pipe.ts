@@ -6,7 +6,7 @@ export class RangeTimeKeys implements PipeTransform
     transform(timeRanges: any[], args: string[]): any
     {
       const keys: any[] = [];
-      timeRanges.filter(i => i.timeRange).forEach((item, index) => {
+      timeRanges.forEach((item, index) => {
         keys.push({
           key: item.timeRange,
           index: index,

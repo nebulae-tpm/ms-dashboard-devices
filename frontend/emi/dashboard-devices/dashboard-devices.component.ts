@@ -1,3 +1,4 @@
+import { transition } from "@angular/animations";
 import { Observable } from "rxjs/Observable";
 import { FuseTranslationLoaderService } from "./../../../core/services/translation-loader.service";
 import { DashboardDevicesService } from "./dashboard-devices.service";
@@ -23,6 +24,7 @@ import { DatePipe } from '@angular/common';
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { of } from "rxjs/observable/of";
 import { from } from "rxjs/observable/from";
+import { DataWidget7 } from "./dummyData/dummyData";
 
 @Component({
   selector: "fuse-dashboard-devices",
@@ -35,38 +37,15 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   projects: any[];
   selectedProject: any;
 
-  widget1SelectedYear = "2016";
-  widget5SelectedDay = "today";
-
-  vehicles = [];
-  devices = [];
-  cuencas = [];
-  dummyData = [];
-
-  widgets: any;
-  widgets2: any;
-
   widget5: any = {};
   widget6: any = {};
   widget7: any = {};
   widget8: any = {};
   widget9: any = {};
-  widget10: any = {};
-  widget11: any = {};
 
-  alertsByRamMemorySubscription: Subscription;
-  alertsByTemperatureSubscription: Subscription;
-  alertsByVoltageSubscription: Subscription;
-  deviceOnlineSubscription: Subscription;
-  deviceOfflineSubscription: Subscription;
-  DeviceNetworkStatusEventsSubscription: Subscription;
+  dataWidget7: DataWidget7[] = [];
 
   allSubscriptions: Subscription[] = [];
-
-  alertsByRamMemory: any;
-  alertsByCpu: any;
-  alertsByTemperature: any;
-  alertsByVoltage: any;
 
   constructor(
     private graphQlGatewayService: DashboardDevicesService,
@@ -77,6 +56,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
     this.widget5 = {
       data: dataDevicesOnVsOff,
+      barPadding: 16,
       currentRange: "TW",
       xAxis: true,
       yAxis: true,
@@ -89,10 +69,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       scheme: {
         domain: ["#a84a4a", "#c0ffa8"]
       },
-      onSelect: ev => {
-        console.log(ev);
-      }
+      onSelect: ev => {}
     };
+
     this.widget6 = {
       timeRanges: {
         ONE_HOUR: 1,
@@ -169,8 +148,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       onSelect: ev => {
         console.log(ev);
       },
-      onRangeChanged: (range: any) => {
-        this.print(range);
+      onRangeChanged: (range: any) => {      
         console.log(range.value, " Selected");
 
         this.getDeviceTransactionByInterval(range.value);
@@ -227,13 +205,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       }
     };
     this.widget7 = {
-      cuencas: {
-        C1: "Cuenca 1",
-        C2: "Cuenca 2",
-        C3: "Cuenca 3",
-        C4: "Cuenca 4",
-        C5: "Cuenca 5"
-      },
+      rawData: [],
       datasets: [
         {
           label: "Errores",
@@ -249,13 +221,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         }
       ],
       labels: ["12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "13:00"],
-      currentCuenca: "C1",
-      timeRanges: {
-        h0_1: "Última hora",
-        h0_2: "Últimas dos horas",
-        h0_3: "Últimas tres horas"
-      },
-      currentTimeRange: "h0_1",
+      cuencas: [],
+      currentCuenca: 0,
+      timeRanges: [],
+      currentTimeRange: 0,
       colors: [
         {
           borderColor: "#3949ab",
@@ -305,10 +274,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         plugins: { filler: { propagate: false } }
       },
       chartType: "line",
-
       legend: true,
       explodeSlices: false,
-      // labels: true,
       doughnut: true,
       gradient: false,
       scheme: {
@@ -316,6 +283,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       },
       onCuencaFilterChanged: ev => {
         console.log(ev, "Selected");
+        this.widget7.currentCuenca = ev;
         const length = this.widget7.datasets[0].data.length;
         this.widget7.datasets[0].data = this.getRandomArray(length, 300, 400);
         this.widget7.datasets[1].data = this.getRandomArray(length, 600, 1000);
@@ -324,6 +292,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         this.widget7.datasets.forEach(d => {
           d.total = this.getCountInArray(d.data);
         });
+        this.widget7.fillTimeRanges();
       },
       onTimeRangeFilterChanged: ev => {
         console.log(ev, "Selected");
@@ -377,77 +346,21 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         console.log(ev);
       }
     };
+
     this.widget8 = {
       view: [700, 400],
-      ranges: {
-        h0_1: "Última hora",
-        h0_2: "Últimas dos horas",
-        h0_3: "Últimas tres horas"
+      timeRanges: [],
+      currentTimeRange: 0,
+      scheme: {
+        domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63", "#533599"]
       },
-      currentRange: "h0_1",
-      scolorScheme: {
-        domain: ["#5AA454", "#A10A28", "#C7B42C", "#AAAAAA"]
-      },
-      data: [
-        {
-          name: "Cuenca 5",
-          value: 1000
-        },
-        {
-          name: "Cuenca 4",
-          value: 2695
-        },
-        {
-          name: "Cuenca 3",
-          value: 3598
-        },
-        {
-          name: "Cuenca 2",
-          value: 745
-        },
-        {
-          name: "Cuenca 1",
-          value: 2569
-        }
-      ],
-      onSelect: ev => {
-        console.log(ev);
-      }
+      data: [],
+      onChangeTimeRange: index => (this.widget8.currentTimeRange = index)
     };
+
     this.widget9 = {
-      data: [
-        {
-          name: "Cuenca 5",
-          color: "#f44336",
-          value: 45
-        },
-        {
-          name: "Cuenca 4",
-          color: "#35c922",
-          value: 45
-        },
-        {
-          name: "Cuenca 3",
-          color: "#03a9f4",
-          value: 34
-        },
-        {
-          name: "Cuenca 2",
-          color: "#03a9f4",
-          value: 67
-        },
-        {
-          name: "Cuenca 1",
-          color: "#533599",
-          value: 89
-        }
-      ],
-      ranges: {
-        h0_1: "Última hora",
-        h0_2: "Últimas dos horas",
-        h0_3: "Últimas tres horas"
-      },
-      currentRange: "h0_1",
+      timeRanges: [],
+      currentTimeRange: 0,
       scheme: {
         domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63", "#533599"]
       },
@@ -459,137 +372,15 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       toggleLegend: () => {
         console.log("toggleLegend...");
         this.widget9.legend = !this.widget9.legend;
+      },
+      onChangeTimeRange: index => {
+        this.widget9.currentTimeRange = index;
+        let data = this.widget9.timeRanges[
+          this.widget9.currentTimeRange
+        ].data.slice();
+        data = data.sort((a, b) => b.value - a.value);
+        this.widget9.max = this.getMaxUsageMeter(data[0].value);
       }
-    };
-    this.widget10 = {
-      datasets: [
-        {
-          label: "Cuenca 1",
-          data: [410, 380, 320, 290, 190, 390, 250, 380, 300, 340, 220, 290],
-          fill: "start"
-        },
-        {
-          label: "Cuenca 2",
-          data: [
-            3000,
-            3400,
-            4100,
-            3800,
-            2200,
-            3200,
-            2900,
-            1900,
-            2900,
-            3900,
-            2500,
-            3800
-          ],
-          fill: "start"
-        }
-      ],
-      labels: [
-        "12am",
-        "2am",
-        "4am",
-        "6am",
-        "8am",
-        "10am",
-        "12pm",
-        "2pm",
-        "4pm",
-        "6pm",
-        "8pm",
-        "10pm"
-      ],
-      colors: [
-        {
-          borderColor: "#3949ab",
-          backgroundColor: "#3949ab",
-          pointBackgroundColor: "#3949ab",
-          pointHoverBackgroundColor: "#3949ab",
-          pointBorderColor: "#ffffff",
-          pointHoverBorderColor: "#ffffff"
-        },
-        {
-          borderColor: "rgba(30, 136, 229, 0.87)",
-          backgroundColor: "rgba(30, 136, 229, 0.87)",
-          pointBackgroundColor: "rgba(30, 136, 229, 0.87)",
-          pointHoverBackgroundColor: "rgba(30, 136, 229, 0.87)",
-          pointBorderColor: "#ffffff",
-          pointHoverBorderColor: "#ffffff"
-        }
-      ],
-      options: {
-        spanGaps: false,
-        legend: { display: false },
-        maintainAspectRatio: false,
-        tooltips: { position: "nearest", mode: "index", intersect: false },
-        layout: { padding: { left: 24, right: 32 } },
-        elements: {
-          point: {
-            radius: 4,
-            borderWidth: 2,
-            hoverRadius: 4,
-            hoverBorderWidth: 2
-          }
-        },
-        scales: {
-          xAxes: [
-            {
-              gridLines: { display: false },
-              ticks: { fontColor: "rgba(0,0,0,0.54)" }
-            }
-          ],
-          yAxes: [
-            {
-              gridLines: { tickMarkLength: 16 },
-              ticks: { stepSize: 1000 }
-            }
-          ]
-        },
-        plugins: { filler: { propagate: false } }
-      },
-      chartType: "line"
-    };
-    this.widget11 = {
-      data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [
-          {
-            label: "# of Votes",
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(54, 162, 235, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(153, 102, 255, 0.2)",
-              "rgba(255, 159, 64, 0.2)"
-            ],
-            borderColor: [
-              "rgba(255,99,132,1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(153, 102, 255, 1)",
-              "rgba(255, 159, 64, 1)"
-            ],
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true
-              }
-            }
-          ]
-        }
-      },
-      type: "bar"
     };
   }
 
@@ -598,9 +389,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
     //  online Vs offline devices subscription
     this.allSubscriptions.push(
-      this.graphQlGatewayService
-        .getDevicesOnlineVsOffline()
-        .subscribe(d => (this.widget5.data = d))
+      this.graphQlGatewayService.getDevicesOnlineVsOffline().subscribe(
+        result => {
+          this.widget5.data = result;
+          // this.widget5.barPadding = Math.floor(Math.random() * 300 + 100);
+        },
+        error => console.log(error)
+      )
     );
 
     /**
@@ -680,23 +475,83 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           error => console.log(error)
         )
     );
-
     /**
      * subscription to update device on Vs device Off on bar Vertical bar
      */
-    this.DeviceNetworkStatusEventsSubscription = this.graphQlGatewayService
-      .getDashboardDeviceNetworkStatusEvents()
-      .subscribe(result => (this.widget5.data = result));
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getDashboardDeviceNetworkStatusEvents()
+        .subscribe(
+          result => {
+            this.widget5.data = result;
+            // this.widget5.barPadding = (Math.floor(Math.random() * 300 + 100));
+          },
+          err => console.log(err)
+        )
+    );
 
-    Rx.Observable.interval(3000).subscribe(t => {
-      this.widget7.datasets[1].data = this.getRandomArray(7, 1800, 4000);
-      this.widget6.usagesCount.next(
-        this.getCountInArray(this.widget6.datasets[1].data)
+    /**
+     * subcription to receive the query respond about Influx of users
+     * widget 8
+     */
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getSucessTransactionsGroupByGroupName()
+        .subscribe(
+          result => this.widget8.timeRanges = result,
+          error => console.log(error)
+        ),
+
+
+    );
+
+    /**
+     * subcription to receive the query respond about Influx of users
+     * widget 9
+     */
+
+    this.allSubscriptions.push(
+      this.graphQlGatewayService
+        .getSucessTransactionsGroupByGroupName()
+        .subscribe(
+          result => {
+            this.widget9.timeRanges = result;
+            let data = this.widget9.timeRanges[0].data.slice();
+            data = data.sort((a, b) => b.value - a.value);
+            this.widget9.max = this.getMaxUsageMeter(data[0].value);
+          },
+          error => console.log(error)
+        )
+    );
+
+    this.allSubscriptions.push(
+      this.graphQlGatewayService.listenDeviceTransactionsUpdates()
+        .subscribe( () => {
+          this.graphQlGatewayService
+          .getSucessTransactionsGroupByGroupName()
+          .subscribe(
+            result => {
+              console.log(this, result)
+
+              this.widget8.timeRanges = result
+
+
+              this.widget9.timeRanges = result.slice();
+              let data = this.widget9.timeRanges[this.widget9.currentTimeRange].data.slice();
+              data = data.sort((a, b) => b.value - a.value);
+              this.widget9.max = this.getMaxUsageMeter(data[0].value);
+
+
+            },
+            error => console.log(error)
+          )
+
+          },
+          error => console.log(error)
+        )
       );
-      this.widget6.errorsCount.next(
-        this.getCountInArray(this.widget6.datasets[0].data)
-      );
-    });
+
+
   }
 
   getDeviceTransactionByInterval(hours: number){
@@ -842,14 +697,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     console.log(dataDevicesOnVsOff);
   }
 
-  getOnlineOffline() { }
-
-  print(args: any) {
-    console.log(Util.inspect(args, { showHidden: false, depth: null }));
-  }
-
-  onUsageVsErrosSelectionChange() { }
-
   onChangeValueWidget8(): void {
     const cuencaRandom = Math.floor(Math.random() * 5);
     const newDataMulti = this.widget8.data.slice();
@@ -857,16 +704,16 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this.widget8.data = newDataMulti;
   }
 
-  onChangeValueWidget9() {
-    const newData = this.widget9.data.slice();
-    newData.forEach(i => {
-      i.value = Math.floor(Math.random() * 10000);
-    });
+  // onChangeValueWidget9() {
+  //   const newData = this.widget9.data.slice();
+  //   newData.forEach(i => {
+  //     i.value = Math.floor(Math.random() * 10000);
+  //   });
 
-    newData.sort((a, b) => b.value - a.value);
-    this.widget9.max = this.getMaxUsageMeter(newData[0].value);
-    this.widget9.data = newData;
-  }
+  //   newData.sort((a, b) => b.value - a.value);
+  //   this.widget9.max = this.getMaxUsageMeter(newData[0].value);
+  //   this.widget9.data = newData;
+  // }
 
   getMaxUsageMeter(realMax: number): number {
     let resp = Math.floor(realMax + realMax / 20);
@@ -916,14 +763,40 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     let lastTimeRange = 0;
     if (!isNew) {
       lastTimeRange = this[widgetName].currentTimeRange;
-      this[widgetName].timeRanges[this[widgetName].currentTimeRange].topDevices
+      this[widgetName].timeRanges[this[widgetName].currentTimeRange].topDevices;
     }
     this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
     this[widgetName].timeRanges = this.orderTimeRanges(
       this[widgetName].timeRanges
     );
-    this[widgetName].currentTimeRange = lastTimeRange
+    this[widgetName].currentTimeRange = lastTimeRange;
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
+  }
+
+  getRandomWidget7Data() {
+    const result = [];
+    const now = Date.now();
+    const date = new Date(now);
+    const cuencas = ["Cuenca 1", "Cuenca 2", "Cuenca 3"];
+    const infLimit =
+      now -
+      3 * 60 * 60 * 1000 -
+      (date.getMinutes() % 10) * 60 * 1000 -
+      date.getSeconds() * 1000;
+    console.log(new Date(infLimit));
+    for (let j = 0; j < cuencas.length; j++) {
+      for (let i = 0; i < 18; i++) {
+        result.push(
+          new DataWidget7(
+            infLimit + i * 10 * 60 * 1000,
+            cuencas[j],
+            Math.floor(Math.random() * 200 + 20),
+            Math.floor(Math.random() * 120 + 15)
+          )
+        );
+      }
+    }
+    return result;
   }
 }

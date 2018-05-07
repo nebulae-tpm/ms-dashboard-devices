@@ -251,6 +251,86 @@
       </fuse-widget>
       <!-- ALERTS BY TEMPERATURE WIDGET -->
 
+      <!-- WIDGET 8 y 9 -->
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" >
+
+        <!-- Front WIDGET 8 -->
+        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+          <!-- header -->
+          <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
+              <!-- text on header -->
+              <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100" fxFlex.gt-sm="95" fxLayoutWrap >
+                <div class="h3 px-8 py-8">
+                  <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
+                </div>
+                <mat-form-field class="px-8 py-8">
+                  <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentTimeRange"
+                  (change)="widget8.onChangeTimeRange($event.value)" aria-label="Change range">
+                    <mat-option *ngFor="let range of widget8.timeRanges | timeRangeKeys" [value]="range.index">
+                      {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <!-- ends text on header -->
+              <!-- toggle Button -->
+              <div fxLayoutAlign="end start" fxFlex="5">
+                <button mat-icon-button fuseWidgetToggle aria-label="more"  >
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+              </div>
+              <!-- end toggle Button -->
+          </div>
+          <!--end header -->
+          <!-- chart -->
+          <div class="h-420">
+            <ngx-charts-advanced-pie-chart
+              [results]="widget8.timeRanges[widget8.currentTimeRange].data"
+              [label]="'DASHBOARD.TOTAL_USAGES' | translate "
+              [scheme]="widget8.scheme" >
+            </ngx-charts-advanced-pie-chart>
+          </div>
+          <!-- end chart -->
+        </div>
+
+        <!-- / Front -->
+
+        <!-- Back WIDGET 9 -->
+        <div class="fuse-widget-back mat-white-bg mat-elevation-z2">
+          <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
+            <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
+              <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
+            </div>
+            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
+                <mat-select class="simplified font-size-16" [(ngModel)]="widget9.currentTimeRange"
+                (change)="widget9.onChangeTimeRange($event.value)" aria-label="Change range">
+                  <mat-option *ngFor="let range of widget9.timeRanges | timeRangeKeys" [value]="range.index" >
+                    {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                  </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
+                <mat-icon class="s-16">close</mat-icon>
+            </button>
+          </div>
+          <div class="h-420">
+            <ngx-charts-gauge
+              [results]="widget9.timeRanges[widget9.currentTimeRange].data"
+              [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate"
+              [max]="widget9.max"
+              [units]=" 'DASHBOARD.TOTAL_USAGES' | translate "
+              [legend]="widget9.legend"
+              [textValue]="widget9.textValue"
+              [scheme]="widget9.scheme"
+              (select)="widget9.toggleLegend()" >
+            </ngx-charts-gauge>
+          </div>
+        </div>
+        <!-- / Back -->
+
+      </fuse-widget>
+      <!-- WIDGET 8 y 9 -->
+
 
       <!-- WIDGET 5 -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row" fxFlex="100">
@@ -275,6 +355,7 @@
           <div class="h-420">
             <ngx-charts-bar-vertical-stacked *fuseIfOnDom [scheme]="widget5.scheme"
               [results]="widget5.data"
+              [barPadding]= "widget5.barPadding"
               [gradient]="widget5.gradient"
               [xAxis]="widget5.xAxis"
               [yAxis]="widget5.yAxis"
@@ -340,15 +421,15 @@
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-
           <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap>
             <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <strong> {{'DASHBOARD.USAGES_VS_ERRORS_by' | translate}} </strong>
             </div>
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
-              <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca" (change)="widget7.onCuencaFilterChanged($event.value)"
+              <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca"
+                (change)="widget7.onCuencaFilterChanged($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.cuencas | keys" [value]="range.key">
+                <mat-option *ngFor="let range of widget7.cuencas | cuencaKeys" [value]="range.index">
                   {{range.value}}
                 </mat-option>
               </mat-select>
@@ -357,7 +438,7 @@
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25"  >
               <mat-select class="simplified" [(ngModel)]="widget7.currentTimeRange" (change)="widget7.onTimeRangeFilterChanged($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.timeRanges | keys" [value]="range.key">
+                <mat-option *ngFor="let range of widget7.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -389,94 +470,6 @@
       </fuse-widget>
       <!-- / WIDGET 7 -->
 
-      <!-- WIDGET 8 y 9 -->
-      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" >
-
-        <!-- Front WIDGET 8 -->
-        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
-          <!-- <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
-            <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="65">
-              <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
-            </div>
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="30" >
-              <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
-                <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
-                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <button mat-icon-button fuseWidgetToggle aria-label="more" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="5" >
-              <mat-icon>more_vert</mat-icon>
-            </button>
-          </div> -->
-
-          <!-- header -->
-          <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
-              <!-- text on header -->
-              <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100" fxFlex.gt-sm="95" fxLayoutWrap >
-                <div class="h3 px-8 py-8">
-                  <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
-                </div>
-                <mat-form-field class="px-8 py-8">
-                  <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentRange" aria-label="Change range">
-                    <mat-option *ngFor="let range of widget8.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget8()">
-                      {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <!-- ends text on header -->
-              <!-- toggle Button -->
-              <div fxLayoutAlign="end start" fxFlex="5">
-                <button mat-icon-button fuseWidgetToggle aria-label="more"  >
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-              </div>
-              <!-- end toggle Button -->
-          </div>
-          <!--end header -->
-
-
-          <!-- chart -->
-          <div class="h-420">
-            <ngx-charts-advanced-pie-chart
-              [results]="widget9.data"
-              [label]="'DASHBOARD.TOTAL_USAGES' | translate "
-              [scheme]="widget9.scheme" >
-            </ngx-charts-advanced-pie-chart>
-          </div>
-          <!-- end chart -->
-        </div>
-
-        <!-- / Front -->
-
-        <!-- Back WIDGET 9 -->
-        <div class="fuse-widget-back mat-white-bg mat-elevation-z2">
-          <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
-            <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
-              <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
-            </div>
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
-                <mat-select class="simplified font-size-16" [(ngModel)]="widget9.currentRange" aria-label="Change range">
-                  <mat-option *ngFor="let range of widget9.ranges | keys" [value]="range.key" (onSelectionChange)="onChangeValueWidget9()">
-                    {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
-                  </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
-                <mat-icon class="s-16">close</mat-icon>
-            </button>
-          </div>
-          <div class="h-420">
-            <ngx-charts-gauge [results]="widget9.data" [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate" [max]="widget9.max" [units]=" 'DASHBOARD.TOTAL_USAGES' | translate "
-              [legend]="widget9.legend" [textValue]="widget9.textValue" [scheme]="widget9.scheme" (select)="widget9.toggleLegend()" >
-            </ngx-charts-gauge>
-          </div>
-        </div>
-        <!-- / Back -->
-
-      </fuse-widget>
-      <!-- WIDGET 8 y 9 -->
     </div>
     <!-- / WIDGET GROUP -->
   </div>
