@@ -91,7 +91,7 @@ type DashBoardDeviceNetworkStatus{
 type DashboardDeviceTransaction{
   "Device transactions group by interval and groupName"
   interval: BigInt!
-  groupName: String!
+  groupName: String
   transactions: Int!
   errors: Int!
 }
@@ -118,6 +118,8 @@ type Query {
   getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
   getDeviceTransactionsGroupByIntervalAndGroupName(startDate: BigInt, endDate: BigInt): [DashboardDeviceTransaction]!
   getSucessDeviceTransactionsGroupByGroupName: [DashboardDeviceTransactionSucessArray]!
+  getDeviceTransactionsGroupByTimeInterval(startDate: BigInt, endDate: BigInt): [DashboardDeviceTransaction]!
+  
 }
 
 type Subscription {

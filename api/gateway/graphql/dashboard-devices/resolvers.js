@@ -46,7 +46,18 @@ module.exports = {
           500
         )
         .toPromise();      
-    }
+    },
+    getDeviceTransactionsGroupByTimeInterval(root, args, context) {
+      console.log('getDeviceTransactionGroupByTimeInterval', args);
+      return context.broker
+        .forwardAndGetReply$(
+          "Device",
+          "gateway.graphql.query.getDeviceTransactionsGroupByTimeInterval",
+          { root, args, jwt: context.encodedToken },
+          500
+        )
+        .toPromise();
+    },
   },
   Subscription: {
     onDashBoardDeviceOnlineReported: {
