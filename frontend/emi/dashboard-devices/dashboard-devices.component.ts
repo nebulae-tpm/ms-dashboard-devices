@@ -5,7 +5,6 @@ import { DashboardDevicesService } from "./dashboard-devices.service";
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { fuseAnimations } from "../../../core/animations";
 import {
-  data,
   dataDevicesOnVsOff,
   multi,
   topDeviceList,
@@ -97,7 +96,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       colors: [
         {
           borderColor: "#3949ab",
-          backgroundColor: "#3949ab",
+          backgroundColor: "rgba(57,73, 171,0.3)",
           pointBackgroundColor: "#3949ab",
           pointHoverBackgroundColor: "#3949ab",
           pointBorderColor: "#ffffff",
@@ -105,7 +104,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         },
         {
           borderColor: "rgba(30, 136, 229, 0.87)",
-          backgroundColor: "rgba(30, 136, 229, 0.87)",
+          backgroundColor: "rgba(30, 136, 229, 0.3)",
           pointBackgroundColor: "rgba(30, 136, 229, 0.87)",
           pointHoverBackgroundColor: "rgba(30, 136, 229, 0.87)",
           pointBorderColor: "#ffffff",
@@ -148,60 +147,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       onSelect: ev => {
         console.log(ev);
       },
-      onRangeChanged: (range: any) => {      
+      onRangeChanged: (range: any) => {
         console.log(range.value, " Selected");
-
         this.getDeviceTransactionByInterval(range.value);
-
-        // switch (range) {
-        //   case "h0_1":
-        //     this.widget6.labels = [
-        //       "12:00",
-        //       "12:10",
-        //       "12:20",
-        //       "12:30",
-        //       "12:40",
-        //       "12:50",
-        //       "13:00"
-        //     ];
-
-
-        //     this.widget6.datasets[0].data = this.getRandomArray(7, 500, 1500);
-        //     this.widget6.datasets[1].data = this.getRandomArray(7, 1800, 4000);
-        //     break;
-        //   case "h0_2":
-        //     this.widget6.labels = [
-        //       "12:00",
-        //       "12:20",
-        //       "12:40",
-        //       "13:00",
-        //       "13:20",
-        //       "13:40",
-        //       "14:00"
-        //     ];
-        //     this.widget6.datasets[0].data = this.getRandomArray(13, 500, 1500);
-        //     this.widget6.datasets[1].data = this.getRandomArray(13, 1800, 4000);
-        //     break;
-        //   case "h0_3":
-        //     this.widget6.labels = [
-        //       "12:00",
-        //       "12:30",
-        //       "13:00",
-        //       "13:30",
-        //       "14:00",
-        //       "14:30",
-        //       "15:00"
-        //     ];
-        //     this.widget6.datasets[0].data = this.getRandomArray(7, 500, 1500);
-        //     this.widget6.datasets[1].data = this.getRandomArray(7, 1800, 4000);
-        //     break;
-        // }
-        // this.widget6.usagesCount.next(
-        //   this.getCountInArray(this.widget6.datasets[1].data)
-        // );
-        // this.widget6.errorsCount.next(
-        //   this.getCountInArray(this.widget6.datasets[0].data)
-        // );
       }
     };
     this.widget7 = {
@@ -350,12 +298,16 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this.widget8 = {
       view: [700, 400],
       timeRanges: [],
+      data: [],
       currentTimeRange: 0,
       scheme: {
         domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63", "#533599"]
       },
-      data: [],
-      onChangeTimeRange: index => (this.widget8.currentTimeRange = index)
+      onChangeTimeRange: index => (this.widget8.currentTimeRange = index),
+      updateRowData : (data) => {
+        this.widget8.timeRanges = data;
+        this.widget8.data = this.widget8.timeRanges[this.widget8.currentTimeRange].data;
+      }
     };
 
     this.widget9 = {
@@ -379,6 +331,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           this.widget9.currentTimeRange
         ].data.slice();
         data = data.sort((a, b) => b.value - a.value);
+        this.widget9.max = this.getMaxUsageMeter(data[0].value);
+      },
+      updateRowData: (result) => {
+        this.widget9.timeRanges = JSON.parse(JSON.stringify(result));
+        let data = this.widget9.timeRanges[this.widget9.currentTimeRange].data.slice();
+        data = data.sort((a, b) => b.value - a.value);
+        this.widget9.timeRanges[this.widget9.currentTimeRange].data = data;
         this.widget9.max = this.getMaxUsageMeter(data[0].value);
       }
     };
@@ -492,69 +451,42 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
     /**
      * subcription to receive the query respond about Influx of users
-     * widget 8
+     * widget 8 y 9
      */
-    this.allSubscriptions.push(
-      this.graphQlGatewayService
-        .getSucessTransactionsGroupByGroupName()
-        .subscribe(
-          result => this.widget8.timeRanges = result,
-          error => console.log(error)
-        ),
+    this.getSucessTransactions();
 
-
-    );
-
-    /**
-     * subcription to receive the query respond about Influx of users
-     * widget 9
-     */
-
-    this.allSubscriptions.push(
-      this.graphQlGatewayService
-        .getSucessTransactionsGroupByGroupName()
-        .subscribe(
-          result => {
-            this.widget9.timeRanges = result;
-            let data = this.widget9.timeRanges[0].data.slice();
-            data = data.sort((a, b) => b.value - a.value);
-            this.widget9.max = this.getMaxUsageMeter(data[0].value);
-          },
-          error => console.log(error)
-        )
-    );
+    // this.allSubscriptions.push(
+    //   this.graphQlGatewayService
+    //     .getSucessTransactionsGroupByGroupName()
+    //     .subscribe(
+    //       result => {
+    //         this.widget9.timeRanges = result;
+    //         let data = this.widget9.timeRanges[0].data.slice();
+    //         data = data.sort((a, b) => b.value - a.value);
+    //         this.widget9.max = this.getMaxUsageMeter(data[0].value);
+    //       },
+    //       error => console.log(error)
+    //     )
+    // );
 
     this.allSubscriptions.push(
-      this.graphQlGatewayService.listenDeviceTransactionsUpdates()
-        .subscribe( () => {
+      this.graphQlGatewayService.listenDeviceTransactionsUpdates().subscribe(
+        () => {
           this.graphQlGatewayService
-          .getSucessTransactionsGroupByGroupName()
-          .subscribe(
-            result => {
-              console.log(this, result)
-
-              this.widget8.timeRanges = result
-
-
-              this.widget9.timeRanges = result.slice();
-              let data = this.widget9.timeRanges[this.widget9.currentTimeRange].data.slice();
-              data = data.sort((a, b) => b.value - a.value);
-              this.widget9.max = this.getMaxUsageMeter(data[0].value);
-
-
-            },
-            error => console.log(error)
-          )
-
-          },
-          error => console.log(error)
-        )
-      );
-
-
+            .getSucessTransactionsGroupByGroupName()
+            .subscribe(
+              result =>  {
+                this.getSucessTransactions();
+              },
+              error => console.log(error)
+            );
+        },
+        error => console.log(error)
+      )
+    );
   }
 
-  getDeviceTransactionByInterval(hours: number){
+  getDeviceTransactionByInterval(hours: number) {
     //TODO: Change to currrent date
     let currentDate1 = new Date();
 
@@ -562,71 +494,86 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     currentDate1.setSeconds(0);
     currentDate1.setMilliseconds(0);
 
-
-
     const currentDate = Date.now();
     const endDate =
       currentDate1.getTime() +
-      (10 - (Number(this.datePipe.transform(new Date(currentDate1.getTime()), 'mm')) % 10)) *
-      60000;
-    const startDate = endDate - (hours * 60 * 60 * 1000);
+      (10 -
+        Number(
+          this.datePipe.transform(new Date(currentDate1.getTime()), "mm")
+        ) %
+          10) *
+        60000;
+    const startDate = endDate - hours * 60 * 60 * 1000;
 
-    
     console.log("Date range... ", startDate, endDate);
 
     this.getDeviceTransactionGroupByTimeInterval(startDate, endDate, hours)
-      
-      .subscribe(val => {
-        console.log('getDeviceTransaction ===> ', val[1]);
+    .subscribe(val => {
+      console.log("getDeviceTransaction ===> ", val[1]);
 
-        const timeIntervals = val[0];
-        const transactionsGroupByTimeIntervals: any = val[1].data.getDeviceTransactionsGroupByTimeInterval;
+      const timeIntervals = val[0];
+      const transactionsGroupByTimeIntervals: any =
+        val[1].data.getDeviceTransactionsGroupByTimeInterval;
 
-        for (let timeInterval of timeIntervals) {
-          for (let transactionInterval of transactionsGroupByTimeIntervals) {
-            console.log("transactionInterval.interval => "+ transactionInterval.interval + " -- " + timeInterval.interval + ' ******* ' + (transactionInterval.interval == timeInterval.interval));
-            if(transactionInterval.interval == timeInterval.interval){
-              timeInterval.transactions = transactionInterval.transactions;
-              timeInterval.errors = transactionInterval.errors;
-            }
+      for (let timeInterval of timeIntervals) {
+        for (let transactionInterval of transactionsGroupByTimeIntervals) {
+          console.log(
+            "transactionInterval.interval => " +
+              transactionInterval.interval +
+              " -- " +
+              timeInterval.interval +
+              " ******* " +
+              (transactionInterval.interval == timeInterval.interval)
+          );
+          if (transactionInterval.interval == timeInterval.interval) {
+            timeInterval.transactions = transactionInterval.transactions;
+            timeInterval.errors = transactionInterval.errors;
           }
         }
+      }
 
-        of(timeIntervals)
+      of(timeIntervals)
         .pipe(
           mergeMap(val =>
             forkJoin(
-              from(val)
-              .pipe(
+              from(val).pipe(
                 map(val => {
-                  return val.transactions
-                })
-                ,toArray()
+                  return val.transactions;
+                }),
+                toArray()
               ),
-              from(val)
-              .pipe(
+              from(val).pipe(
                 map(val => {
-                  return val.errors
-                })
-                ,toArray()
+                  return val.errors;
+                }),
+                toArray()
               ),
-              from(val)
-              .pipe(
+              from(val).pipe(
                 map(val => {
-                  return this.datePipe.transform(new Date(val.interval), 'hh:mm');
+                  return this.datePipe.transform(
+                    new Date(val.interval),
+                    "hh:mm"
+                  );
                 }),
                 toArray()
               )
             )
           ),
-          map(([successTransactions, failedTransactions, timeIntervalLabels]) => {
-            return this.buildDeviceTransactionGroupByTimeIntervalWidget(successTransactions, failedTransactions, timeIntervalLabels);
-          })
-        ).subscribe(val => {
-          console.log("Final interval => ", val);
+          map(
+            ([successTransactions, failedTransactions, timeIntervalLabels]) => {
+              return this.buildDeviceTransactionGroupByTimeIntervalWidget(
+                successTransactions,
+                failedTransactions,
+                timeIntervalLabels
+              );
+            }
+          )
+        )
+        .subscribe(val => {
+          // console.log("Final interval => ", val);
 
           this.widget6.labels.length = 0;
-          for (let i = 0;i < val.labels.length; i++) {
+          for (let i = 0; i < val.labels.length; i++) {
             this.widget6.labels.push(val.labels[i]);
           }
 
@@ -639,51 +586,62 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             this.getCountInArray(this.widget6.datasets[0].data)
           );
         });
-      });
+    });
   }
 
-      /**
+  /**
    * Gets the devices transactions group by time interval of ten minutes
    * @param startDate
    * @param endDate
    */
-  getDeviceTransactionGroupByTimeInterval(startDate: number, endDate: number, hours: number) {
+  getDeviceTransactionGroupByTimeInterval(
+    startDate: number,
+    endDate: number,
+    hours: number
+  ) {
     return range(0, hours * 6).pipe(
       map(val => {
         const value = {
-          interval: startDate + (val * (10 * 60 * 1000)),
+          interval: startDate + val * (10 * 60 * 1000),
           transactions: 0,
           errors: 0
         };
 
-        console.log('value ', value.interval , new Date(value.interval));
+        console.log("value ", value.interval, new Date(value.interval));
 
         return value;
       }),
       toArray(),
-      mergeMap(timeMap => forkJoin(
-        of(timeMap),
-        this.graphQlGatewayService.getDeviceTransactionsGroupByTimeInterval(startDate, endDate).pipe(first())
-      ))
+      mergeMap(timeMap =>
+        forkJoin(
+          of(timeMap),
+          this.graphQlGatewayService
+            .getDeviceTransactionsGroupByTimeInterval(startDate, endDate)
+            .pipe(first())
+        )
+      )
     );
   }
 
-
-  buildDeviceTransactionGroupByTimeIntervalWidget(successTransactionList,failedTransactionList,timeIntervalList) {
+  buildDeviceTransactionGroupByTimeIntervalWidget(
+    successTransactionList,
+    failedTransactionList,
+    timeIntervalList
+  ) {
     return {
       datasets: [
         {
-          label: 'Usos',
+          label: "Usos",
           data: successTransactionList,
-          fill: 'start'
+          fill: "start"
         },
         {
-          label: 'Errores',
+          label: "Errores",
           data: failedTransactionList,
-          fill: 'start'
+          fill: "start"
         }
       ],
-      labels: timeIntervalList,      
+      labels: timeIntervalList
     };
   }
 
@@ -697,23 +655,22 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     console.log(dataDevicesOnVsOff);
   }
 
-  onChangeValueWidget8(): void {
-    const cuencaRandom = Math.floor(Math.random() * 5);
-    const newDataMulti = this.widget8.data.slice();
-    newDataMulti[cuencaRandom].value = Math.floor(Math.random() * 5000 + 1200);
-    this.widget8.data = newDataMulti;
+
+
+  getSucessTransactions() {
+    const subscription = this.graphQlGatewayService
+        .getSucessTransactionsGroupByGroupName()
+        .subscribe(
+          result => {
+
+            this.widget8.updateRowData(result);
+            this.widget9.updateRowData(result);
+
+            subscription.unsubscribe();
+          },
+          error => console.log(error)
+        )
   }
-
-  // onChangeValueWidget9() {
-  //   const newData = this.widget9.data.slice();
-  //   newData.forEach(i => {
-  //     i.value = Math.floor(Math.random() * 10000);
-  //   });
-
-  //   newData.sort((a, b) => b.value - a.value);
-  //   this.widget9.max = this.getMaxUsageMeter(newData[0].value);
-  //   this.widget9.data = newData;
-  // }
 
   getMaxUsageMeter(realMax: number): number {
     let resp = Math.floor(realMax + realMax / 20);
@@ -774,29 +731,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       (this[widgetName].currentTimeRange = ev);
   }
 
-  getRandomWidget7Data() {
-    const result = [];
-    const now = Date.now();
-    const date = new Date(now);
-    const cuencas = ["Cuenca 1", "Cuenca 2", "Cuenca 3"];
-    const infLimit =
-      now -
-      3 * 60 * 60 * 1000 -
-      (date.getMinutes() % 10) * 60 * 1000 -
-      date.getSeconds() * 1000;
-    console.log(new Date(infLimit));
-    for (let j = 0; j < cuencas.length; j++) {
-      for (let i = 0; i < 18; i++) {
-        result.push(
-          new DataWidget7(
-            infLimit + i * 10 * 60 * 1000,
-            cuencas[j],
-            Math.floor(Math.random() * 200 + 20),
-            Math.floor(Math.random() * 120 + 15)
-          )
-        );
-      }
-    }
-    return result;
+  buildwidget8(data:  any[], name: string){
+
+
+    this[name].view = [700, 400];
+    this[name].timeRanges = data;
+    this[name].currentTimeRange = 0;
+    this[name].scheme = {domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63", "#533599"]}
+    this[name].onChangeTimeRange = (index) => this[name].currentTimeRange = index;
   }
 }

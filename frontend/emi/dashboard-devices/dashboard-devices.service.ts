@@ -146,9 +146,10 @@ export class DashboardDevicesService {
   }
 
   getSucessTransactionsGroupByGroupName(){
-    return this.gateway.apollo.watchQuery<any>({
+    return this.gateway.apollo.query<any>({
       query: getSucessDeviceTransactionsGroupByGroupName,
-    }).valueChanges
+      fetchPolicy: 'network-only'
+    })
     .map(result => result.data.getSucessDeviceTransactionsGroupByGroupName)
   }
 }
