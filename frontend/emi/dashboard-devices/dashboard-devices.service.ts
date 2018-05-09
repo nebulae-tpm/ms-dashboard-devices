@@ -18,7 +18,8 @@ import {
   getDeviceTransactionsGroupByTimeInterval,
   getDeviceTransactionsGroupByIntervalAndGroupName,
   getSucessDeviceTransactionsGroupByGroupName,
-  deviceTransactionsUpdatedEvent
+  deviceTransactionsUpdatedEvent,
+  getDeviceDashBoardTotalAccount
 } from "./gql/DashBoardDevices";
 
 @Injectable()
@@ -30,12 +31,14 @@ export class DashboardDevicesService {
    * @param startDate Start date
    * @param endDate End date
    */
-  getDeviceTransactionsGroupByTimeInterval(startDate: number, endDate: number) {
+  getDeviceTransactionsGroupByTimeInterval(startDate: number, endDate: number, cuencaName: string) {
     return this.gateway.apollo.watchQuery<any>({
       query: getDeviceTransactionsGroupByTimeInterval,
+      fetchPolicy: 'network-only',
       variables: {
         startDate: startDate,
-        endDate: endDate
+        endDate: endDate,
+        groupName: cuencaName
       }
     }).valueChanges
   }
@@ -53,6 +56,7 @@ export class DashboardDevicesService {
         endDate: endDate
       }
     }).valueChanges
+    .map(respond => respond.data.getDeviceTransactionsGroupByIntervalAndGroupName)
   }
 
   getDashboardDeviceAlertsBy(alarmType: string) {
@@ -62,6 +66,13 @@ export class DashboardDevicesService {
         type: alarmType
       }
     }).valueChanges
+  }
+
+  getAllDevicesAccount(){
+    return this.gateway.apollo.watchQuery<any>({
+      query: getDeviceDashBoardTotalAccount
+    }).valueChanges
+    .map(result => result.data.getDeviceDashBoardTotalAccount);
   }
 
   /**

@@ -25,8 +25,8 @@ export const getDashBoardDevicesAlarmReport = gql`
 
 // Gets the devices transactions group by time intervals of 10 minutes
 export const getDeviceTransactionsGroupByTimeInterval = gql`
-  query getDeviceTransactionsGroupByTimeInterval($startDate: BigInt, $endDate: BigInt){
-    getDeviceTransactionsGroupByTimeInterval(startDate: $startDate, endDate: $endDate){
+  query getDeviceTransactionsGroupByTimeInterval($startDate: BigInt, $endDate: BigInt, $groupName: String ){
+    getDeviceTransactionsGroupByTimeInterval(startDate: $startDate, endDate: $endDate, groupName: $groupName){
       interval
       transactions
       errors
@@ -37,12 +37,7 @@ export const getDeviceTransactionsGroupByTimeInterval = gql`
 // Gets the devices transactions group by group name and time intervals of 10 minutes
 export const getDeviceTransactionsGroupByIntervalAndGroupName = gql`
   query getDeviceTransactionsGroupByIntervalAndGroupName($startDate: BigInt, $endDate: BigInt){
-    getDeviceTransactionsGroupByIntervalAndGroupName(startDate: $startDate, endDate: $endDate){
-      interval
-      groupName
-      transactions
-      errors
-    }
+    getDeviceTransactionsGroupByIntervalAndGroupName(startDate: $startDate, endDate: $endDate)
   }
 `;
 
@@ -204,5 +199,12 @@ export const  deviceTransactionsUpdatedEvent = gql`
   deviceTransactionsUpdatedEvent{
     timestamp
   }
+}
+`;
+
+
+export const getDeviceDashBoardTotalAccount = gql`
+query getDeviceDashBoardTotalAccount{
+  getDeviceDashBoardTotalAccount
 }
 `;

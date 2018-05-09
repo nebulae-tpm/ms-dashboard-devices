@@ -45,6 +45,14 @@ class DashBoardDevices {
   }
 
   /**
+   * 
+   */
+  getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken){
+    console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
+    return DeviceStatus.getDevicesTotalAccount$();
+  }
+
+  /**
    * Reaction to deviceOnlineReported
    */
   handleDeviceConnectedEvent$(evt) {
@@ -73,7 +81,9 @@ class DashBoardDevices {
         broker.send$("MaterializedViewUpdates", "DeviceDisconnected", msg)
       );
   }
-
+  /**
+   * used to convert data to Online vs Offline schema.
+   */
   mapToCharBarData$(devices) {
     return Rx.Observable.from(devices)
       .groupBy(cuenca => cuenca._id.cuenca)
@@ -83,22 +93,26 @@ class DashBoardDevices {
           name: group[0]._id.cuenca,
           series: [
             {
-              name: "Offline",
-              value: group.filter(c => !c._id.online)[0]
-                ? group.filter(c => !c._id.online)[0].value
-                : 0
-            },
-            {
               name: "Online",
               value: group.filter(c => c._id.online)[0]
                 ? group.filter(c => c._id.online)[0].value
                 : 0
-            }
+            },
+            {
+              name: "Offline",
+              value: group.filter(c => !c._id.online)[0]
+                ? group.filter(c => !c._id.online)[0].value
+                : 0
+            }            
           ]
         };
       });
   }
 
+  /**
+   * 
+   * @param {Object} array data with alarms info in range of times
+   */
   mapToAlarmsWidget$(array) {
     const result = [];
     const timeRanges = ["ONE_HOUR", "TWO_HOURS", "THREE_HOURS"];
@@ -172,6 +186,13 @@ class DashBoardDevices {
     return this.getTimeRangesToLimit$(evt, "TEMPERATURE")
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      // .do(r => console.log("====> ", JSON.stringify(r)))
+      // .mergeMap(result => {
+      //   Rx.Observable.from(result)
+      //   .mergeMap(rb =>)
+      //   .subscribe(ra => console.log("##########>>>> ", JSON.stringify(ra)))
+      //   return Rx.Observable.of(result)
+      // })
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
@@ -262,8 +283,18 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDeviceTransactionsGroupByIntervalAndGroupName$({ root, args, jwt }, authToken) {
-    console.log("------------ getDeviceTransactionsGroupByIntervalAndGroupName", args);
-    return DeviceTransactionsDA.getDeviceTransactionGroupByTimeIntervalAndGroupName$(args.startDate, args.endDate);
+    // console.log("------------ getDeviceTransactionsGroupByIntervalAndGroupName", args);
+    return DeviceTransactionsDA
+    .getDeviceTransactionGroupByTimeIntervalAndGroupName$(args.startDate, args.endDate)  
+    .map(response => {
+      const result = [];
+      response.forEach(item => {
+        result.push(item.name);
+      });
+      return result;
+    });
+    // .do(val => console.log('RESULT ===========> ', JSON.stringify(val), "<==========="))
+    // .subscribe(r => {})
   }
 
   /**
@@ -275,7 +306,8 @@ class DashBoardDevices {
     console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
     return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(
       args.startDate,
-      args.endDate
+      args.endDate,
+      args.groupName
     );
   }
 
@@ -283,10 +315,9 @@ class DashBoardDevices {
    * 
    */
   getDeviceTransactionsGroupByGroupName$({ root, args, jwt }, authToken){
-    console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
+    // console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
     return instance.getTimeRangesToLimit$({}, undefined)
     .mergeMap(evt => DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt))
-    .do(r => console.log("########", JSON.stringify(r), "########"))
   }
 
   /**
@@ -303,7 +334,7 @@ class DashBoardDevices {
    * @param {*} data Reported transaction event
    */
   persistFailedDeviceTransaction$(data) {
-    console.log("persistFailedDeviceTransaction ==> ", data);
+    // console.log("persistFailedDeviceTransaction ==> ", data);
     return this.handleDeviceMainAppUsosTranspCountReported$(data, false);
   }
 

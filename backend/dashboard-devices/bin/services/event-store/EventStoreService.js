@@ -84,9 +84,9 @@ class EventStoreService {
           et: "DeviceMainAppUsosTranspCountReported",
           etv: 1,
           at: "Device",
-          aid: "sn0001-0001-TEST",
+          aid: `sn0001-000${Math.floor(Math.random() * 9)}-TEST`,
           data: {
-            count: Math.floor(Math.random() * 100 + 5),
+            count: Math.floor(Math.random() * 10 + 1),
             timestamp: Date.now()
           },
           user: "SYSTEM.DevicesReport.devices-report-handler",
@@ -104,7 +104,7 @@ class EventStoreService {
         at: "Device",
         aid: `sn0001-000${Math.floor(Math.random() * 9)}-TEST`,
         data: {
-          count: Math.floor(Math.random() * 100 + 5),
+          count: Math.floor(Math.random() * 20 + 1),
           timestamp: Date.now()
         },
         user: "SYSTEM.DevicesReport.devices-report-handler",

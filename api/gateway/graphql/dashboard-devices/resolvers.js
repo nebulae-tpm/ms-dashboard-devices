@@ -58,6 +58,17 @@ module.exports = {
         )
         .toPromise();
     },
+    getDeviceDashBoardTotalAccount(root, args, context){
+      console.log('getDeviceDashBoardTotalAccount', args);
+      return context.broker
+      .forwardAndGetReply$(
+        "Device",
+        "gateway.graphql.query.getDeviceDashBoardTotalAccount",
+        { root, args, jwt: context.encodedToken },
+        500
+      )
+      .toPromise();
+    }
   },
   Subscription: {
     onDashBoardDeviceOnlineReported: {

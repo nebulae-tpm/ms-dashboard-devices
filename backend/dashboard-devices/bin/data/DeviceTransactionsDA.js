@@ -38,13 +38,13 @@ class DeviceTransactionsDA {
    * @param {*} endDate  End date
    */
   static getDeviceTransactionGroupByTimeIntervalAndGroupName$(startDate, endDate) {
+    console.log(startDate, endDate);
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(
       collection
         .aggregate(
           [
-            //{ $match: { timestamp:         { $gte: 1432765200000, $lt: 1432852500000 }       } },
-            { $match: { timestamp:         { $gte: startDate, $lt: endDate }       } },
+            { $match: { timestamp: { $gte: startDate, $lt: endDate } } },
             {
                 "$project": {
                     "date": { "$add": [new Date(0), "$timestamp"] },
@@ -71,12 +71,22 @@ class DeviceTransactionsDA {
                     "transactions": 1,
                     "errors": 1
                 }
+            },
+            {
+                $group: {
+                    _id: "$groupName"
+                }
+            },
+            {
+                $project : {
+                    _id: 0,
+                    name: "$_id"
+                }
             }
         ]
         )
         .toArray()
-    )
-    .do(val => console.log('RESULT ===========> ', val));
+    )    
   }
 
     /**
@@ -84,13 +94,17 @@ class DeviceTransactionsDA {
    * @param {*} startDate Start date
    * @param {*} endDate  End date
    */
-  static getDeviceTransactionGroupByTimeInterval$(startDate, endDate) {
+  static getDeviceTransactionGroupByTimeInterval$(startDate, endDate, cuenca) {
     const collection = mongoDB.db.collection(CollectionName);
+    let matchCriteria = { $match: { timestamp: { $gte: startDate, $lt: endDate }} }
+    if(cuenca){
+        matchCriteria = { $match: { timestamp: { $gte: startDate, $lt: endDate }, groupName: cuenca  } }
+    }
     return Rx.Observable.fromPromise(
       collection
         .aggregate(
           [
-            { $match: { timestamp:         { $gte: startDate, $lt: endDate }       } },
+            matchCriteria,
             {
                 "$project": {
                     "date": { "$add": [new Date(0), "$timestamp"] },
@@ -119,11 +133,11 @@ class DeviceTransactionsDA {
         )
         .toArray()
     )
-    .do(val => console.log('RESULT ===========> ', val));
+    //  .do(val => console.log('RESULT ===========> ', val));
   }
 
   static getDeviceTransactionGroupByGroupName$(evt){
-      console.log("======",evt, "====")
+    //   console.log("======",evt, "====")
       return Rx.Observable.forkJoin(
         DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[0], "ONE_HOUR"),
         DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[1], "TWO_HOURS"),

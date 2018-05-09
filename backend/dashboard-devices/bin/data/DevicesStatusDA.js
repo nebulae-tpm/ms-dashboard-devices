@@ -23,6 +23,16 @@ class DeviceStatusDA {
   }
 
   /**
+   * 
+   */
+  static getDevicesTotalAccount$(){
+    const collection = mongoDB.db.collection(CollectionName);
+    return Rx.Observable.fromPromise(
+      collection.find().count()
+    );
+  }
+
+  /**
    * Updates the device state in DB and gets the new data for front-end chart interested
    * @param {String} sn device sn to update the state in DB
    */

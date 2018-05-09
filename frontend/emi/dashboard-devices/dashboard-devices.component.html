@@ -35,7 +35,10 @@
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
-            <span class="h4 ml-8"> {{ alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].devicesCount }} </span>
+            <span class="h4 ml-8">
+              {{ alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].devicesCount }}
+              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
+              {{ totalDeviceAccout | async }} </span>
           </div>
         </div>
         <!-- / Front -->
@@ -47,16 +50,16 @@
           </button>
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices">
-              <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.alarmsCount}}
-              </p>
+              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
+                {{item.hostname}} -- {{item.sn}} : {{item.alarmsCount}}
+              <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent"
-                [routerLink]="[alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].fullDevicesListLink]">
+                <!-- [routerLink]="[alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].fullDevicesListLink]" -->
+              <button mat-button color="accent">
                  {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
             </div>
@@ -96,7 +99,11 @@
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
-            <span class="h4 ml-8"> {{alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].devicesCount}} </span>
+            <span class="h4 ml-8">
+              {{ alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].devicesCount }}
+              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
+              {{ totalDeviceAccout | async }}
+            </span>
           </div>
         </div>
         <!-- / Front -->
@@ -108,16 +115,15 @@
           </button>
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices">
-              <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.alarmsCount}}
-              </p>
+              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
+                {{item.hostname}} -- {{item.sn}} : {{item.alarmsCount}}
+              <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent"
-                [routerLink]="[alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].fullDevicesListLink]">
+              <button mat-button color="accent">
                   {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
             </div>
@@ -157,7 +163,11 @@
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
-            <span class="h4 ml-8"> {{alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].devicesCount}} </span>
+            <span class="h4 ml-8">
+              {{alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].devicesCount}}
+              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
+              {{ totalDeviceAccout | async }}
+             </span>
           </div>
         </div>
         <!-- / Front -->
@@ -169,16 +179,15 @@
           </button>
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices">
-              <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.alarmsCount}}
-              </p>
+              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
+                {{item.hostname}} -- {{item.sn}} : {{item.alarmsCount}}
+              <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent"
-                [routerLink]="[alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].fullDevicesListLink]">
+              <button mat-button color="accent">
                 {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
             </div>
@@ -213,12 +222,18 @@
             <div class="red-fg font-size-72 line-height-72">
               {{ alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].alarmsCount }}
             </div>
-            <div class="h3 secondary-text font-weight-500">{{'DASHBOARD.MINI_WIDGET.ALERTS_BY_TEMPERATURE' | translate}}</div>
+            <div class="h3 secondary-text font-weight-500">
+              {{'DASHBOARD.MINI_WIDGET.ALERTS_BY_TEMPERATURE' | translate}}
+            </div>
           </div>
 
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
-            <span class="h4 ml-8"> {{alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].devicesCount}} </span>
+            <span class="h4 ml-8">
+              {{alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].devicesCount}}
+              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
+              {{ totalDeviceAccout | async }}
+            </span>
           </div>
         </div>
         <!-- / Front -->
@@ -230,16 +245,15 @@
           </button>
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices">
-              <p [routerLink]="[item.deviceDetailLink]" >
-                {{item.sn}} -- {{item.alarmsCount}}
-              </p>
+              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
+                {{item.hostname}} -- {{item.sn}}: <span><strong> {{"   "}} {{item.alarmsCount}}</strong></span>
+              <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
             <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-              <button mat-button color="accent"
-                [routerLink]="[alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].fullDevicesListLink]">
+              <button mat-button color="accent">
                 {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
             </div>
@@ -251,7 +265,7 @@
       </fuse-widget>
       <!-- ALERTS BY TEMPERATURE WIDGET -->
 
-      <!-- WIDGET 8 y 9 -->
+      <!-- WIDGET 8 and 9 -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" >
 
         <!-- Front WIDGET 8 -->
@@ -287,6 +301,7 @@
             <ngx-charts-advanced-pie-chart
               [results]="widget8.data"
               [label]="'DASHBOARD.TOTAL_USAGES' | translate "
+              [animations]= "true"
               [scheme]="widget8.scheme" >
             </ngx-charts-advanced-pie-chart>
           </div>
@@ -317,11 +332,11 @@
             <ngx-charts-gauge
               [results]="widget9.timeRanges[widget9.currentTimeRange].data"
               [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate"
-              [max]="widget9.max"
-              [units]=" 'DASHBOARD.TOTAL_USAGES' | translate "
               [legend]="widget9.legend"
-              [textValue]="widget9.textValue"
+              [max]="widget9.max"
               [scheme]="widget9.scheme"
+              [units]=" 'DASHBOARD.TOTAL_USAGES' | translate"
+              [textValue]="widget9.textValue"
               (select)="widget9.toggleLegend()" >
             </ngx-charts-gauge>
           </div>
@@ -329,7 +344,7 @@
         <!-- / Back -->
 
       </fuse-widget>
-      <!-- WIDGET 8 y 9 -->
+      <!-- WIDGET 8 and 9 -->
 
 
       <!-- WIDGET 5 -->
@@ -384,7 +399,7 @@
             </div>
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
               <mat-select class="simplified" [(ngModel)]="widget6.currentTimeRange" (change)="widget6.onRangeChanged($event.value)" aria-label="Change range">
-                <mat-option *ngFor="let range of widget6.timeRanges | keys" [value]="range">
+                <mat-option *ngFor="let range of widget6.timeRanges | keys" [value]="range.value">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -401,12 +416,12 @@
 
             <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
-              <span class="h4"> {{ widget6.usagesCount | async}} </span>
+              <span class="h4"> {{ widget6.usagesCount }} </span>
             </div>
 
             <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0">{{'DASHBOARD.ERRORS' | translate}}</span>
-              <span class="h4">{{widget6.errorsCount | async}}</span>
+              <span class="h4">{{widget6.errorsCount }}</span>
             </div>
           </div>
 
@@ -425,21 +440,23 @@
             <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <strong> {{'DASHBOARD.USAGES_VS_ERRORS_by' | translate}} </strong>
             </div>
+
+            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25"  >
+              <mat-select class="simplified" [(ngModel)]="widget7.currentTimeRange"
+                (change)="widget7.onTimeRangeFilterChanged($event.value)"
+                aria-label="Change range">
+                <mat-option *ngFor="let range of widget7.timeRanges | keys" [value]="range.value">
+                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
               <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca"
                 (change)="widget7.onCuencaFilterChanged($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.cuencas | cuencaKeys" [value]="range.index">
-                  {{range.value}}
-                </mat-option>
-              </mat-select>
-
-            </mat-form-field>
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25"  >
-              <mat-select class="simplified" [(ngModel)]="widget7.currentTimeRange" (change)="widget7.onTimeRangeFilterChanged($event.value)"
-                aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.timeRanges | timeRangeKeys" [value]="range.index">
-                  {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                <mat-option *ngFor="let range of widget7.cuencas | keys" [value]="range.value">
+                  {{ range.key }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -455,12 +472,12 @@
 
             <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
-              <span class="h4"> {{ widget7.datasets[1].total }} </span>
+              <span class="h4"> {{ widget7.usagesCount }} </span>
             </div>
 
             <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0">{{ 'DASHBOARD.ERRORS' | translate }}</span>
-              <span class="h4"> {{ widget7.datasets[0].total }} </span>
+              <span class="h4"> {{ widget7.errorsCount }} </span>
             </div>
           </div>
 
