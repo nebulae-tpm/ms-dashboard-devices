@@ -2,7 +2,7 @@ const withFilter = require("graphql-subscriptions").withFilter;
 const PubSub = require("graphql-subscriptions").PubSub;
 const pubsub = new PubSub();
 const Rx = require("rxjs");
-const broker = require('../../broker/BrokerFactory')();
+const broker = require("../../broker/BrokerFactory")();
 
 module.exports = {
   Query: {
@@ -16,7 +16,8 @@ module.exports = {
         )
         .toPromise();
     },
-    getDashBoardDevicesCurrentNetworkStatus(root, args, context){
+    
+    getDashBoardDevicesCurrentNetworkStatus(root, args, context) {
       return broker
         .forwardAndGetReply$(
           "Device",
@@ -46,7 +47,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           500
         )
-        .toPromise();      
+        .toPromise();
     },
     getDeviceTransactionsGroupByTimeInterval(root, args, context) {
       // console.log('getDeviceTransactionGroupByTimeInterval', args);
@@ -59,16 +60,16 @@ module.exports = {
         )
         .toPromise();
     },
-    getDeviceDashBoardTotalAccount(root, args, context){
+    getDeviceDashBoardTotalAccount(root, args, context) {
       // console.log('getDeviceDashBoardTotalAccount', args);
       return broker
-      .forwardAndGetReply$(
-        "Device",
-        "gateway.graphql.query.getDeviceDashBoardTotalAccount",
-        { root, args, jwt: context.encodedToken },
-        500
-      )
-      .toPromise();
+        .forwardAndGetReply$(
+          "Device",
+          "gateway.graphql.query.getDeviceDashBoardTotalAccount",
+          { root, args, jwt: context.encodedToken },
+          500
+        )
+        .toPromise();
     }
   },
   Subscription: {
@@ -88,8 +89,14 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening onDashBoardDeviceOnlineReported", error),
-              () => console.log("onDashBoardDeviceOnlineReported listener STOPED :D")
+                console.error(
+                  "Error listening onDashBoardDeviceOnlineReported",
+                  error
+                ),
+              () =>
+                console.log(
+                  "onDashBoardDeviceOnlineReported listener STOPED :D"
+                )
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -121,8 +128,14 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening onDashBoardDeviceOfflineReported", error),
-              () => console.log("onDashBoardDeviceOfflineReported listener STOPED :D")
+                console.error(
+                  "Error listening onDashBoardDeviceOfflineReported",
+                  error
+                ),
+              () =>
+                console.log(
+                  "onDashBoardDeviceOfflineReported listener STOPED :D"
+                )
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -154,8 +167,14 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening onDashBoardDeviceCpuUsageAlarmActivated", error),
-              () => console.log("onDashBoardDeviceCpuUsageAlarmActivated listener STOPED :D")
+                console.error(
+                  "Error listening onDashBoardDeviceCpuUsageAlarmActivated",
+                  error
+                ),
+              () =>
+                console.log(
+                  "onDashBoardDeviceCpuUsageAlarmActivated listener STOPED :D"
+                )
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -163,7 +182,9 @@ module.exports = {
             observer.next("rxjs subscription had been terminated");
             observer.complete();
           });
-          return pubsub.asyncIterator("onDashBoardDeviceCpuUsageAlarmActivated");
+          return pubsub.asyncIterator(
+            "onDashBoardDeviceCpuUsageAlarmActivated"
+          );
         },
         (payload, variables, context, info) => {
           //return payload.authorEvent.lastName === variables.lastName;
@@ -171,7 +192,7 @@ module.exports = {
         }
       )
     },
-    onDashBoardDeviceRamMemoryAlarmActivated:{
+    onDashBoardDeviceRamMemoryAlarmActivated: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
           const subscription = broker
@@ -187,8 +208,14 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening onDashBoardDeviceRamMemoryAlarmActivated", error),
-              () => console.log("onDashBoardDeviceRamMemoryAlarmActivated listener STOPED :D")
+                console.error(
+                  "Error listening onDashBoardDeviceRamMemoryAlarmActivated",
+                  error
+                ),
+              () =>
+                console.log(
+                  "onDashBoardDeviceRamMemoryAlarmActivated listener STOPED :D"
+                )
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -196,7 +223,9 @@ module.exports = {
             observer.next("rxjs subscription had been terminated");
             observer.complete();
           });
-          return pubsub.asyncIterator("onDashBoardDeviceRamMemoryAlarmActivated");
+          return pubsub.asyncIterator(
+            "onDashBoardDeviceRamMemoryAlarmActivated"
+          );
         },
         (payload, variables, context, info) => {
           //return payload.authorEvent.lastName === variables.lastName;
@@ -204,7 +233,7 @@ module.exports = {
         }
       )
     },
-    onDashBoardDeviceTemperatureAlarmActivated:{
+    onDashBoardDeviceTemperatureAlarmActivated: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
           const subscription = broker
@@ -220,8 +249,14 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening onDashBoardDeviceTemperatureAlarmActivated", error),
-              () => console.log("onDashBoardDeviceTemperatureAlarmActivated listener STOPED :D")
+                console.error(
+                  "Error listening onDashBoardDeviceTemperatureAlarmActivated",
+                  error
+                ),
+              () =>
+                console.log(
+                  "onDashBoardDeviceTemperatureAlarmActivated listener STOPED :D"
+                )
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -229,7 +264,9 @@ module.exports = {
             observer.next("rxjs subscription had been terminated");
             observer.complete();
           });
-          return pubsub.asyncIterator("onDashBoardDeviceTemperatureAlarmActivated");
+          return pubsub.asyncIterator(
+            "onDashBoardDeviceTemperatureAlarmActivated"
+          );
         },
         (payload, variables, context, info) => {
           //return payload.authorEvent.lastName === variables.lastName;
@@ -237,7 +274,7 @@ module.exports = {
         }
       )
     },
-    onDashBoardDeviceLowVoltageAlarmReported:{
+    onDashBoardDeviceLowVoltageAlarmReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
           const subscription = broker
@@ -253,8 +290,14 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening onDashBoardDeviceLowVoltageAlarmReported", error),
-              () => console.log("onDashBoardDeviceLowVoltageAlarmReported listener STOPED :D")
+                console.error(
+                  "Error listening onDashBoardDeviceLowVoltageAlarmReported",
+                  error
+                ),
+              () =>
+                console.log(
+                  "onDashBoardDeviceLowVoltageAlarmReported listener STOPED :D"
+                )
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -262,7 +305,9 @@ module.exports = {
             observer.next("rxjs subscription had been terminated");
             observer.complete();
           });
-          return pubsub.asyncIterator("onDashBoardDeviceLowVoltageAlarmReported");
+          return pubsub.asyncIterator(
+            "onDashBoardDeviceLowVoltageAlarmReported"
+          );
         },
         (payload, variables, context, info) => {
           //return payload.authorEvent.lastName === variables.lastName;
@@ -286,8 +331,14 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening onDashBoardDeviceHighVoltageAlarmReported", error),
-              () => console.log("onDashBoardDeviceHighVoltageAlarmReported listener STOPED :D")
+                console.error(
+                  "Error listening onDashBoardDeviceHighVoltageAlarmReported",
+                  error
+                ),
+              () =>
+                console.log(
+                  "onDashBoardDeviceHighVoltageAlarmReported listener STOPED :D"
+                )
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -295,7 +346,9 @@ module.exports = {
             observer.next("rxjs subscription had been terminated");
             observer.complete();
           });
-          return pubsub.asyncIterator("onDashBoardDeviceHighVoltageAlarmReported");
+          return pubsub.asyncIterator(
+            "onDashBoardDeviceHighVoltageAlarmReported"
+          );
         },
         (payload, variables, context, info) => {
           //return payload.authorEvent.lastName === variables.lastName;
@@ -320,8 +373,12 @@ module.exports = {
                 });
               },
               error =>
-                console.error("Error listening deviceTransactionsUpdatedEvent", error),
-              () => console.log("deviceTransactionsUpdatedEvent listener STOPED :D")
+                console.error(
+                  "Error listening deviceTransactionsUpdatedEvent",
+                  error
+                ),
+              () =>
+                console.log("deviceTransactionsUpdatedEvent listener STOPED :D")
             );
 
           context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
@@ -337,6 +394,5 @@ module.exports = {
         }
       )
     }
-    
   }
 };
