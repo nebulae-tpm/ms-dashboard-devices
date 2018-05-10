@@ -13,7 +13,7 @@ spec:
         app: dashboard-devices
     spec:      
       containers:
-      - image: nebulaetpm/dashboard-devices.backend.dashboard-devices:0.0.2
+      - image: nebulaetpm/dashboard-devices.backend.dashboard-devices:0.0.3
         name: dashboard-devices
         volumeMounts:
         - name: google-application-credentials
@@ -37,7 +37,7 @@ spec:
           value: EventStore
         # INTERNAL MONGO DB CONFIG
         - name: MONGODB_URL
-          value: mongodb://dashboard-devices-mongo:27017
+          value: mongodb://dash-dev-mongo:27017
         - name: MONGODB_DB_NAME
           value: Device
         # JWT CONGIF        

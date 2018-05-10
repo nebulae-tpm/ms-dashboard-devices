@@ -1,18 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dashboard-devices-mongo
+  name: dash-dev-mongo
 spec:
   ports:
   - port: 27017
-    name: dashboard-devices-mongo
+    name: dash-dev-mongo
   selector:
-    app: dashboard-devices-mongo
+    app: dash-dev-mongo
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: dashboard-devices-mongo-pv-claim
+  name: dash-dev-mongo-pv-claim
 spec:
   accessModes:
     - ReadWriteOnce
@@ -23,26 +23,26 @@ spec:
 apiVersion: apps/v1beta2 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: dashboard-devices-mongo
+  name: dash-dev-mongo
 spec:
   selector:
     matchLabels:
-      app: dashboard-devices-mongo
+      app: dash-dev-mongo
   template:
     metadata:
       labels:
-        app: dashboard-devices-mongo
+        app: dash-dev-mongo
     spec:
       containers:
       - image: mongo:3.7-jessie
-        name: dashboard-devices-mongo        
+        name: dash-dev-mongo        
         ports:
         - containerPort: 27017
-          name: dashboard-devices-mongo
+          name: dash-dev-mongo
         volumeMounts:
-        - name: dashboard-devices-mongo-persistent-storage
+        - name: dash-dev-mongo-persistent-storage
           mountPath: /data/db
       volumes:
-      - name: dashboard-devices-mongo-persistent-storage
+      - name: dash-dev-mongo-persistent-storage
         persistentVolumeClaim:
-          claimName: dashboard-devices-mongo-pv-claim
+          claimName: dash-dev-mongo-pv-claim

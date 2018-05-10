@@ -48,7 +48,6 @@ class DashBoardDevices {
 
   /**
    *  
-   * 
    */
   getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken){
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);

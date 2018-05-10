@@ -666,9 +666,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         });
         this.successfulAndFailedTransactionByGroupNameWidget.cuencas = {};
         data.forEach((item, index) => {
-          this.successfulAndFailedTransactionByGroupNameWidget.cuencas[
-            item
-          ] = index;
+          this.successfulAndFailedTransactionByGroupNameWidget.cuencas[item] = index;
         });
 
         this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
