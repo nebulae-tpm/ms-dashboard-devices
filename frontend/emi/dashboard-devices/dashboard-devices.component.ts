@@ -738,6 +738,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this[widgetName].currentTimeRange = lastTimeRange;
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
+
+      this[widgetName].isReady = true;
   }
 
   errorHandler(error: any): void {

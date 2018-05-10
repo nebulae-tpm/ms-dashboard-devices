@@ -7,7 +7,7 @@
     <div class="widget-group" fxLayout="row" fxFlex="100" fxLayoutWrap fxLayoutAlign="start start" *fuseIfOnDom [@animateStagger]="{value:'50'}">
 
       <!-- ALERTS BY CPU WIDGET -->
-      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByCpu.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
@@ -74,7 +74,7 @@
       <!-- ALERTS BY CPU WIDGET -->
 
       <!-- ALERT BY RAM MEMORY -->
-      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByRamMemory.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
@@ -138,7 +138,7 @@
       <!-- ALERT BY RAM MEMORY -->
 
       <!-- ALERTS BY VOLTAGE WIDGET -->
-      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByVoltage.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
@@ -202,7 +202,7 @@
       <!-- ALERTS BY VOLTAGE WIDGET -->
 
       <!-- ALERTS BY TEMPERATURE WIDGET -->
-      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByTemperature.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">

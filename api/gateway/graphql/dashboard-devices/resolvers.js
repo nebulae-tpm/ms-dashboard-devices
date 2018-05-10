@@ -4,7 +4,6 @@ const pubsub = new PubSub();
 const Rx = require("rxjs");
 const broker = require("../../broker/BrokerFactory")();
 
-
 module.exports = {
   Query: {
     getDashBoardDevicesAlarmReport(root, args, context) {
