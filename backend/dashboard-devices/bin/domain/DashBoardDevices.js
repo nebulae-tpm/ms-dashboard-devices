@@ -47,6 +47,7 @@ class DashBoardDevices {
   }
 
   /**
+   *  
    * 
    */
   getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken){
