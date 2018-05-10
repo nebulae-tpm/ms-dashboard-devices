@@ -6,6 +6,8 @@ const DeviceStatus = require("../data/DevicesStatusDA");
 const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
 const broker = require("../tools/broker/BrokerFactory.js")();
 
+const MATERIALIZED_VIEW_TOPIC = 'materialized-view-updates';
+
 let instance;
 
 class DashBoardDevices {
@@ -62,7 +64,7 @@ class DashBoardDevices {
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
-        broker.send$("MaterializedViewUpdates", "DeviceConnected", msg)
+        broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceConnected", msg)
       );
   }
 
@@ -76,7 +78,7 @@ class DashBoardDevices {
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
-        broker.send$("MaterializedViewUpdates", "DeviceDisconnected", msg)
+        broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceDisconnected", msg)
       );
   }
   /**
@@ -142,7 +144,7 @@ class DashBoardDevices {
       })
       .mergeMap(msg =>
         broker.send$(
-          "MaterializedViewUpdates",
+          MATERIALIZED_VIEW_TOPIC,
           "DeviceCpuUsageAlarmActivated",
           msg
         )
@@ -169,7 +171,7 @@ class DashBoardDevices {
       })
       .mergeMap(msg =>
         broker.send$(
-          "MaterializedViewUpdates",
+          MATERIALIZED_VIEW_TOPIC,
           "DeviceRamMemoryAlarmActivated",
           msg
         )
@@ -194,7 +196,7 @@ class DashBoardDevices {
       })
       .mergeMap(msg =>
         broker.send$(
-          "MaterializedViewUpdates",
+          MATERIALIZED_VIEW_TOPIC,
           "DeviceTemperatureAlarmActivated",
           msg
         )
@@ -236,7 +238,7 @@ class DashBoardDevices {
       })
       .mergeMap(msg =>
         broker.send$(
-          "MaterializedViewUpdates",
+          MATERIALIZED_VIEW_TOPIC,
           "DeviceLowVoltageAlarmReported",
           msg
         )
@@ -261,7 +263,7 @@ class DashBoardDevices {
       })
       .mergeMap(msg =>
         broker.send$(
-          "MaterializedViewUpdates",
+          MATERIALIZED_VIEW_TOPIC,
           "DeviceHighVoltageAlarmReported",
           msg
         )
@@ -356,7 +358,7 @@ class DashBoardDevices {
       })
       .mergeMap(deviceTransactionsUpdatedEvent => {
         return broker.send$(
-          "MaterializedViewUpdates",
+          MATERIALIZED_VIEW_TOPIC,
           "deviceTransactionsUpdatedEvent",
           deviceTransactionsUpdatedEvent
         );

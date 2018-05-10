@@ -177,6 +177,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       ],
       labels: ["12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "13:00"],
       cuencas: {},
+      // cuencasAsync: new Rx.Subject<any[]>(),
       currentCuenca: 0,
       timeRanges: {
         ONE_HOUR: 1,
@@ -244,6 +245,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63"]
       },
       onTimeRangeFilterChanged: (ev: number) => {
+        this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca = 0;
         this.getDeviceTransactionByInterval(
           ev,
           this.successfulAndFailedTransactionByGroupNameWidget.name,
@@ -467,9 +469,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             );
 
             // To update and display the successfulAndFailedTransactionByGroupNameWidget data
-            this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
-              this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
-            )
+            // this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
+            //   this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+            // )
           },
           error => this.errorHandler(error)
         )
@@ -662,12 +664,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           }
           return 0;
         });
-        this.successfulAndFailedTransactionByGroupNameWidget.cuencas = [];
+        this.successfulAndFailedTransactionByGroupNameWidget.cuencas = {};
         data.forEach((item, index) => {
           this.successfulAndFailedTransactionByGroupNameWidget.cuencas[
             item
           ] = index;
         });
+
         this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
           1
         );

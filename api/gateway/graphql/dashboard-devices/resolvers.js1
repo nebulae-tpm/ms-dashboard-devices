@@ -2,11 +2,12 @@ const withFilter = require("graphql-subscriptions").withFilter;
 const PubSub = require("graphql-subscriptions").PubSub;
 const pubsub = new PubSub();
 const Rx = require("rxjs");
+const broker = require('../../broker/BrokerFactory')();
 
 module.exports = {
   Query: {
     getDashBoardDevicesAlarmReport(root, args, context) {
-      return context.broker
+      return broker
         .forwardAndGetReply$(
           "Device",
           "gateway.graphql.query.getDashBoardDevicesAlarmReport",
@@ -16,7 +17,7 @@ module.exports = {
         .toPromise();
     },
     getDashBoardDevicesCurrentNetworkStatus(root, args, context){
-      return context.broker
+      return broker
         .forwardAndGetReply$(
           "Device",
           "gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus",
@@ -27,7 +28,7 @@ module.exports = {
     },
     getCuencaNamesWithSuccessTransactionsOnInterval(root, args, context) {
       // console.log('getCuencaNamesWithSuccessTransactionsOnInterval', args);
-      return context.broker
+      return broker
         .forwardAndGetReply$(
           "Device",
           "gateway.graphql.query.getCuencaNamesWithSuccessTransactionsOnInterval",
@@ -38,7 +39,7 @@ module.exports = {
     },
     getSucessDeviceTransactionsGroupByGroupName(root, args, context) {
       // console.log('getDeviceTransactionsGroupByGroupName', args);
-      return context.broker
+      return broker
         .forwardAndGetReply$(
           "Device",
           "gateway.graphql.query.getDeviceTransactionsGroupByGroupName",
@@ -49,7 +50,7 @@ module.exports = {
     },
     getDeviceTransactionsGroupByTimeInterval(root, args, context) {
       // console.log('getDeviceTransactionGroupByTimeInterval', args);
-      return context.broker
+      return broker
         .forwardAndGetReply$(
           "Device",
           "gateway.graphql.query.getDeviceTransactionsGroupByTimeInterval",
@@ -60,7 +61,7 @@ module.exports = {
     },
     getDeviceDashBoardTotalAccount(root, args, context){
       // console.log('getDeviceDashBoardTotalAccount', args);
-      return context.broker
+      return broker
       .forwardAndGetReply$(
         "Device",
         "gateway.graphql.query.getDeviceDashBoardTotalAccount",
@@ -74,7 +75,7 @@ module.exports = {
     onDashBoardDeviceOnlineReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["DeviceConnected"])
             .subscribe(
               evt => {
@@ -107,7 +108,7 @@ module.exports = {
     onDashBoardDeviceOfflineReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["DeviceDisconnected"])
             .subscribe(
               evt => {
@@ -140,7 +141,7 @@ module.exports = {
     onDashBoardDeviceCpuUsageAlarmActivated: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["DeviceCpuUsageAlarmActivated"])
             .subscribe(
               evt => {
@@ -173,7 +174,7 @@ module.exports = {
     onDashBoardDeviceRamMemoryAlarmActivated:{
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["DeviceRamMemoryAlarmActivated"])
             .subscribe(
               evt => {
@@ -206,7 +207,7 @@ module.exports = {
     onDashBoardDeviceTemperatureAlarmActivated:{
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["DeviceTemperatureAlarmActivated"])
             .subscribe(
               evt => {
@@ -239,7 +240,7 @@ module.exports = {
     onDashBoardDeviceLowVoltageAlarmReported:{
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["DeviceLowVoltageAlarmReported"])
             .subscribe(
               evt => {
@@ -272,7 +273,7 @@ module.exports = {
     onDashBoardDeviceHighVoltageAlarmReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["DeviceHighVoltageAlarmReported"])
             .subscribe(
               evt => {
@@ -306,7 +307,7 @@ module.exports = {
     deviceTransactionsUpdatedEvent: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = context.broker
+          const subscription = broker
             .getMaterializedViewsUpdates$(["deviceTransactionsUpdatedEvent"])
             .subscribe(
               evt => {
