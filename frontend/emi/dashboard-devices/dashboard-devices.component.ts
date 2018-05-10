@@ -318,7 +318,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         this.influxOfUseGaugeChart.timeRanges[
           this.influxOfUseGaugeChart.currentTimeRange
         ].data = data;
-        this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
+        if(data[0]){
+          this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
+        }
+
       },
       updateRowData: result => {
         this.influxOfUseGaugeChart.timeRanges = JSON.parse(
@@ -331,7 +334,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         this.influxOfUseGaugeChart.timeRanges[
           this.influxOfUseGaugeChart.currentTimeRange
         ].data = data;
-        this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
+        if(data[0]){
+          this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
+        }
+
       }
     };
   }
@@ -665,9 +671,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           return 0;
         });
         this.successfulAndFailedTransactionByGroupNameWidget.cuencas = {};
-        data.forEach((item, index) => {
+        if(data && data.length > 0){
+          data.forEach((item, index) => {
           this.successfulAndFailedTransactionByGroupNameWidget.cuencas[item] = index;
-        });
+          });
+        }
 
         this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
           1
@@ -708,6 +716,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
    */
   getCountInArray(array: number[]): number {
     let counter = 0;
+    if(!array || array.length == 0){ return 0; }
     array.forEach(item => {
       counter = counter + item;
     });
