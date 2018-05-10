@@ -116,7 +116,7 @@ type Query {
   "Get a report summary of alarmed devices.  this is used on DashBoardDevices section"
   getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
   getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
-  getDeviceTransactionsGroupByIntervalAndGroupName(startDate: BigInt, endDate: BigInt): [String]!
+  getCuencaNamesWithSuccessTransactionsOnInterval(startDate: BigInt, endDate: BigInt): [String]!
   getSucessDeviceTransactionsGroupByGroupName: [DashboardDeviceTransactionSucessArray]!
   getDeviceTransactionsGroupByTimeInterval(startDate: BigInt, endDate: BigInt, groupName: String): [DashboardDeviceTransaction]!
   getDeviceDashBoardTotalAccount: Int!

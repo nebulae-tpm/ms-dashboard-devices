@@ -25,19 +25,19 @@ module.exports = {
         )
         .toPromise();
     },
-    getDeviceTransactionsGroupByIntervalAndGroupName(root, args, context) {
-      console.log('getDeviceTransactionsGroupByIntervalAndGroupName', args);
+    getCuencaNamesWithSuccessTransactionsOnInterval(root, args, context) {
+      // console.log('getCuencaNamesWithSuccessTransactionsOnInterval', args);
       return context.broker
         .forwardAndGetReply$(
           "Device",
-          "gateway.graphql.query.getDeviceTransactionsGroupByIntervalAndGroupName",
+          "gateway.graphql.query.getCuencaNamesWithSuccessTransactionsOnInterval",
           { root, args, jwt: context.encodedToken },
           500
         )
         .toPromise();
     },
     getSucessDeviceTransactionsGroupByGroupName(root, args, context) {
-      console.log('getDeviceTransactionsGroupByGroupName', args);
+      // console.log('getDeviceTransactionsGroupByGroupName', args);
       return context.broker
         .forwardAndGetReply$(
           "Device",
@@ -48,7 +48,7 @@ module.exports = {
         .toPromise();      
     },
     getDeviceTransactionsGroupByTimeInterval(root, args, context) {
-      console.log('getDeviceTransactionGroupByTimeInterval', args);
+      // console.log('getDeviceTransactionGroupByTimeInterval', args);
       return context.broker
         .forwardAndGetReply$(
           "Device",
@@ -59,7 +59,7 @@ module.exports = {
         .toPromise();
     },
     getDeviceDashBoardTotalAccount(root, args, context){
-      console.log('getDeviceDashBoardTotalAccount', args);
+      // console.log('getDeviceDashBoardTotalAccount', args);
       return context.broker
       .forwardAndGetReply$(
         "Device",
@@ -310,10 +310,10 @@ module.exports = {
             .getMaterializedViewsUpdates$(["deviceTransactionsUpdatedEvent"])
             .subscribe(
               evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
+                // console.log({
+                //   type: evt.type,
+                //   data: evt.data
+                // });
                 pubsub.publish("deviceTransactionsUpdatedEvent", {
                   deviceTransactionsUpdatedEvent: evt.data
                 });

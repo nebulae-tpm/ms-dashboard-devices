@@ -14,8 +14,7 @@
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
             <mat-form-field>
               <mat-select class="simplified font-size-16" [(ngModel)]="alertsByCpu.currentTimeRange"
-                (change)="alertsByCpu.onChangeTimeRange($event.value)"
-                aria-label="Change range">
+                (change)="alertsByCpu.onChangeTimeRange($event.value)" aria-label="Change range">
                 <mat-option *ngFor="let range of alertsByCpu.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
@@ -278,9 +277,9 @@
                   <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
                 </div>
                 <mat-form-field class="px-8 py-8">
-                  <mat-select class="simplified font-size-16" [(ngModel)]="widget8.currentTimeRange"
-                  (change)="widget8.onChangeTimeRange($event.value)" aria-label="Change range">
-                    <mat-option *ngFor="let range of widget8.timeRanges | timeRangeKeys" [value]="range.index">
+                  <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUserAdvancedPieChart.currentTimeRange"
+                  (change)="influxOfUserAdvancedPieChart.onChangeTimeRange($event.value)" aria-label="Change range">
+                    <mat-option *ngFor="let range of influxOfUserAdvancedPieChart.timeRanges | timeRangeKeys" [value]="range.index">
                       {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                     </mat-option>
                   </mat-select>
@@ -299,10 +298,10 @@
           <!-- chart -->
           <div class="h-420">
             <ngx-charts-advanced-pie-chart
-              [results]="widget8.data"
+              [results]="influxOfUserAdvancedPieChart.data"
               [label]="'DASHBOARD.TOTAL_USAGES' | translate "
               [animations]= "true"
-              [scheme]="widget8.scheme" >
+              [scheme]="influxOfUserAdvancedPieChart.scheme" >
             </ngx-charts-advanced-pie-chart>
           </div>
           <!-- end chart -->
@@ -317,9 +316,9 @@
               <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
             </div>
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
-                <mat-select class="simplified font-size-16" [(ngModel)]="widget9.currentTimeRange"
-                (change)="widget9.onChangeTimeRange($event.value)" aria-label="Change range">
-                  <mat-option *ngFor="let range of widget9.timeRanges | timeRangeKeys" [value]="range.index" >
+                <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange"
+                (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)" aria-label="Change range">
+                  <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeys" [value]="range.index" >
                     {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                   </mat-option>
                 </mat-select>
@@ -330,14 +329,14 @@
           </div>
           <div class="h-420">
             <ngx-charts-gauge
-              [results]="widget9.timeRanges[widget9.currentTimeRange].data"
+              [results]="influxOfUseGaugeChart.timeRanges[influxOfUseGaugeChart.currentTimeRange].data"
               [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate"
-              [legend]="widget9.legend"
-              [max]="widget9.max"
-              [scheme]="widget9.scheme"
+              [legend]="influxOfUseGaugeChart.legend"
+              [max]="influxOfUseGaugeChart.max"
+              [scheme]="influxOfUseGaugeChart.scheme"
               [units]=" 'DASHBOARD.TOTAL_USAGES' | translate"
-              [textValue]="widget9.textValue"
-              (select)="widget9.toggleLegend()" >
+              [textValue]="influxOfUseGaugeChart.textValue"
+              (select)="influxOfUseGaugeChart.toggleLegend()" >
             </ngx-charts-gauge>
           </div>
         </div>
@@ -354,32 +353,25 @@
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
 
           <div class="px-16 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
-
             <div fxFlex class="py-8 h2">
               <strong style="text-align: center; float: center"> {{'DASHBOARD.DEVICES_BY_CUENCA' | translate}} </strong>
             </div>
-
-            <!-- <div fxFlex="0 1 auto" class="py-8" fxLayout="row">
-              <button mat-button class="px-16" *ngFor="let range of widgets.widget5.ranges | keys" (click)="widget5.currentRange = range.key"
-                [disabled]="widget5.currentRange == range.key">
-                {{range.value}}
-              </button>
-            </div> -->
           </div>
 
           <div class="h-420">
-            <ngx-charts-bar-vertical-stacked *fuseIfOnDom [scheme]="widget5.scheme"
-              [results]="widget5.data"
-              [barPadding]= "widget5.barPadding"
-              [gradient]="widget5.gradient"
-              [xAxis]="widget5.xAxis"
-              [yAxis]="widget5.yAxis"
-              [legend]="widget5.legend"
-              [showXAxisLabel]="widget5.showXAxisLabel"
-              [showYAxisLabel]="widget5.showYAxisLabel"
-              [xAxisLabel]="widget5.xAxisLabel"
-              [yAxisLabel]="'DASHBOARD.TOTAL_USAGES' | translate"
-              (select)="widget5.onSelect($event)">
+            <ngx-charts-bar-vertical-stacked *fuseIfOnDom
+              [scheme]="onlineVsOfflineByGroupNameWidget.scheme"
+              [results]="onlineVsOfflineByGroupNameWidget.data"
+              [barPadding]= "onlineVsOfflineByGroupNameWidget.barPadding"
+              [gradient]="onlineVsOfflineByGroupNameWidget.gradient"
+              [xAxis]="onlineVsOfflineByGroupNameWidget.xAxis"
+              [yAxis]="onlineVsOfflineByGroupNameWidget.yAxis"
+              [legend]="onlineVsOfflineByGroupNameWidget.legend"
+              [showXAxisLabel]="onlineVsOfflineByGroupNameWidget.showXAxisLabel"
+              [showYAxisLabel]="onlineVsOfflineByGroupNameWidget.showYAxisLabel"
+              [xAxisLabel]="onlineVsOfflineByGroupNameWidget.xAxisLabel"
+              [yAxisLabel]="onlineVsOfflineByGroupNameWidget.yAxisLabel | translate"
+              (select)="onlineVsOfflineByGroupNameWidget.onSelect($event)">
             </ngx-charts-bar-vertical-stacked>
           </div>
         </div>
@@ -398,8 +390,8 @@
               <strong> {{ 'DASHBOARD.USAGES_VS_ERRORS' | translate }} </strong>
             </div>
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
-              <mat-select class="simplified" [(ngModel)]="widget6.currentTimeRange" (change)="widget6.onRangeChanged($event.value)" aria-label="Change range">
-                <mat-option *ngFor="let range of widget6.timeRanges | keys" [value]="range.value">
+              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionWidget.currentTimeRange" (change)="successfulAndFailedTransactionWidget.onRangeChanged($event.value)" aria-label="Change range">
+                <mat-option *ngFor="let range of successfulAndFailedTransactionWidget.timeRanges | keys" [value]="range.value">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
@@ -407,8 +399,12 @@
           </div>
 
           <div class="h-400">
-            <canvas baseChart [datasets]="widget6.datasets" [labels]="widget6.labels" [colors]="widget6.colors" [options]="widget6.options"
-              [chartType]="widget6.chartType">
+            <canvas baseChart
+              [datasets]="successfulAndFailedTransactionWidget.datasets"
+              [labels]="successfulAndFailedTransactionWidget.labels"
+              [colors]="successfulAndFailedTransactionWidget.colors"
+              [options]="successfulAndFailedTransactionWidget.options"
+              [chartType]="successfulAndFailedTransactionWidget.chartType">
             </canvas>
           </div>
 
@@ -416,12 +412,12 @@
 
             <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
-              <span class="h4"> {{ widget6.usagesCount }} </span>
+              <span class="h4"> {{ successfulAndFailedTransactionWidget.usagesCount }} </span>
             </div>
 
             <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0">{{'DASHBOARD.ERRORS' | translate}}</span>
-              <span class="h4">{{widget6.errorsCount }}</span>
+              <span class="h4">{{successfulAndFailedTransactionWidget.errorsCount }}</span>
             </div>
           </div>
 
@@ -442,20 +438,20 @@
             </div>
 
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25"  >
-              <mat-select class="simplified" [(ngModel)]="widget7.currentTimeRange"
-                (change)="widget7.onTimeRangeFilterChanged($event.value)"
+              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionByGroupNameWidget.currentTimeRange"
+                (change)="successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.timeRanges | keys" [value]="range.value">
+                <mat-option *ngFor="let range of successfulAndFailedTransactionByGroupNameWidget.timeRanges | keys" [value]="range.value">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
 
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
-              <mat-select class="simplified" [(ngModel)]="widget7.currentCuenca"
-                (change)="widget7.onCuencaFilterChanged($event.value)"
+              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionByGroupNameWidget.currentCuenca"
+                (change)="successfulAndFailedTransactionByGroupNameWidget.onCuencaFilterChanged($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of widget7.cuencas | keys" [value]="range.value">
+                <mat-option *ngFor="let range of successfulAndFailedTransactionByGroupNameWidget.cuencas | keys" [value]="range.value">
                   {{ range.key }}
                 </mat-option>
               </mat-select>
@@ -463,8 +459,12 @@
           </div>
 
           <div class="h-400">
-            <canvas baseChart [datasets]="widget7.datasets" [labels]="widget7.labels"
-            [colors]="widget7.colors" [options]="widget7.options" [chartType]="widget7.chartType">
+            <canvas baseChart
+              [datasets]="successfulAndFailedTransactionByGroupNameWidget.datasets"
+              [labels]="successfulAndFailedTransactionByGroupNameWidget.labels"
+              [colors]="successfulAndFailedTransactionByGroupNameWidget.colors"
+              [options]="successfulAndFailedTransactionByGroupNameWidget.options"
+              [chartType]="successfulAndFailedTransactionByGroupNameWidget.chartType">
             </canvas>
           </div>
 
@@ -472,12 +472,12 @@
 
             <div class="py-8 border-right" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0"> {{ 'DASHBOARD.USAGES' | translate }} </span>
-              <span class="h4"> {{ widget7.usagesCount }} </span>
+              <span class="h4"> {{ successfulAndFailedTransactionByGroupNameWidget.usagesCount }} </span>
             </div>
 
             <div class="py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="50">
               <span class="mat-display-1 mb-0">{{ 'DASHBOARD.ERRORS' | translate }}</span>
-              <span class="h4"> {{ widget7.errorsCount }} </span>
+              <span class="h4"> {{ successfulAndFailedTransactionByGroupNameWidget.errorsCount }} </span>
             </div>
           </div>
 

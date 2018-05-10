@@ -72,11 +72,9 @@ class DashBoardDevices {
   handleDeviceDisconnectedEvent$(evt) {
     console.log("handleDeviceDisconnectedEvent", evt);
     return DeviceStatus.onDeviceOfflineReported(evt.aid)
-    .map(results => results.filter(result => result._id.cuenca))
-    
+    .map(results => results.filter(result => result._id.cuenca))    
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
-      .do(r => console.log("::", JSON.stringify(r), "::"))
       .mergeMap(msg =>
         broker.send$("MaterializedViewUpdates", "DeviceDisconnected", msg)
       );
@@ -186,13 +184,6 @@ class DashBoardDevices {
     return this.getTimeRangesToLimit$(evt, "TEMPERATURE")
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
-      // .do(r => console.log("====> ", JSON.stringify(r)))
-      // .mergeMap(result => {
-      //   Rx.Observable.from(result)
-      //   .mergeMap(rb =>)
-      //   .subscribe(ra => console.log("##########>>>> ", JSON.stringify(ra)))
-      //   return Rx.Observable.of(result)
-      // })
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
@@ -282,10 +273,10 @@ class DashBoardDevices {
    * @param {*} param0
    * @param {*} authToken
    */
-  getDeviceTransactionsGroupByIntervalAndGroupName$({ root, args, jwt }, authToken) {
-    // console.log("------------ getDeviceTransactionsGroupByIntervalAndGroupName", args);
+  getCuencaNamesWithSuccessTransactionsOnInterval$({ root, args, jwt }, authToken) {
+    // console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
     return DeviceTransactionsDA
-    .getDeviceTransactionGroupByTimeIntervalAndGroupName$(args.startDate, args.endDate)  
+    .getCuencaNamesWithSuccessTransactionsOnInterval$(args.startDate, args.endDate)  
     .map(response => {
       const result = [];
       response.forEach(item => {
@@ -293,8 +284,6 @@ class DashBoardDevices {
       });
       return result;
     });
-    // .do(val => console.log('RESULT ===========> ', JSON.stringify(val), "<==========="))
-    // .subscribe(r => {})
   }
 
   /**
@@ -303,7 +292,7 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDeviceTransactionsGroupByTimeInterval$({ root, args, jwt }, authToken) {
-    console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
+    // console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
     return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(
       args.startDate,
       args.endDate,

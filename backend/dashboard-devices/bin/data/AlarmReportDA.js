@@ -2,6 +2,7 @@
 
 const mongoDB = require('./MongoDB')();
 const Rx = require('rxjs');
+const CollectionName = "DeviceAlarmReports";
 
 class AlarmReportDA {
   /**
@@ -20,7 +21,7 @@ class AlarmReportDA {
    * @param {Object} device
    */
   static onDeviceCpuUsageAlarmActivated(evt) {
-    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    const collection = mongoDB.db.collection(CollectionName);
     const alarmType = "CPU_USAGE";
     return Rx.Observable.fromPromise(
       collection.insertOne({
@@ -46,7 +47,7 @@ class AlarmReportDA {
    * @param {Object} evt 
    */
   static onDeviceAlarmActivated$(evt) {
-    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    const collection = mongoDB.db.collection(CollectionName);
     const alarmType = evt.alarmType;
     return Rx.Observable.fromPromise(
       collection.insertOne({
@@ -72,7 +73,7 @@ class AlarmReportDA {
    * @param {string} type of alert
    */
   static getAlarmsInRangeOfTime(lowestLimit, alarmType) {
-    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(
       collection
         .aggregate([
@@ -96,7 +97,7 @@ class AlarmReportDA {
 
 
   static getDistinctDevicesOnAlarm$(result, lowestLimit, alarmType){
-    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(
       collection
         .aggregate([
@@ -128,7 +129,7 @@ class AlarmReportDA {
    * @param {int} topLimit Top devices  limit
    */
   static getTopAlarmDevices$(timeRanges, topLimit) {
-    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.from(timeRanges)
     .mergeMap(timeRange => {
       return (
@@ -175,7 +176,7 @@ class AlarmReportDA {
   }
 
   static generateAlarms__RANDOM__() {
-    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    const collection = mongoDB.db.collection(CollectionName);
     const types = ["VOLTAGE", "TEMPERATURE", "CPU_USAGE", "RAM_MEMORY"];
     const units = ["V", "C", "%", "%"];
     const selection = Math.floor(Math.random() * 4);
@@ -192,7 +193,7 @@ class AlarmReportDA {
   }
 
   static calculateTimeRanges$(evt) {
-    const collection = mongoDB.db.collection("DeviceAlarmReports");
+    const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(collection
         .aggregate([
           { $match: { type: evt.data.alarmType } },

@@ -35,9 +35,9 @@ export const getDeviceTransactionsGroupByTimeInterval = gql`
 `;
 
 // Gets the devices transactions group by group name and time intervals of 10 minutes
-export const getDeviceTransactionsGroupByIntervalAndGroupName = gql`
-  query getDeviceTransactionsGroupByIntervalAndGroupName($startDate: BigInt, $endDate: BigInt){
-    getDeviceTransactionsGroupByIntervalAndGroupName(startDate: $startDate, endDate: $endDate)
+export const getCuencaNamesWithSuccessTransactionsOnInterval = gql`
+  query getCuencaNamesWithSuccessTransactionsOnInterval($startDate: BigInt, $endDate: BigInt){
+    getCuencaNamesWithSuccessTransactionsOnInterval(startDate: $startDate, endDate: $endDate)
   }
 `;
 

@@ -37,8 +37,7 @@ class DeviceTransactionsDA {
    * @param {*} startDate Start date
    * @param {*} endDate  End date
    */
-  static getDeviceTransactionGroupByTimeIntervalAndGroupName$(startDate, endDate) {
-    console.log(startDate, endDate);
+  static getCuencaNamesWithSuccessTransactionsOnInterval$(startDate, endDate) {
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(
       collection

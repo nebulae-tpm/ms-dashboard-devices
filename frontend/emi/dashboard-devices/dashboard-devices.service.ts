@@ -16,7 +16,7 @@ import {
   onDeviceLowVoltageAlarmActivated,
   onDeviceHighVoltageAlarmActivated,
   getDeviceTransactionsGroupByTimeInterval,
-  getDeviceTransactionsGroupByIntervalAndGroupName,
+  getCuencaNamesWithSuccessTransactionsOnInterval,
   getSucessDeviceTransactionsGroupByGroupName,
   deviceTransactionsUpdatedEvent,
   getDeviceDashBoardTotalAccount
@@ -48,15 +48,15 @@ export class DashboardDevicesService {
    * @param startDate Start date
    * @param endDate End date
    */
-  getDeviceTransactionsGroupByIntervalAndGroupName(startDate: number, endDate: number) {
+  getCuencaNamesWithSuccessTransactionsOnInterval(startDate: number, endDate: number) {
     return this.gateway.apollo.watchQuery<any>({
-      query: getDeviceTransactionsGroupByIntervalAndGroupName,
+      query: getCuencaNamesWithSuccessTransactionsOnInterval,
       variables: {
         startDate: startDate,
         endDate: endDate
       }
     }).valueChanges
-    .map(respond => respond.data.getDeviceTransactionsGroupByIntervalAndGroupName)
+    .map(respond => respond.data.getCuencaNamesWithSuccessTransactionsOnInterval)
   }
 
   getDashboardDeviceAlertsBy(alarmType: string) {
