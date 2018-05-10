@@ -12,7 +12,9 @@
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-form-field>
+
+
+            <mat-form-field *ngIf="alertsByCpu.timeRanges" >
               <mat-select class="simplified font-size-16" [(ngModel)]="alertsByCpu.currentTimeRange"
                 (change)="alertsByCpu.onChangeTimeRange($event.value)" aria-label="Change range">
                 <mat-option *ngFor="let range of alertsByCpu.timeRanges | timeRangeKeys" [value]="range.index">
@@ -20,6 +22,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
+
             <button mat-icon-button fuseWidgetToggle aria-label="more">
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -76,7 +79,7 @@
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-form-field>
+            <mat-form-field *ngIf="alertsByRamMemory.timeRanges" >
               <mat-select class="simplified font-size-16" [(ngModel)]="alertsByRamMemory.currentTimeRange"
               aria-label="Change range" (change)="alertsByRamMemory.onChangeTimeRange($event.value)">
                 <mat-option *ngFor="let range of alertsByRamMemory.timeRanges | timeRangeKeys" [value]="range.index">
@@ -140,7 +143,7 @@
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-form-field>
+            <mat-form-field *ngIf="alertsByVoltage.timeRanges"  >
               <mat-select class="simplified font-size-16" [(ngModel)]="alertsByVoltage.currentTimeRange"
                 aria-label="Change range" (change)="alertsByVoltage.onChangeTimeRange($event.value)">
                 <mat-option *ngFor="let range of alertsByVoltage.timeRanges | timeRangeKeys" [value]="range.index">
@@ -204,7 +207,7 @@
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-form-field>
+            <mat-form-field *ngIf="alertsByTemperature.timeRanges" >
               <mat-select class="simplified font-size-16" [(ngModel)]="alertsByTemperature.currentTimeRange"
                 aria-label="Change range" (change)="alertsByTemperature.onChangeTimeRange($event.value)">
                 <mat-option *ngFor="let range of alertsByTemperature.timeRanges | timeRangeKeys" [value]="range.index">
