@@ -16,7 +16,8 @@ import {
   pairwise,
   filter,
   groupBy,
-  tap
+  tap,
+  switchMap
 } from "rxjs/operators";
 import { range } from "rxjs/observable/range";
 import { locale as english } from "./i18n/en";
@@ -150,7 +151,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       usagesCount: 0,
       errorsCount: 0,
       onRangeChanged: (range: number) => {
-        this.getDeviceTransactionByInterval(range, this.successfulAndFailedTransactionWidget.name, null);
+        this.getDeviceTransactionByInterval(
+          range,
+          this.successfulAndFailedTransactionWidget.name,
+          null
+        );
       }
     };
     this.successfulAndFailedTransactionByGroupNameWidget = {
@@ -242,11 +247,15 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         this.getDeviceTransactionByInterval(
           ev,
           this.successfulAndFailedTransactionByGroupNameWidget.name,
-          Object.keys(this.successfulAndFailedTransactionByGroupNameWidget.cuencas)[0]
+          Object.keys(
+            this.successfulAndFailedTransactionByGroupNameWidget.cuencas
+          )[0]
         );
       },
       onCuencaFilterChanged: ev => {
-        const cuencaSelected = Object.keys(this.successfulAndFailedTransactionByGroupNameWidget.cuencas)[ev];
+        const cuencaSelected = Object.keys(
+          this.successfulAndFailedTransactionByGroupNameWidget.cuencas
+        )[ev];
 
         this.getDeviceTransactionByInterval(
           this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange,
@@ -268,13 +277,20 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         let newData = this.influxOfUserAdvancedPieChart.timeRanges[
           this.influxOfUserAdvancedPieChart.currentTimeRange
         ].data.slice();
-        this.influxOfUserAdvancedPieChart.data = newData.sort((a, b) => b.value - a.value);
+        this.influxOfUserAdvancedPieChart.data = newData.sort(
+          (a, b) => b.value - a.value
+        );
       },
       updateRowData: data => {
-        this.influxOfUserAdvancedPieChart.timeRanges = JSON.parse(JSON.stringify(data));
-        let dataUpdated = this.influxOfUserAdvancedPieChart.timeRanges[this.influxOfUserAdvancedPieChart.currentTimeRange]
-          .data;
-        this.influxOfUserAdvancedPieChart.data = dataUpdated.sort((a, b) => b.value - a.value);
+        this.influxOfUserAdvancedPieChart.timeRanges = JSON.parse(
+          JSON.stringify(data)
+        );
+        let dataUpdated = this.influxOfUserAdvancedPieChart.timeRanges[
+          this.influxOfUserAdvancedPieChart.currentTimeRange
+        ].data;
+        this.influxOfUserAdvancedPieChart.data = dataUpdated.sort(
+          (a, b) => b.value - a.value
+        );
       }
     };
     this.influxOfUseGaugeChart = {
@@ -297,16 +313,22 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           this.influxOfUseGaugeChart.currentTimeRange
         ].data.slice();
         data = data.sort((a, b) => b.value - a.value);
-        this.influxOfUseGaugeChart.timeRanges[this.influxOfUseGaugeChart.currentTimeRange].data = data;
+        this.influxOfUseGaugeChart.timeRanges[
+          this.influxOfUseGaugeChart.currentTimeRange
+        ].data = data;
         this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
       },
       updateRowData: result => {
-        this.influxOfUseGaugeChart.timeRanges = JSON.parse(JSON.stringify(result));
+        this.influxOfUseGaugeChart.timeRanges = JSON.parse(
+          JSON.stringify(result)
+        );
         let data = this.influxOfUseGaugeChart.timeRanges[
           this.influxOfUseGaugeChart.currentTimeRange
         ].data.slice();
         data = data.sort((a, b) => b.value - a.value);
-        this.influxOfUseGaugeChart.timeRanges[this.influxOfUseGaugeChart.currentTimeRange].data = data;
+        this.influxOfUseGaugeChart.timeRanges[
+          this.influxOfUseGaugeChart.currentTimeRange
+        ].data = data;
         this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
       }
     };
@@ -314,17 +336,33 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
-    this.getAllCuencaNamesWithSuccessTransactionsOnInterval(this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange);
+    this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
+      this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+    );
 
     // gets the total number of devices to show in alarms widgets
     this.totalDeviceAccout = this.graphQlGatewayService.getAllDevicesAccount();
 
     // fill the chart of transaction Vs write erros in all System
-    this.getDeviceTransactionByInterval(1, this.successfulAndFailedTransactionWidget.name, null);
-
+    this.getDeviceTransactionByInterval(
+      1,
+      this.successfulAndFailedTransactionWidget.name,
+      null
+    );
 
     // All RxJs Subscriptions with querie and subscriptions of grahpQl
     this.allSubscriptions.push(
+      // Fill the data neccesary to display influxOfUserAdvancedPieChart and influxOfUseGaugeChart
+      this.graphQlGatewayService
+        .getSucessTransactionsGroupByGroupName()
+        .subscribe(
+          result => {
+            this.influxOfUserAdvancedPieChart.updateRowData(result);
+            this.influxOfUseGaugeChart.updateRowData(result);
+          },
+          error => this.errorHandler(error)
+        ),
+
       // online Vs offline GraphQl Query
       this.graphQlGatewayService.getDevicesOnlineVsOffline().subscribe(
         result => {
@@ -333,17 +371,17 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         },
         error => this.errorHandler(error)
       ),
-
       // online Vs offline GraphQl Subscription
       this.graphQlGatewayService
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
-          (result) => {
+          result => {
             this.onlineVsOfflineByGroupNameWidget.data = result;
             // this.widget5.barPadding = (Math.floor(Math.random() * 300 + 100));
           },
-          (error) => this.errorHandler(error)
+          error => this.errorHandler(error)
         ),
+
       // CPU_USAGE GraphQl Query
       this.graphQlGatewayService
         .getDashboardDeviceAlertsBy("CPU_USAGE")
@@ -408,30 +446,33 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .subscribe(
           response => this.buildWidget("alertsByTemperature", response),
           error => this.errorHandler(error)
+        ),
+      // GraphQl Subscription to let know about an update in transactions
+      this.graphQlGatewayService
+        .listenDeviceTransactionsUpdates()
+        .pipe(
+          switchMap(event =>
+            this.graphQlGatewayService.getSucessTransactionsGroupByGroupName()
+          )
         )
-    );
+        .subscribe(
+          data => {
+            // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
+            this.influxOfUserAdvancedPieChart.updateRowData(data);
+            this.influxOfUseGaugeChart.updateRowData(data);
 
-    /**
-     * subcription to receive the query respond about Influx of users
-     * widget 8 y 9
-     */
-    this.getSucessTransactions();
-    this.allSubscriptions.push(
-      this.graphQlGatewayService.listenDeviceTransactionsUpdates().subscribe(
-        () => {
-          this.graphQlGatewayService
-            .getSucessTransactionsGroupByGroupName()
-            .subscribe(
-              result => {
-                this.getSucessTransactions();
-                this.successfulAndFailedTransactionWidget
-                .onRangeChanged(this.successfulAndFailedTransactionWidget.currentTimeRange);
-              },
-              error => this.errorHandler(error)
+            // To update and display the successfulAndFailedTransactionWidget data.
+            this.successfulAndFailedTransactionWidget.onRangeChanged(
+              this.successfulAndFailedTransactionWidget.currentTimeRange
             );
-        },
-        error => this.errorHandler(error)
-      )
+
+            // To update and display the successfulAndFailedTransactionByGroupNameWidget data
+            this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
+              this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+            )
+          },
+          error => this.errorHandler(error)
+        )
     );
   }
 
@@ -623,9 +664,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         });
         this.successfulAndFailedTransactionByGroupNameWidget.cuencas = [];
         data.forEach((item, index) => {
-          this.successfulAndFailedTransactionByGroupNameWidget.cuencas[item] = index;
+          this.successfulAndFailedTransactionByGroupNameWidget.cuencas[
+            item
+          ] = index;
         });
-        this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(1);
+        this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
+          1
+        );
         subcriptionByIntervalAndGroupName.unsubscribe();
       });
   }
@@ -637,19 +682,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   onSelectChart(e) {
     console.log(e);
-  }
-
-  getSucessTransactions() {
-    const subscription = this.graphQlGatewayService
-      .getSucessTransactionsGroupByGroupName()
-      .subscribe(
-        result => {
-          this.influxOfUserAdvancedPieChart.updateRowData(result);
-          this.influxOfUseGaugeChart.updateRowData(result);
-          subscription.unsubscribe();
-        },
-        error => this.errorHandler(error)
-      );
   }
 
   getMaxUsageMeter(realMax: number): number {
@@ -681,7 +713,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     return counter;
   }
 
-
   buildWidget(widgetName: string, widgetContent: any): void {
     const isNew = this[widgetName].currentTimeRange ? false : true;
     let lastTimeRange = 0;
@@ -690,7 +721,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this[widgetName].timeRanges[this[widgetName].currentTimeRange].topDevices;
     }
     this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
-    this[widgetName].timeRanges = this[widgetName].timeRanges.sort((a: any, b: any) => a.order - b.order);
+    this[widgetName].timeRanges = this[widgetName].timeRanges.sort(
+      (a: any, b: any) => a.order - b.order
+    );
     this[widgetName].currentTimeRange = lastTimeRange;
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
