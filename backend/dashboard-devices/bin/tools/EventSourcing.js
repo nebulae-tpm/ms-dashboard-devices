@@ -10,11 +10,11 @@ let instance;
 class EventSourcing {
 
     constructor() {
-        // console.log("new --> class EventSourcing");
         this.eventStore = new EventStore(
             {
                 type: process.env.EVENT_STORE_BROKER_TYPE,
                 eventsTopic: process.env.EVENT_STORE_BROKER_EVENTS_TOPIC,
+                eventsTopicSubscription: `${process.env.EVENT_STORE_BROKER_EVENTS_TOPIC}_dashboard-devices`,
                 brokerUrl: process.env.EVENT_STORE_BROKER_URL,
                 projectId: process.env.EVENT_STORE_BROKER_PROJECT_ID,
             },
