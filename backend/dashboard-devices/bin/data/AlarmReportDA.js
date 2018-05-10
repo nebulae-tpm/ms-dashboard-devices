@@ -227,4 +227,5 @@ class AlarmReportDA {
   }
 }
 
+
 module.exports = AlarmReportDA;
