@@ -272,7 +272,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       data: [],
       currentTimeRange: 0,
       scheme: {
-        domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63", "#533599"]
+        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300" ]
       },
       onChangeTimeRange: index => {
         this.influxOfUserAdvancedPieChart.currentTimeRange = index;
@@ -295,12 +295,15 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         );
       }
     };
+    // timeRanges[influxOfUseGaugeChart.currentTimeRange].data
     this.influxOfUseGaugeChart = {
       isReady: false,
+      data: [],
       timeRanges: [],
       currentTimeRange: 0,
       scheme: {
-        domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63", "#533599"]
+        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300" ]
+        // domain: ["#3399ff", "#9999ff", "#33ff77", "#ff6666", "#cc00cc"]
       },
       units: "Usos totales",
       max: 100,
@@ -316,9 +319,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           this.influxOfUseGaugeChart.currentTimeRange
         ].data.slice();
         data = data.sort((a, b) => b.value - a.value);
-        this.influxOfUseGaugeChart.timeRanges[
-          this.influxOfUseGaugeChart.currentTimeRange
-        ].data = data;
+        this.influxOfUseGaugeChart.data = data;
         if(data[0]){
           this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
         }
@@ -332,9 +333,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           this.influxOfUseGaugeChart.currentTimeRange
         ].data.slice();
         data = data.sort((a, b) => b.value - a.value);
-        this.influxOfUseGaugeChart.timeRanges[
-          this.influxOfUseGaugeChart.currentTimeRange
-        ].data = data;
+        this.influxOfUseGaugeChart.data = data;
         this.influxOfUseGaugeChart.isReady = true;
         if(data[0]){
           this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
@@ -344,7 +343,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("Running Version 0.0.6");
+    console.log("Running Version 0.0.11");
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
@@ -477,9 +476,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             );
 
             // To update and display the successfulAndFailedTransactionByGroupNameWidget data
-            // this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
-            //   this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
-            // )
+            this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
+              this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+            )
           },
           error => this.errorHandler(error)
         )
@@ -521,14 +520,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
       for (let timeInterval of timeIntervals) {
         for (let transactionInterval of transactionsGroupByTimeIntervals) {
-          // console.log(
-          //   "transactionInterval.interval => " +
-          //     transactionInterval.interval +
-          //     " -- " +
-          //     timeInterval.interval +
-          //     " ******* " +
-          //     (transactionInterval.interval == timeInterval.interval)
-          // );
           if (transactionInterval.interval == timeInterval.interval) {
             timeInterval.transactions = transactionInterval.transactions;
             timeInterval.errors = transactionInterval.errors;
@@ -706,9 +697,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     while (resp % 100 !== 0) {
       resp = resp + 10;
     }
-    while (resp % 1000 !== 0) {
-      resp = resp + 100;
-    }
+    // while (resp % 1000 !== 0) {
+    //   resp = resp + 100;
+    // }
     return resp;
   }
 
