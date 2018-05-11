@@ -15,7 +15,7 @@ module.exports = {
           500
         )
         .toPromise();
-    },        
+    },
     getDashBoardDevicesCurrentNetworkStatus(root, args, context) {
       return broker
         .forwardAndGetReply$(
@@ -75,34 +75,6 @@ module.exports = {
     onDashBoardDeviceOnlineReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["DeviceConnected"])
-            .subscribe(
-              evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
-                pubsub.publish("onDashBoardDeviceOnlineReported", {
-                  onDashBoardDeviceOnlineReported: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening onDashBoardDeviceOnlineReported",
-                  error
-                ),
-              () =>
-                console.log(
-                  "onDashBoardDeviceOnlineReported listener STOPED :D"
-                )
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator("onDashBoardDeviceOnlineReported");
         },
         (payload, variables, context, info) => {
@@ -114,34 +86,6 @@ module.exports = {
     onDashBoardDeviceOfflineReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["DeviceDisconnected"])
-            .subscribe(
-              evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
-                pubsub.publish("onDashBoardDeviceOfflineReported", {
-                  onDashBoardDeviceOfflineReported: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening onDashBoardDeviceOfflineReported",
-                  error
-                ),
-              () =>
-                console.log(
-                  "onDashBoardDeviceOfflineReported listener STOPED :D"
-                )
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator("onDashBoardDeviceOfflineReported");
         },
         (payload, variables, context, info) => {
@@ -153,34 +97,6 @@ module.exports = {
     onDashBoardDeviceCpuUsageAlarmActivated: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["DeviceCpuUsageAlarmActivated"])
-            .subscribe(
-              evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
-                pubsub.publish("onDashBoardDeviceCpuUsageAlarmActivated", {
-                  onDashBoardDeviceCpuUsageAlarmActivated: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening onDashBoardDeviceCpuUsageAlarmActivated",
-                  error
-                ),
-              () =>
-                console.log(
-                  "onDashBoardDeviceCpuUsageAlarmActivated listener STOPED :D"
-                )
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator(
             "onDashBoardDeviceCpuUsageAlarmActivated"
           );
@@ -194,34 +110,6 @@ module.exports = {
     onDashBoardDeviceRamMemoryAlarmActivated: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["DeviceRamMemoryAlarmActivated"])
-            .subscribe(
-              evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
-                pubsub.publish("onDashBoardDeviceRamMemoryAlarmActivated", {
-                  onDashBoardDeviceRamMemoryAlarmActivated: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening onDashBoardDeviceRamMemoryAlarmActivated",
-                  error
-                ),
-              () =>
-                console.log(
-                  "onDashBoardDeviceRamMemoryAlarmActivated listener STOPED :D"
-                )
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator(
             "onDashBoardDeviceRamMemoryAlarmActivated"
           );
@@ -235,34 +123,6 @@ module.exports = {
     onDashBoardDeviceTemperatureAlarmActivated: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["DeviceTemperatureAlarmActivated"])
-            .subscribe(
-              evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
-                pubsub.publish("onDashBoardDeviceTemperatureAlarmActivated", {
-                  onDashBoardDeviceTemperatureAlarmActivated: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening onDashBoardDeviceTemperatureAlarmActivated",
-                  error
-                ),
-              () =>
-                console.log(
-                  "onDashBoardDeviceTemperatureAlarmActivated listener STOPED :D"
-                )
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator(
             "onDashBoardDeviceTemperatureAlarmActivated"
           );
@@ -276,34 +136,6 @@ module.exports = {
     onDashBoardDeviceLowVoltageAlarmReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["DeviceLowVoltageAlarmReported"])
-            .subscribe(
-              evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
-                pubsub.publish("onDashBoardDeviceLowVoltageAlarmReported", {
-                  onDashBoardDeviceLowVoltageAlarmReported: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening onDashBoardDeviceLowVoltageAlarmReported",
-                  error
-                ),
-              () =>
-                console.log(
-                  "onDashBoardDeviceLowVoltageAlarmReported listener STOPED :D"
-                )
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator(
             "onDashBoardDeviceLowVoltageAlarmReported"
           );
@@ -317,34 +149,6 @@ module.exports = {
     onDashBoardDeviceHighVoltageAlarmReported: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["DeviceHighVoltageAlarmReported"])
-            .subscribe(
-              evt => {
-                console.log({
-                  type: evt.type,
-                  data: evt.data
-                });
-                pubsub.publish("onDashBoardDeviceHighVoltageAlarmReported", {
-                  onDashBoardDeviceHighVoltageAlarmReported: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening onDashBoardDeviceHighVoltageAlarmReported",
-                  error
-                ),
-              () =>
-                console.log(
-                  "onDashBoardDeviceHighVoltageAlarmReported listener STOPED :D"
-                )
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator(
             "onDashBoardDeviceHighVoltageAlarmReported"
           );
@@ -359,32 +163,6 @@ module.exports = {
     deviceTransactionsUpdatedEvent: {
       subscribe: withFilter(
         (payload, variables, context, info) => {
-          const subscription = broker
-            .getMaterializedViewsUpdates$(["deviceTransactionsUpdatedEvent"])
-            .subscribe(
-              evt => {
-                // console.log({
-                //   type: evt.type,
-                //   data: evt.data
-                // });
-                pubsub.publish("deviceTransactionsUpdatedEvent", {
-                  deviceTransactionsUpdatedEvent: evt.data
-                });
-              },
-              error =>
-                console.error(
-                  "Error listening deviceTransactionsUpdatedEvent",
-                  error
-                ),
-              () =>
-                console.log("deviceTransactionsUpdatedEvent listener STOPED :D")
-            );
-
-          context.webSocket.onUnSubscribe = Rx.Observable.create(observer => {
-            subscription.unsubscribe();
-            observer.next("rxjs subscription had been terminated");
-            observer.complete();
-          });
           return pubsub.asyncIterator("deviceTransactionsUpdatedEvent");
         },
         (payload, variables, context, info) => {
@@ -395,3 +173,155 @@ module.exports = {
     }
   }
 };
+
+broker
+  .getMaterializedViewsUpdates$(["DeviceHighVoltageAlarmReported"])
+  .subscribe(
+    evt => {
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceHighVoltageAlarmReported", {
+        onDashBoardDeviceHighVoltageAlarmReported: evt.data
+      });
+    },
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceHighVoltageAlarmReported",
+        error
+      ),
+    () =>
+      console.log(
+        "onDashBoardDeviceHighVoltageAlarmReported listener STOPED :D"
+      )
+  );
+
+broker
+  .getMaterializedViewsUpdates$(["deviceTransactionsUpdatedEvent"])
+  .subscribe(
+    evt => {
+      // console.log({
+      //   type: evt.type,
+      //   data: evt.data
+      // });
+      pubsub.publish("deviceTransactionsUpdatedEvent", {
+        deviceTransactionsUpdatedEvent: evt.data
+      });
+    },
+    error =>
+      console.error("Error listening deviceTransactionsUpdatedEvent", error),
+    () => console.log("deviceTransactionsUpdatedEvent listener STOPED :D")
+  );
+
+broker
+  .getMaterializedViewsUpdates$(["DeviceLowVoltageAlarmReported"])
+  .subscribe(
+    evt => {
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceLowVoltageAlarmReported", {
+        onDashBoardDeviceLowVoltageAlarmReported: evt.data
+      });
+    },
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceLowVoltageAlarmReported",
+        error
+      ),
+    () =>
+      console.log("onDashBoardDeviceLowVoltageAlarmReported listener STOPED :D")
+  );
+
+broker
+  .getMaterializedViewsUpdates$(["DeviceTemperatureAlarmActivated"])
+  .subscribe(
+    evt => {
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceTemperatureAlarmActivated", {
+        onDashBoardDeviceTemperatureAlarmActivated: evt.data
+      });
+    },
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceTemperatureAlarmActivated",
+        error
+      ),
+    () =>
+      console.log(
+        "onDashBoardDeviceTemperatureAlarmActivated listener STOPED :D"
+      )
+  );
+
+broker
+  .getMaterializedViewsUpdates$(["DeviceRamMemoryAlarmActivated"])
+  .subscribe(
+    evt => {
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceRamMemoryAlarmActivated", {
+        onDashBoardDeviceRamMemoryAlarmActivated: evt.data
+      });
+    },
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceRamMemoryAlarmActivated",
+        error
+      ),
+    () =>
+      console.log("onDashBoardDeviceRamMemoryAlarmActivated listener STOPED :D")
+  );
+
+broker.getMaterializedViewsUpdates$(["DeviceCpuUsageAlarmActivated"]).subscribe(
+  evt => {
+    console.log({
+      type: evt.type,
+      data: evt.data
+    });
+    pubsub.publish("onDashBoardDeviceCpuUsageAlarmActivated", {
+      onDashBoardDeviceCpuUsageAlarmActivated: evt.data
+    });
+  },
+  error =>
+    console.error(
+      "Error listening onDashBoardDeviceCpuUsageAlarmActivated",
+      error
+    ),
+  () =>
+    console.log("onDashBoardDeviceCpuUsageAlarmActivated listener STOPED :D")
+);
+broker.getMaterializedViewsUpdates$(["DeviceDisconnected"]).subscribe(
+  evt => {
+    console.log({
+      type: evt.type,
+      data: evt.data
+    });
+    pubsub.publish("onDashBoardDeviceOfflineReported", {
+      onDashBoardDeviceOfflineReported: evt.data
+    });
+  },
+  error =>
+    console.error("Error listening onDashBoardDeviceOfflineReported", error),
+  () => console.log("onDashBoardDeviceOfflineReported listener STOPED :D")
+);
+broker.getMaterializedViewsUpdates$(["DeviceConnected"]).subscribe(
+  evt => {
+    console.log({
+      type: evt.type,
+      data: evt.data
+    });
+    pubsub.publish("onDashBoardDeviceOnlineReported", {
+      onDashBoardDeviceOnlineReported: evt.data
+    });
+  },
+  error =>
+    console.error("Error listening onDashBoardDeviceOnlineReported", error),
+  () => console.log("onDashBoardDeviceOnlineReported listener STOPED :D")
+);
