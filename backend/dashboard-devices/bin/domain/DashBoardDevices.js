@@ -337,6 +337,7 @@ class DashBoardDevices {
    */
   handleDeviceMainAppUsosTranspCountReported$(data, success) {
     return DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
+      .filter(device => device)
       .map(device => {
         const deviceTransaction = {
           deviceId: data.aid,
