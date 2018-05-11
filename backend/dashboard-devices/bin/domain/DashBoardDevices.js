@@ -336,8 +336,11 @@ class DashBoardDevices {
    * @param {*} success boolean that indicates if the transactions were failed or successful
    */
   handleDeviceMainAppUsosTranspCountReported$(data, success) {
+
+    console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", data.aid )
     return DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
-      .filter(device => device)
+    .do(d => console.log("deviceFound ==> ", d))
+    .filter(device => device)
       .map(device => {
         const deviceTransaction = {
           deviceId: data.aid,
