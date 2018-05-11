@@ -296,6 +296,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       }
     };
     this.influxOfUseGaugeChart = {
+      isReady: false,
       timeRanges: [],
       currentTimeRange: 0,
       scheme: {
@@ -334,10 +335,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         this.influxOfUseGaugeChart.timeRanges[
           this.influxOfUseGaugeChart.currentTimeRange
         ].data = data;
+        this.influxOfUseGaugeChart.isReady = true;
         if(data[0]){
           this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
         }
-
       }
     };
   }

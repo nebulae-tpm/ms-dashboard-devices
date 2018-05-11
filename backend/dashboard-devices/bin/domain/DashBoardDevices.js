@@ -47,7 +47,7 @@ class DashBoardDevices {
   }
 
   /**
-   *  
+   *  Get the Devices count
    */
   getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken){
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
@@ -81,6 +81,7 @@ class DashBoardDevices {
         broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceDisconnected", msg)
       );
   }
+
   /**
    * used to convert data to Online vs Offline schema.
    */

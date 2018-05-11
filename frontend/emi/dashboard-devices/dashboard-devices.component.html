@@ -271,7 +271,7 @@
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" >
 
         <!-- Front WIDGET 8 -->
-        <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
+        <div *ngIf="influxOfUserAdvancedPieChart.data" class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <!-- header -->
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- text on header -->
@@ -313,7 +313,7 @@
         <!-- / Front -->
 
         <!-- Back WIDGET 9 -->
-        <div class="fuse-widget-back mat-white-bg mat-elevation-z2">
+        <div *ngIf="influxOfUseGaugeChart.isReady" class="fuse-widget-back mat-white-bg mat-elevation-z2">
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
             <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
               <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
