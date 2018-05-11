@@ -5,6 +5,7 @@ const Rx = require("rxjs");
 const broker = require("../../broker/BrokerFactory")();
 
 module.exports = {
+  
   Query: {
     getDashBoardDevicesAlarmReport(root, args, context) {
       return broker
