@@ -361,6 +361,7 @@ class DashBoardDevices {
         return deviceTransactionUpdatedEvent;
       })
       .mergeMap(deviceTransactionsUpdatedEvent => {
+        console.log("deviceTransactionsUpdatedEvent sent")
         return broker.send$(
           MATERIALIZED_VIEW_TOPIC,
           "deviceTransactionsUpdatedEvent",

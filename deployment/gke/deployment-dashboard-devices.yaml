@@ -13,7 +13,7 @@ spec:
         app: dashboard-devices
     spec:      
       containers:
-      - image: nebulaetpm/dashboard-devices.backend.dashboard-devices:0.0.13
+      - image: nebulaetpm/dashboard-devices.backend.dashboard-devices:0.0.14
         name: dashboard-devices
         volumeMounts:
         - name: google-application-credentials

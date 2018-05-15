@@ -245,13 +245,16 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63"]
       },
       onTimeRangeFilterChanged: (ev: number) => {
-        this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca = 0;
+        // this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca = 0;
+        const cuencaNumberSelected = this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
+        const cuencaNameSelected = Object.keys(this.successfulAndFailedTransactionByGroupNameWidget.cuencas)[cuencaNumberSelected];
+        // if(cuencaNameSelected){
+
+        // }
         this.getDeviceTransactionByInterval(
           ev,
           this.successfulAndFailedTransactionByGroupNameWidget.name,
-          Object.keys(
-            this.successfulAndFailedTransactionByGroupNameWidget.cuencas
-          )[0]
+          cuencaNameSelected
         );
       },
       onCuencaFilterChanged: ev => {
@@ -343,7 +346,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("Running Version 0.0.11");
+    console.log("Running Version 0.0.14");
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
@@ -366,6 +369,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getSucessTransactionsGroupByGroupName()
         .subscribe(
           result => {
+            console.log(".getSucessTransactionsGroupByGroupName()", result)
             this.influxOfUserAdvancedPieChart.updateRowData(result);
             this.influxOfUseGaugeChart.updateRowData(result);
           },
@@ -466,6 +470,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           data => {
+            console.log(".listenDeviceTransactionsUpdates()", data)
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);
             this.influxOfUseGaugeChart.updateRowData(data);
@@ -476,9 +481,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             );
 
             // To update and display the successfulAndFailedTransactionByGroupNameWidget data
+            // const cuencaSelected = this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
             this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
               this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
-            )
+            );
+            // this.successfulAndFailedTransactionByGroupNameWidget.onCuencaFilterChanged(cuencaSelected);
           },
           error => this.errorHandler(error)
         )
