@@ -277,9 +277,10 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getCuencaNamesWithSuccessTransactionsOnInterval$({ root, args, jwt }, authToken) {
-    // console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
+    console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
     return DeviceTransactionsDA
     .getCuencaNamesWithSuccessTransactionsOnInterval$(args.startDate, args.endDate)  
+    .do(response => console.log("getCuencaNamesWithSuccessTransactionsOnInterval$", response))
     .map(response => {
       const result = [];
       response.forEach(item => {
@@ -343,7 +344,7 @@ class DashBoardDevices {
       .map(device => {
         const deviceTransaction = {
           deviceId: data.aid,
-          timestamp: data.data.timestamp,
+          timestamp: parseInt(data.data.timestamp),
           value: data.data.count,
           success: success,
           groupName: device.groupName

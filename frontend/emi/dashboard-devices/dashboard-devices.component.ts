@@ -470,6 +470,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           data => {
+            
             console.log(".listenDeviceTransactionsUpdates()", data)
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);

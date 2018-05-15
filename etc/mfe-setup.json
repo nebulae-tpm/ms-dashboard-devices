@@ -27,7 +27,7 @@
                 "loadChildren": "./main/content/dashboard-devices/dashboard-devices.module#DashboardDevicesModule",
                 "priority": 1000,
                 "roles" : ["operator"],
-                "default" : false
+                "default" : true
             }
         ],
         "preBuildCommands": [],
