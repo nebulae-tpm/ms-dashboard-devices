@@ -295,7 +295,7 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDeviceTransactionsGroupByTimeInterval$({ root, args, jwt }, authToken) {
-    // console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
+    console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
     return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(
       args.startDate,
       args.endDate,

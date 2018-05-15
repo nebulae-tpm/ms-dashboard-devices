@@ -99,6 +99,7 @@ class DeviceTransactionsDA {
     if(cuenca){
         matchCriteria = { $match: { timestamp: { $gte: startDate, $lt: endDate }, groupName: cuenca  } }
     }
+    console.log(startDate, endDate, cuenca, matchCriteria);
     return Rx.Observable.fromPromise(
       collection
         .aggregate(
@@ -132,7 +133,7 @@ class DeviceTransactionsDA {
         )
         .toArray()
     )
-    //  .do(val => console.log('RESULT ===========> ', val));
+    .do(val => console.log('getDeviceTransactionGroupByTimeInterval RESULT ===========> ', val));
   }
 
   static getDeviceTransactionGroupByGroupName$(evt){
