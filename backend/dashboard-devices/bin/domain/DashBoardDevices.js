@@ -283,7 +283,7 @@ class DashBoardDevices {
     .do(response => console.log("getCuencaNamesWithSuccessTransactionsOnInterval$", response))
     .map(response => {
       const result = [];
-      response.forEach(item => {
+      response.filter(i => i.name ).forEach(item => {
         result.push(item.name);
       });
       return result;

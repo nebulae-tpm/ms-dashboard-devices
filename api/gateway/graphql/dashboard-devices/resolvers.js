@@ -16,8 +16,7 @@ module.exports = {
           500
         )
         .toPromise();
-    },    
-    
+    },        
     getDashBoardDevicesCurrentNetworkStatus(root, args, context) {
       return broker
         .forwardAndGetReply$(
