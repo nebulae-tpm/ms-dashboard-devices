@@ -43,7 +43,12 @@ class DeviceTransactionsDA {
       collection
         .aggregate(
           [
-            { $match: { timestamp: { $gte: startDate, $lt: endDate } } },
+            { $match: { 
+                $and: [ 
+                    { timestamp: { $gte: startDate, $lt: endDate } } ,
+                    { groupName: { $ne: null } }
+                ]} 
+            },
             {
                 "$project": {
                     "date": { "$add": [new Date(0), "$timestamp"] },
@@ -99,7 +104,7 @@ class DeviceTransactionsDA {
     if(cuenca){
         matchCriteria = { $match: { timestamp: { $gte: startDate, $lt: endDate }, groupName: cuenca  } }
     }
-    console.log(startDate, endDate, cuenca, matchCriteria);
+    // console.log(startDate, endDate, cuenca, matchCriteria);
     return Rx.Observable.fromPromise(
       collection
         .aggregate(
@@ -133,7 +138,7 @@ class DeviceTransactionsDA {
         )
         .toArray()
     )
-    .do(val => console.log('getDeviceTransactionGroupByTimeInterval RESULT ===========> ', val));
+    // .do(val => console.log('getDeviceTransactionGroupByTimeInterval RESULT ===========> ', val));
   }
 
   static getDeviceTransactionGroupByGroupName$(evt){

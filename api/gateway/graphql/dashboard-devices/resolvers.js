@@ -27,6 +27,7 @@ module.exports = {
         )
         .toPromise();
     },
+    
     getCuencaNamesWithSuccessTransactionsOnInterval(root, args, context) {
       // console.log('getCuencaNamesWithSuccessTransactionsOnInterval', args);
       return broker

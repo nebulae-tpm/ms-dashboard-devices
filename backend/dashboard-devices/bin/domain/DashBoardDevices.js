@@ -277,17 +277,17 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getCuencaNamesWithSuccessTransactionsOnInterval$({ root, args, jwt }, authToken) {
-    console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
+    // console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
     return DeviceTransactionsDA
-    .getCuencaNamesWithSuccessTransactionsOnInterval$(args.startDate, args.endDate)  
-    .do(response => console.log("getCuencaNamesWithSuccessTransactionsOnInterval$", response))
+    .getCuencaNamesWithSuccessTransactionsOnInterval$(args.startDate, args.endDate)
     .map(response => {
       const result = [];
-      response.filter(i => i.name ).forEach(item => {
-        result.push(item.name);
+      response.forEach(item => {
+          result.push(item.name);
       });
+      console.log("getCuencaNamesWithSuccessTransactionsOnInterval ", JSON.stringify(response));
       return result;
-    });
+    })
   }
 
   /**
@@ -296,7 +296,7 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDeviceTransactionsGroupByTimeInterval$({ root, args, jwt }, authToken) {
-    console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
+    // console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
     return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(
       args.startDate,
       args.endDate,
@@ -337,9 +337,9 @@ class DashBoardDevices {
    * @param {*} success boolean that indicates if the transactions were failed or successful
    */
   handleDeviceMainAppUsosTranspCountReported$(data, success) {
-    console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", data )
+    // console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", data )
     return DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
-    .do(d => console.log("deviceFound ==> ", d))
+    // .do(d => console.log("deviceFound ==> ", d))
     .filter(device => device)
       .map(device => {
         const deviceTransaction = {
@@ -347,7 +347,7 @@ class DashBoardDevices {
           timestamp: parseInt(data.data.timestamp),
           value: data.data.count,
           success: success,
-          groupName: device.groupName
+          groupName: device.groupName ? device.groupName : "__Cuenca__"
         };
         return deviceTransaction;
       })
