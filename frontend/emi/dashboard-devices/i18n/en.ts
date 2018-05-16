@@ -23,7 +23,7 @@ export const locale = {
           'USAGES_VS_ERRORS_by': 'Usages Vs write erros by:',
           'USAGES': 'Usages',
           'ERRORS': 'Errors',
-          'INFLUX_OF_USERS': 'Influx of users',
+          'INFLUX_OF_USERS': 'Influx of users between ',
           'TOTAL_USAGES': 'Total usages',
           'TOTAL_USAGES_BY_CUENCA': 'Total usages by Cuenca'
       }

@@ -211,11 +211,37 @@ class DashBoardDevices {
     return Rx.Observable.of(evt).map(evt => {
       const now = new Date();
       const lastHourLimit = now - 3600000;
-        // Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+      // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
       const lastTwoHoursLimit = lastHourLimit - 3600000;
       const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
       evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
       evt.alarmType = eventType;
+      return evt;
+    });
+  }
+
+  /**
+   * gets array with datelimits in milliseconds to last one, two and three hours
+   */
+  getTimeRangesRoundedToLimit$(evt, eventType) {
+    return Rx.Observable.of(evt).map(evt => {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getMinutes() % 10);
+      now.setSeconds(0);
+      now.setMilliseconds(0);
+      const lastHourLimit = now - 3600000;
+      // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+      const lastTwoHoursLimit = lastHourLimit - 3600000;
+      const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
+      evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
+      const nowLabel = new Date(now).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false });
+      evt.timeRangesLabel = [
+        new Date(lastHourLimit).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',  hour12: false }) + " -- " + nowLabel,
+        new Date(lastTwoHoursLimit).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',  hour12: false  }) + " -- " + nowLabel,
+        new Date(lastThreeHoursLimit).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',  hour12: false }) + " -- " + nowLabel
+      ];
+      evt.alarmType = eventType;
+      evt.endTimeLimit = now.getTime();
       return evt;
     });
   }
@@ -309,7 +335,7 @@ class DashBoardDevices {
    */
   getDeviceTransactionsGroupByGroupName$({ root, args, jwt }, authToken){
     // console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
-    return instance.getTimeRangesToLimit$({}, undefined)
+    return instance.getTimeRangesRoundedToLimit$({}, undefined)
     .mergeMap(evt => DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt))
   }
 

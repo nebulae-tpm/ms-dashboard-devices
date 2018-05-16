@@ -142,19 +142,19 @@ class DeviceTransactionsDA {
   }
 
   static getDeviceTransactionGroupByGroupName$(evt){
-    //   console.log("======",evt, "====")
       return Rx.Observable.forkJoin(
-        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[0], "ONE_HOUR"),
-        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[1], "TWO_HOURS"),
-        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[2], "THREE_HOURS")
+        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[0], evt.endTimeLimit, evt.timeRangesLabel[0]),
+        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[1], evt.endTimeLimit, evt.timeRangesLabel[1]),
+        DeviceTransactionsDA.getDeviceTransactionGroupByGroupNameInInterval$(evt.timeRanges[2], evt.endTimeLimit, evt.timeRangesLabel[2])
       );
   }
 
 
-  static getDeviceTransactionGroupByGroupNameInInterval$(startDate, timeInterval){
+  static getDeviceTransactionGroupByGroupNameInInterval$(startDate, endTime, timeInterval){
+      console.log(startDate, endTime, timeInterval )
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(collection.aggregate([
-        { $match: { timestamp: { $gte: startDate }, success: true } },
+        { $match: { timestamp: { $gte: startDate, $lte: endTime }, success: true } },
         {
           $project: {
             groupName: 1,

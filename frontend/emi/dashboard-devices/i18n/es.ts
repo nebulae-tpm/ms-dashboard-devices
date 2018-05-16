@@ -23,7 +23,7 @@ export const locale = {
           'USAGES_VS_ERRORS_by': 'N° Usos vs errores de escritura por:',
           'USAGES': 'Usos',
           'ERRORS': 'Errores',
-          'INFLUX_OF_USERS': 'Afluencia de usuarios',
+          'INFLUX_OF_USERS': 'Afluencia de usuarios entre ',
           'TOTAL_USAGES': 'Usos totales',
           'TOTAL_USAGES_BY_CUENCA': 'Usos totales por cuenca'
       }

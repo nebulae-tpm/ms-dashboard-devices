@@ -15,6 +15,7 @@ import {
   toArray,
   pairwise,
   filter,
+  throttleTime,
   groupBy,
   tap,
   switchMap
@@ -244,13 +245,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       scheme: {
         domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63"]
       },
-      onTimeRangeFilterChanged: (ev: number) => {
-        // this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca = 0;
+      onTimeRangeFilterChanged: (ev: number, updateCuencaOptions: boolean = false) => {
+        console.log("onTimeRangeFilterChanged", ev, updateCuencaOptions, this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange);
         const cuencaNumberSelected = this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
         const cuencaNameSelected = Object.keys(this.successfulAndFailedTransactionByGroupNameWidget.cuencas)[cuencaNumberSelected];
-        // if(cuencaNameSelected){
-
-        // }
+        if(updateCuencaOptions){
+          this.getAllCuencaNamesWithSuccessTransactionsOnInterval(ev);
+        }
         this.getDeviceTransactionByInterval(
           ev,
           this.successfulAndFailedTransactionByGroupNameWidget.name,
@@ -362,6 +363,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       null
     );
 
+    //
+    this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(1, true);
+
     // All RxJs Subscriptions with querie and subscriptions of grahpQl
     this.allSubscriptions.push(
       // Fill the data neccesary to display influxOfUserAdvancedPieChart and influxOfUseGaugeChart
@@ -470,23 +474,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           data => {
-            
             console.log(".listenDeviceTransactionsUpdates()", data)
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);
             this.influxOfUseGaugeChart.updateRowData(data);
 
-            // To update and display the successfulAndFailedTransactionWidget data.
-            this.successfulAndFailedTransactionWidget.onRangeChanged(
-              this.successfulAndFailedTransactionWidget.currentTimeRange
-            );
 
-            // To update and display the successfulAndFailedTransactionByGroupNameWidget data
-            // const cuencaSelected = this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
-            this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
-              this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
-            );
-            // this.successfulAndFailedTransactionByGroupNameWidget.onCuencaFilterChanged(cuencaSelected);
           },
           error => this.errorHandler(error)
         )
@@ -512,7 +505,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ) %
           10) *
         60000;
-    const startDate = endDate - hours * 60 * 60 * 1000;
+    const startDate = endDate - hours * 70 * 60 * 1000;
 
     // console.log("Date range... ", startDate, endDate);
 
@@ -677,10 +670,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           this.successfulAndFailedTransactionByGroupNameWidget.cuencas[item] = index;
           });
         }
-
-        this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
-          1
-        );
+        console.log(this.successfulAndFailedTransactionByGroupNameWidget.cuencas);
+        // this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
+        //   1
+        // );
         subcriptionByIntervalAndGroupName.unsubscribe();
       });
   }
@@ -695,7 +688,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   getMaxUsageMeter(realMax: number): number {
-    let resp = Math.floor(realMax + realMax / 20);
+    let resp = Math.floor(realMax + ( 3 * (realMax / 10)) );
     if (resp % 2 !== 0) {
       resp = resp + 1;
     }
@@ -705,9 +698,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     while (resp % 100 !== 0) {
       resp = resp + 10;
     }
-    // while (resp % 1000 !== 0) {
-    //   resp = resp + 100;
-    // }
+    while (resp % 1000 !== 0) {
+      resp = resp + 100;
+    }
     return resp;
   }
 

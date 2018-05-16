@@ -49,12 +49,14 @@ export class DashboardDevicesService {
    * @param endDate End date
    */
   getCuencaNamesWithSuccessTransactionsOnInterval(startDate: number, endDate: number) {
+    console.log("requesting by getCuencaNamesWithSuccessTransactionsOnInterval...");
     return this.gateway.apollo.watchQuery<any>({
       query: getCuencaNamesWithSuccessTransactionsOnInterval,
       variables: {
         startDate: startDate,
         endDate: endDate
-      }
+      },
+      fetchPolicy: 'network-only'
     }).valueChanges
     .map(respond => respond.data.getCuencaNamesWithSuccessTransactionsOnInterval)
   }

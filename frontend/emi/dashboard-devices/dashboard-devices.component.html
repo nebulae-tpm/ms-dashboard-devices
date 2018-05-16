@@ -283,7 +283,7 @@
                   <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUserAdvancedPieChart.currentTimeRange"
                   (change)="influxOfUserAdvancedPieChart.onChangeTimeRange($event.value)" aria-label="Change range">
                     <mat-option *ngFor="let range of influxOfUserAdvancedPieChart.timeRanges | timeRangeKeys" [value]="range.index">
-                      {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                      {{ range.key }}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -322,7 +322,7 @@
                 <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange"
                 (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)" aria-label="Change range">
                   <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeys" [value]="range.index" >
-                    {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
+                    {{ range.key }}
                   </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -442,7 +442,7 @@
 
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25"  >
               <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionByGroupNameWidget.currentTimeRange"
-                (change)="successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged($event.value)"
+                (change)="successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged($event.value, true)"
                 aria-label="Change range">
                 <mat-option *ngFor="let range of successfulAndFailedTransactionByGroupNameWidget.timeRanges | keys" [value]="range.value">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}

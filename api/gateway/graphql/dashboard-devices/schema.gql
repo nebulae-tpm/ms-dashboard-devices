@@ -102,7 +102,7 @@ type DashboardDeviceTransactionSucess{
   value: Int!
 }
 type DashboardDeviceTransactionSucessArray{
-  timeRange: DashBoardDevicesAlarmReportTimeRangeType!
+  timeRange: String!
   data: [DashboardDeviceTransactionSucess]!
 }
 

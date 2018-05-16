@@ -4,7 +4,6 @@ const pubsub = new PubSub();
 const Rx = require("rxjs");
 const broker = require("../../broker/BrokerFactory")();
 
-
 module.exports = {
   Query: {
     getDashBoardDevicesAlarmReport(root, args, context) {
@@ -16,7 +15,7 @@ module.exports = {
           500
         )
         .toPromise();
-    },        
+    },
     getDashBoardDevicesCurrentNetworkStatus(root, args, context) {
       return broker
         .forwardAndGetReply$(
@@ -27,7 +26,6 @@ module.exports = {
         )
         .toPromise();
     },
-    
     getCuencaNamesWithSuccessTransactionsOnInterval(root, args, context) {
       // console.log('getCuencaNamesWithSuccessTransactionsOnInterval', args);
       return broker
