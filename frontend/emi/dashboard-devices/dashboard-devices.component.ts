@@ -245,11 +245,22 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       scheme: {
         domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63"]
       },
-      onTimeRangeFilterChanged: (ev: number, updateCuencaOptions: boolean = false) => {
-        console.log("onTimeRangeFilterChanged", ev, updateCuencaOptions, this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange);
-        const cuencaNumberSelected = this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
-        const cuencaNameSelected = Object.keys(this.successfulAndFailedTransactionByGroupNameWidget.cuencas)[cuencaNumberSelected];
-        if(updateCuencaOptions){
+      onTimeRangeFilterChanged: (
+        ev: number,
+        updateCuencaOptions: boolean = false
+      ) => {
+        console.log(
+          "onTimeRangeFilterChanged",
+          ev,
+          updateCuencaOptions,
+          this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+        );
+        const cuencaNumberSelected = this
+          .successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
+        const cuencaNameSelected = Object.keys(
+          this.successfulAndFailedTransactionByGroupNameWidget.cuencas
+        )[cuencaNumberSelected];
+        if (updateCuencaOptions) {
           this.getAllCuencaNamesWithSuccessTransactionsOnInterval(ev);
         }
         this.getDeviceTransactionByInterval(
@@ -276,7 +287,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       data: [],
       currentTimeRange: 0,
       scheme: {
-        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300" ]
+        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300"]
       },
       onChangeTimeRange: index => {
         this.influxOfUserAdvancedPieChart.currentTimeRange = index;
@@ -306,7 +317,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       timeRanges: [],
       currentTimeRange: 0,
       scheme: {
-        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300" ]
+        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300"]
         // domain: ["#3399ff", "#9999ff", "#33ff77", "#ff6666", "#cc00cc"]
       },
       units: "Usos totales",
@@ -324,10 +335,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ].data.slice();
         data = data.sort((a, b) => b.value - a.value);
         this.influxOfUseGaugeChart.data = data;
-        if(data[0]){
+        if (data[0]) {
           this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
         }
-
       },
       updateRowData: result => {
         this.influxOfUseGaugeChart.timeRanges = JSON.parse(
@@ -339,7 +349,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         data = data.sort((a, b) => b.value - a.value);
         this.influxOfUseGaugeChart.data = data;
         this.influxOfUseGaugeChart.isReady = true;
-        if(data[0]){
+        if (data[0]) {
           this.influxOfUseGaugeChart.max = this.getMaxUsageMeter(data[0].value);
         }
       }
@@ -364,7 +374,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     );
 
     //
-    this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(1, true);
+    this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
+      1,
+      true
+    );
 
     // All RxJs Subscriptions with querie and subscriptions of grahpQl
 
@@ -378,7 +391,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getSucessTransactionsGroupByGroupName(nowDate.getTime())
         .subscribe(
           result => {
-            console.log(".getSucessTransactionsGroupByGroupName()", result)
+            console.log(".getSucessTransactionsGroupByGroupName()", result);
             this.influxOfUserAdvancedPieChart.updateRowData(result);
             this.influxOfUseGaugeChart.updateRowData(result);
           },
@@ -478,20 +491,29 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             now.setMinutes(now.getMinutes() - now.getMinutes() % 10);
             now.setSeconds(0);
             now.setMilliseconds(0);
-           return  this.graphQlGatewayService.getSucessTransactionsGroupByGroupName(now.getTime())
-          }
-
-
-          )
+            return this.graphQlGatewayService.getSucessTransactionsGroupByGroupName(
+              now.getTime()
+            );
+          })
         )
         .subscribe(
           data => {
-            console.log(".listenDeviceTransactionsUpdates()", data)
+            console.log(".listenDeviceTransactionsUpdates()", data);
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);
             this.influxOfUseGaugeChart.updateRowData(data);
 
+            // To update and display the successfulAndFailedTransactionWidget data.
+            this.successfulAndFailedTransactionWidget.onRangeChanged(
+              this.successfulAndFailedTransactionWidget.currentTimeRange
+            );
 
+            // To update and display the successfulAndFailedTransactionByGroupNameWidget data
+            // const cuencaSelected = this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
+            this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
+              this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+            );
+            // this.successfulAndFailedTransactionByGroupNameWidget.onCuencaFilterChanged(cuencaSelected);
           },
           error => this.errorHandler(error)
         )
@@ -505,8 +527,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   ) {
     //TODO: Change to currrent date
     let currentDate1 = new Date();
-    currentDate1.setSeconds(0);
-    currentDate1.setMilliseconds(0);
+    currentDate1.setSeconds(0, 0);
 
     const currentDate = Date.now();
     const endDate =
@@ -517,7 +538,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ) %
           10) *
         60000;
-    const startDate = endDate - hours * 70 * 60 * 1000;
+    const startDate = endDate - ((hours * 60 * 60 * 1000) + 10 * 60 * 1000 ) ;
 
     // console.log("Date range... ", startDate, endDate);
 
@@ -558,10 +579,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
               ),
               from(val).pipe(
                 map(val => {
-                  return this.datePipe.transform(
-                    new Date(val.interval),
-                    "hh:mm"
-                  );
+                  return new Date(val.interval).toLocaleString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: false
+                  });
                 }),
                 toArray()
               )
@@ -677,12 +699,16 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           return 0;
         });
         this.successfulAndFailedTransactionByGroupNameWidget.cuencas = {};
-        if(data && data.length > 0){
+        if (data && data.length > 0) {
           data.forEach((item, index) => {
-          this.successfulAndFailedTransactionByGroupNameWidget.cuencas[item] = index;
+            this.successfulAndFailedTransactionByGroupNameWidget.cuencas[
+              item
+            ] = index;
           });
         }
-        console.log(this.successfulAndFailedTransactionByGroupNameWidget.cuencas);
+        console.log(
+          this.successfulAndFailedTransactionByGroupNameWidget.cuencas
+        );
         // this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
         //   1
         // );
@@ -700,7 +726,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   getMaxUsageMeter(realMax: number): number {
-    let resp = Math.floor(realMax + ( 3 * (realMax / 10)) );
+    let resp = Math.floor(realMax + 3 * (realMax / 10));
     if (resp % 2 !== 0) {
       resp = resp + 1;
     }
@@ -722,7 +748,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
    */
   getCountInArray(array: number[]): number {
     let counter = 0;
-    if(!array || array.length == 0){ return 0; }
+    if (!array || array.length == 0) {
+      return 0;
+    }
     array.forEach(item => {
       counter = counter + item;
     });
@@ -744,7 +772,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
 
-      this[widgetName].isReady = true;
+    this[widgetName].isReady = true;
   }
 
   errorHandler(error: any): void {

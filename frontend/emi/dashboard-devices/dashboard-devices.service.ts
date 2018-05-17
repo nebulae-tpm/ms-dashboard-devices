@@ -159,7 +159,6 @@ export class DashboardDevicesService {
   }
 
   getSucessTransactionsGroupByGroupName(now: number){
-    console.log("now : ", now);
     return this.gateway.apollo.query<any>({
       query: getSucessDeviceTransactionsGroupByGroupName,
       variables: {

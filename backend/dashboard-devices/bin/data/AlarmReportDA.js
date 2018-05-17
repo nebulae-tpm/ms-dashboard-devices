@@ -180,7 +180,7 @@ class AlarmReportDA {
     const types = ["VOLTAGE", "TEMPERATURE", "CPU_USAGE", "RAM_MEMORY"];
     const units = ["V", "C", "%", "%"];
     const selection = Math.floor(Math.random() * 4);
-    const id = `sn00${Math.floor(Math.random() * 10)}-000${Math.floor(Math.random() * 9)}-TEST`;
+    const id = `sn0000-000${Math.floor(Math.random() * 10)}-TEST`;
     return Rx.Observable.fromPromise(
       collection.insertOne({
         timestamp: Date.now(),

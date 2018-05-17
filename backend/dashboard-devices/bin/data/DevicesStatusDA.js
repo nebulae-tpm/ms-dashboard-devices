@@ -88,15 +88,14 @@ class DeviceStatusDA {
   }
 
 
-  static generateDevices__RANDOM__$(){
-        
+  static generateDevices__RANDOM__$(){        
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(collection.insertOne(
         {
             active: true,
-            deviceId : `sn00${Math.floor((Math.random() * 10) )}-000${Math.floor((Math.random() * 9) )}-TEST`,
+            deviceId : `sn0000-000${Math.floor((Math.random() * 10) )}-TEST`,
             hostname: `ABC${Math.floor((Math.random() * 999 ) + 100 )}`,
-            groupName: `Cuenca${Math.floor((Math.random() * 5) + 1)}`,
+            groupName: `Cuenca ${Math.floor((Math.random() * 5) + 1)}`,
             online: true,
             ramMemoryAlert: false,
             cpuAlert: false,

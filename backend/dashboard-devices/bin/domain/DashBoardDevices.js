@@ -378,7 +378,7 @@ class DashBoardDevices {
       .mergeMap(transaction =>
         DeviceTransactionsDA.insertDeviceTransaction$(transaction)
       )
-      .throttleTime(15000)
+      .throttleTime(30000)
       .map(deviceTransaction => {
         const deviceTransactionUpdatedEvent = {
           timestamp: new Date().getTime()

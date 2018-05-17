@@ -70,7 +70,7 @@ class EventStoreService {
     //   dashBoardDevices.generateAlarms__RANDOM__$()
     //   .subscribe(r => {});
     // });
-    // Rx.Observable.interval(500).subscribe(() => {
+    // Rx.Observable.interval(30000).subscribe(() => {
     //   dashBoardDevices.generateDevices__RANDOM__$()
     //   .subscribe(
     //     r => {},
@@ -84,9 +84,9 @@ class EventStoreService {
     //       et: "DeviceMainAppUsosTranspCountReported",
     //       etv: 1,
     //       at: "Device",
-    //       aid: `sn0001-000${Math.floor(Math.random() * 9)}-TEST`,
+    //       aid: `sn0000-000${Math.floor(Math.random() * 10)}-TEST`,
     //       data: {
-    //         count: Math.floor(Math.random() * 10 + 1),
+    //         count: Math.floor(Math.random() * 5 + 1),
     //         timestamp: Date.now()
     //       },
     //       user: "SYSTEM.DevicesReport.devices-report-handler",
@@ -102,9 +102,9 @@ class EventStoreService {
     //     et: "DeviceMainAppUsosTranspCountReported",
     //     etv: 1,
     //     at: "Device",
-    //     aid: `sn0001-000${Math.floor(Math.random() * 9)}-TEST`,
+    //     aid: `sn0000-000${Math.floor(Math.random() * 10)}-TEST`,
     //     data: {
-    //       count: Math.floor(Math.random() * 20 + 1),
+    //       count: Math.floor(Math.random() * 11 + 1),
     //       timestamp: Date.now()
     //     },
     //     user: "SYSTEM.DevicesReport.devices-report-handler",
