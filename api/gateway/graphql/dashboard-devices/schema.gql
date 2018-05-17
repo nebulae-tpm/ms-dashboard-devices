@@ -117,7 +117,7 @@ type Query {
   getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
   getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
   getCuencaNamesWithSuccessTransactionsOnInterval(startDate: BigInt, endDate: BigInt): [String]!
-  getSucessDeviceTransactionsGroupByGroupName(nowDate: BigInt): [DashboardDeviceTransactionSucessArray]!
+  getSucessDeviceTransactionsGroupByGroupName(nowDate: BigInt!): [DashboardDeviceTransactionSucessArray]!
   getDeviceTransactionsGroupByTimeInterval(startDate: BigInt, endDate: BigInt, groupName: String): [DashboardDeviceTransaction]!
   getDeviceDashBoardTotalAccount: Int!
   

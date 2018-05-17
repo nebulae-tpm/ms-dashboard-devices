@@ -224,7 +224,7 @@ class DashBoardDevices {
    * gets array with datelimits in milliseconds to last one, two and three hours
    */
   getTimeRangesRoundedToLimit$(evt, eventType, dateNow) {
-    console.log("getTimeRangesRoundedToLimit$", evt, eventType, dateNow );
+    console.log("--getTimeRangesRoundedToLimit$", evt, eventType, dateNow );
     return Rx.Observable.of(evt).map(evt => {
       const now = new Date(dateNow);
       now.setMinutes(now.getMinutes() - now.getMinutes() % 10,0, 0);
@@ -301,7 +301,7 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getCuencaNamesWithSuccessTransactionsOnInterval$({ root, args, jwt }, authToken) {
-    // console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
+    console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
     return DeviceTransactionsDA
     .getCuencaNamesWithSuccessTransactionsOnInterval$(args.startDate, args.endDate)
     .map(response => {

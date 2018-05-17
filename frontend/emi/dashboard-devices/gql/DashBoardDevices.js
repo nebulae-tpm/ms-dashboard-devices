@@ -183,7 +183,7 @@ export const onDeviceHighVoltageAlarmActivated = gql`
   }
 `;
 export const getSucessDeviceTransactionsGroupByGroupName = gql`
-query getSucessDeviceTransactionsGroupByGroupName($nowDate: BigInt){
+query getSucessDeviceTransactionsGroupByGroupName($nowDate: BigInt!){
   getSucessDeviceTransactionsGroupByGroupName(nowDate: $nowDate){
     timeRange
     data{
