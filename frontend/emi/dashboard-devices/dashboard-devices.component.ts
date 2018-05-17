@@ -347,7 +347,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("Running Version 0.0.18");
+    console.log("Running Version 0.0.20");
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
@@ -367,10 +367,15 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(1, true);
 
     // All RxJs Subscriptions with querie and subscriptions of grahpQl
+
+    const nowDate = new Date();
+    nowDate.setMinutes(nowDate.getMinutes() - nowDate.getMinutes() % 10);
+    nowDate.setSeconds(0);
+    nowDate.setMilliseconds(0);
     this.allSubscriptions.push(
       // Fill the data neccesary to display influxOfUserAdvancedPieChart and influxOfUseGaugeChart
       this.graphQlGatewayService
-        .getSucessTransactionsGroupByGroupName()
+        .getSucessTransactionsGroupByGroupName(nowDate.getTime())
         .subscribe(
           result => {
             console.log(".getSucessTransactionsGroupByGroupName()", result)
@@ -468,8 +473,15 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this.graphQlGatewayService
         .listenDeviceTransactionsUpdates()
         .pipe(
-          switchMap(event =>
-            this.graphQlGatewayService.getSucessTransactionsGroupByGroupName()
+          switchMap(event => {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getMinutes() % 10);
+            now.setSeconds(0);
+            now.setMilliseconds(0);
+           return  this.graphQlGatewayService.getSucessTransactionsGroupByGroupName(now.getTime())
+          }
+
+
           )
         )
         .subscribe(

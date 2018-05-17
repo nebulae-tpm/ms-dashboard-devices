@@ -158,9 +158,13 @@ export class DashboardDevicesService {
     // .mapTo(this.getSucessTransactionsGroupByGroupName())
   }
 
-  getSucessTransactionsGroupByGroupName(){
+  getSucessTransactionsGroupByGroupName(now: number){
+    console.log("now : ", now);
     return this.gateway.apollo.query<any>({
       query: getSucessDeviceTransactionsGroupByGroupName,
+      variables: {
+        nowDate: now
+      },
       fetchPolicy: 'network-only'
     })
     .map(result => result.data.getSucessDeviceTransactionsGroupByGroupName)

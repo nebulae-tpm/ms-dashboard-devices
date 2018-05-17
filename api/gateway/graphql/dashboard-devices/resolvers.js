@@ -38,7 +38,7 @@ module.exports = {
         .toPromise();
     },
     getSucessDeviceTransactionsGroupByGroupName(root, args, context) {
-      // console.log('getDeviceTransactionsGroupByGroupName', args);
+      console.log('[GATEWAY]--getDeviceTransactionsGroupByGroupName', args);
       return broker
         .forwardAndGetReply$(
           "Device",

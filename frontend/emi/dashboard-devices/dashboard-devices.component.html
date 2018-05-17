@@ -282,7 +282,7 @@
                 <mat-form-field class="px-8 py-8">
                   <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUserAdvancedPieChart.currentTimeRange"
                   (change)="influxOfUserAdvancedPieChart.onChangeTimeRange($event.value)" aria-label="Change range">
-                    <mat-option *ngFor="let range of influxOfUserAdvancedPieChart.timeRanges | timeRangeKeys" [value]="range.index">
+                    <mat-option *ngFor="let range of influxOfUserAdvancedPieChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
                       {{ range.key }}
                     </mat-option>
                   </mat-select>
