@@ -11,6 +11,7 @@ export const locale = {
             'DEVICES_BY_ROUTE': 'Dispositivos por cuenca',
             'VIEW_COMPLETE_LIST': 'Ver Listado Completo',
             'OF': " de ",
+            'QUANTITY': 'Cant: ',
             'TIMERANGES':{
               ONE_HOUR: 'Una hora',
               TWO_HOURS: 'Dos horas',

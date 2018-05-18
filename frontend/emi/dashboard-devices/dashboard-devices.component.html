@@ -53,18 +53,18 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-                {{item.hostname}} -- {{item.sn}} : {{item.alarmsCount}}
+               <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
+            <!-- [routerLink]="[alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].fullDevicesListLink]" -->
+            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
 
-            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-                <!-- [routerLink]="[alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].fullDevicesListLink]" -->
               <button mat-button color="accent">
                  {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
-            </div>
+            </div> -->
           </mat-list>
 
         </div>
@@ -118,17 +118,17 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-                {{item.hostname}} -- {{item.sn}} : {{item.alarmsCount}}
+                <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
-            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
               <button mat-button color="accent">
                   {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
-            </div>
+            </div> -->
           </mat-list>
 
         </div>
@@ -182,17 +182,17 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-                {{item.hostname}} -- {{item.sn}} : {{item.alarmsCount}}
+                <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
-            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
               <button mat-button color="accent">
                 {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
-            </div>
+            </div> -->
           </mat-list>
 
         </div>
@@ -248,17 +248,17 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-                {{item.hostname}} -- {{item.sn}}: <span><strong> {{"   "}} {{item.alarmsCount}}</strong></span>
+                <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
             <div class="card-divider full-width"></div>
 
-            <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
               <button mat-button color="accent">
                 {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
-            </div>
+            </div> -->
           </mat-list>
 
         </div>
@@ -309,7 +309,7 @@
           </div>
           <!-- end chart -->
         </div>
-        
+
         <!-- / Front -->
         <!-- Back WIDGET 9 -->
         <div *ngIf="influxOfUseGaugeChart.isReady" class="fuse-widget-back mat-white-bg mat-elevation-z2">

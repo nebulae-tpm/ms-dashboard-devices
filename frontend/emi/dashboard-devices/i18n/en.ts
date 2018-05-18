@@ -11,6 +11,7 @@ export const locale = {
             'DEVICES_BY_ROUTE': 'Devices by cuenca',
             'VIEW_COMPLETE_LIST': 'View complete list',
             'OF': " of ",
+            'QUANTITY': 'Qty: ',
             'TIMERANGES':{
               ONE_HOUR: 'One hour',
               TWO_HOURS: 'Two hours',
