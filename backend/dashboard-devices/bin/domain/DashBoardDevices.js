@@ -23,6 +23,7 @@ class DashBoardDevices {
     return instance
       .getTimeRangesToLimit$({}, args.type)
       .mergeMap(result => AlarmReportDA.getDashBoardDevicesAlarmReport$(result))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
       .mergeMap(array => instance.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
