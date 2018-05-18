@@ -369,7 +369,7 @@ class DashBoardDevices {
       .map(device => {
         const deviceTransaction = {
           deviceId: data.aid,
-          timestamp: parseInt(data.data.timestamp),
+          timestamp: data.data.timestamp,
           value: data.data.count,
           success: success,
           groupName: device.groupName ? device.groupName : "__Cuenca__"
