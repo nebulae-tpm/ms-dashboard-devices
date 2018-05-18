@@ -340,9 +340,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         }
       },
       updateRowData: result => {
-        this.influxOfUseGaugeChart.timeRanges = JSON.parse(
-          JSON.stringify(result)
-        );
+        this.influxOfUseGaugeChart.timeRanges = JSON.parse(JSON.stringify(result));
         let data = this.influxOfUseGaugeChart.timeRanges[
           this.influxOfUseGaugeChart.currentTimeRange
         ].data.slice();
@@ -498,7 +496,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           data => {
-            console.log(".listenDeviceTransactionsUpdates()", data);
+            // console.log(".listenDeviceTransactionsUpdates()", data);
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);
             this.influxOfUseGaugeChart.updateRowData(data);
@@ -726,20 +724,25 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   getMaxUsageMeter(realMax: number): number {
-    let resp = Math.floor(realMax + 3 * (realMax / 10));
-    if (resp % 2 !== 0) {
-      resp = resp + 1;
+    if( realMax > (Math.floor( (96/100) * this.influxOfUseGaugeChart.max) ) ){
+      let resp = Math.floor(realMax + (30/100) * realMax);
+      // let resp = realMax;
+
+      if (resp % 2 !== 0) {
+        resp = resp + 1;
+      }
+      while (resp % 10 !== 0) {
+        resp = resp + 2;
+      }
+      while (resp % 100 !== 0) {
+        resp = resp + 10;
+      }
+      while (resp % 1000 !== 0) {
+        resp = resp + 100;
+      }
+      return resp;
     }
-    while (resp % 10 !== 0) {
-      resp = resp + 2;
-    }
-    while (resp % 100 !== 0) {
-      resp = resp + 10;
-    }
-    while (resp % 1000 !== 0) {
-      resp = resp + 100;
-    }
-    return resp;
+    return this.influxOfUseGaugeChart.max;
   }
 
   /**
