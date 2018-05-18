@@ -315,14 +315,14 @@
         <!-- / Front -->
 
         <!-- Back WIDGET 9 -->
-        <div *ngIf="influxOfUseGaugeChart.isReady" class="fuse-widget-back mat-white-bg mat-elevation-z2">
+        <div  class="fuse-widget-back mat-white-bg mat-elevation-z2">
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
 
             <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
               <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
             </div>
 
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
+            <mat-form-field *ngIf="influxOfUseGaugeChart.timeRanges.length > 0" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
               <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange" (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)"
                 aria-label="Change range">
                 <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
@@ -337,7 +337,7 @@
 
           </div>
 
-          <div class="h-420">
+          <div *ngIf="influxOfUseGaugeChart.timeRanges.length > 0" class="h-420">
             <ngx-charts-gauge [results]="influxOfUseGaugeChart.data" [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate" [legend]="influxOfUseGaugeChart.legend"
               [max]="influxOfUseGaugeChart.max" [scheme]="influxOfUseGaugeChart.scheme" [units]=" 'DASHBOARD.TOTAL_USAGES' | translate"
               [textValue]="influxOfUseGaugeChart.textValue" (select)="influxOfUseGaugeChart.toggleLegend()">
