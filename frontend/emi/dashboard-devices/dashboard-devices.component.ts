@@ -357,7 +357,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("Running Version 0.0.20");
+    console.log("Running Version 0.0.24");
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange

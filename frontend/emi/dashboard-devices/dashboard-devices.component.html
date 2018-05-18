@@ -272,8 +272,10 @@
       <!-- WIDGET 8 and 9 -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100">
 
+
         <!-- Front WIDGET 8 -->
         <div *ngIf="influxOfUserAdvancedPieChart.data" class="fuse-widget-front mat-white-bg mat-elevation-z2">
+
           <!-- header -->
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
             <!-- text on header -->
@@ -300,6 +302,7 @@
             <!-- end toggle Button -->
           </div>
           <!--end header -->
+
           <!-- chart -->
           <div class="h-420">
             <ngx-charts-advanced-pie-chart [results]="influxOfUserAdvancedPieChart.data" [label]="'DASHBOARD.TOTAL_USAGES' | translate "
@@ -307,15 +310,18 @@
             </ngx-charts-advanced-pie-chart>
           </div>
           <!-- end chart -->
-        </div>
 
+        </div>
         <!-- / Front -->
+
         <!-- Back WIDGET 9 -->
         <div *ngIf="influxOfUseGaugeChart.isReady" class="fuse-widget-back mat-white-bg mat-elevation-z2">
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
+
             <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
               <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
             </div>
+
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
               <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange" (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)"
                 aria-label="Change range">
@@ -324,16 +330,20 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
+
             <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
               <mat-icon class="s-16">close</mat-icon>
             </button>
+
           </div>
+
           <div class="h-420">
             <ngx-charts-gauge [results]="influxOfUseGaugeChart.data" [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate" [legend]="influxOfUseGaugeChart.legend"
               [max]="influxOfUseGaugeChart.max" [scheme]="influxOfUseGaugeChart.scheme" [units]=" 'DASHBOARD.TOTAL_USAGES' | translate"
               [textValue]="influxOfUseGaugeChart.textValue" (select)="influxOfUseGaugeChart.toggleLegend()">
             </ngx-charts-gauge>
           </div>
+
         </div>
         <!-- / Back -->
 
