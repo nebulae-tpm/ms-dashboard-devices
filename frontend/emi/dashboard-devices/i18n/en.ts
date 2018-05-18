@@ -12,6 +12,7 @@ export const locale = {
             'VIEW_COMPLETE_LIST': 'View complete list',
             'OF': " of ",
             'QUANTITY': 'Qty: ',
+            'TOPLIST_EMPTY': 'Empty list',
             'TIMERANGES':{
               ONE_HOUR: 'One hour',
               TWO_HOURS: 'Two hours',
@@ -20,8 +21,8 @@ export const locale = {
           },
           'DEVICES_BY_CUENCA': 'Online and offline devices by cuenca',
           'NUMBER_OF_DEVICES': 'Number of devices',
-          'USAGES_VS_ERRORS': 'Usages Vs write erros on system',
-          'USAGES_VS_ERRORS_by': 'Usages Vs write erros by:',
+          'USAGES_VS_ERRORS': 'Usages Vs write errors on system',
+          'USAGES_VS_ERRORS_by': 'Usages Vs write errors by:',
           'USAGES': 'Usages',
           'ERRORS': 'Errors',
           'INFLUX_OF_USERS': 'Influx of users between ',

@@ -12,6 +12,7 @@ export const locale = {
             'VIEW_COMPLETE_LIST': 'Ver Listado Completo',
             'OF': " de ",
             'QUANTITY': 'Cant: ',
+            'TOPLIST_EMPTY': 'Lista vacía',
             'TIMERANGES':{
               ONE_HOUR: 'Una hora',
               TWO_HOURS: 'Dos horas',

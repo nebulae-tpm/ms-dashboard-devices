@@ -249,12 +249,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ev: number,
         updateCuencaOptions: boolean = false
       ) => {
-        console.log(
-          "onTimeRangeFilterChanged",
-          ev,
-          updateCuencaOptions,
-          this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
-        );
+        // console.log(
+        //   "onTimeRangeFilterChanged",
+        //   ev,
+        //   updateCuencaOptions,
+        //   this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+        // );
         const cuencaNumberSelected = this
           .successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
         const cuencaNameSelected = Object.keys(
@@ -389,7 +389,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getSucessTransactionsGroupByGroupName(nowDate.getTime())
         .subscribe(
           result => {
-            console.log(".getSucessTransactionsGroupByGroupName()", result);
             this.influxOfUserAdvancedPieChart.updateRowData(result);
             this.influxOfUseGaugeChart.updateRowData(result);
           },
@@ -704,9 +703,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             ] = index;
           });
         }
-        console.log(
-          this.successfulAndFailedTransactionByGroupNameWidget.cuencas
-        );
+        // console.log(
+        //   this.successfulAndFailedTransactionByGroupNameWidget.cuencas
+        // );
         // this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
         //   1
         // );

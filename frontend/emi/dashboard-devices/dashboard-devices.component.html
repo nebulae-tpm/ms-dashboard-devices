@@ -50,23 +50,23 @@
           <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
             <mat-icon class="s-16">close</mat-icon>
           </button>
-          <mat-list>
-            <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices">
-              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
-              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
-              <!-- </p> -->
-            </mat-list-item>
 
-            <div class="card-divider full-width"></div>
-            <!-- [routerLink]="[alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].fullDevicesListLink]" -->
-            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
-
-              <button mat-button color="accent">
-                 {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
-              </button>
-            </div> -->
-          </mat-list>
+          <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
+            <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
+              <ul style="padding-left: 0px; text-align: center">
+                <li *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices"
+                style="list-style-type:none; padding-top: 5px; font-size: 16px">
+                  {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
+                </li>
+                <li *ngIf="alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices.length == 0" style="list-style-type:none">
+                  {{ 'DASHBOARD.MINI_WIDGET.TOPLIST_EMPTY' | translate }}
+                </li>
+              </ul>
+            </div>
+            <button mat-button color="accent">
+              {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+            </button>
+          </div>
 
         </div>
         <!-- / Back -->
@@ -115,22 +115,24 @@
           <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
             <mat-icon class="s-16">close</mat-icon>
           </button>
-          <mat-list>
-            <mat-list-item *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices">
-              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
-              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
-              <!-- </p> -->
-            </mat-list-item>
-
-            <div class="card-divider full-width"></div>
-
-            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+          <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
+              <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
+                <ul style="padding-left: 0px; text-align: center">
+                  <li *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices"
+                  style="list-style-type:none; padding-top: 5px; font-size: 16px">
+                    {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
+                  </li>
+                  <li *ngIf="alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices.length == 0" style="list-style-type:none">
+                    {{ 'DASHBOARD.MINI_WIDGET.TOPLIST_EMPTY' | translate }}
+                  </li>
+                </ul>
+              </div>
               <button mat-button color="accent">
-                  {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+                {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
-            </div> -->
-          </mat-list>
+          </div>
+
+
 
         </div>
         <!-- / Back -->
@@ -179,22 +181,24 @@
           <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
             <mat-icon class="s-16">close</mat-icon>
           </button>
-          <mat-list>
-            <mat-list-item *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices">
-              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
-              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
-              <!-- </p> -->
-            </mat-list-item>
 
-            <div class="card-divider full-width"></div>
-
-            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+          <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
+              <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
+                <ul style="padding-left: 0px; text-align: center">
+                  <li *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices"
+                  style="list-style-type:none; padding-top: 5px; font-size: 16px">
+                    {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
+                  </li>
+                  <li *ngIf="alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices.length == 0" style="list-style-type:none">
+                    {{ 'DASHBOARD.MINI_WIDGET.TOPLIST_EMPTY' | translate }}
+                  </li>
+                </ul>
+              </div>
               <button mat-button color="accent">
-                {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+                {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
-            </div> -->
-          </mat-list>
+          </div>
+
 
         </div>
         <!-- / Back -->
@@ -246,22 +250,23 @@
           <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
             <mat-icon class="s-16">close</mat-icon>
           </button>
-          <mat-list>
-            <mat-list-item *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices">
-              <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
-              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
-              <!-- </p> -->
-            </mat-list-item>
 
-            <div class="card-divider full-width"></div>
-
-            <!-- <div class="p-8 pt-16" fxLayout="row" fxLayoutAlign="start center">
+          <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
+              <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
+                <ul style="padding-left: 0px; text-align: center">
+                  <li *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices"
+                  style="list-style-type:none; padding-top: 5px; font-size: 16px">
+                    {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
+                  </li>
+                  <li *ngIf="alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices.length == 0" style="list-style-type:none">
+                    {{ 'DASHBOARD.MINI_WIDGET.TOPLIST_EMPTY' | translate }}
+                  </li>
+                </ul>
+              </div>
               <button mat-button color="accent">
-                {{'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
+                {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
               </button>
-            </div> -->
-          </mat-list>
+          </div>
 
         </div>
         <!-- / Back -->
@@ -315,14 +320,15 @@
         <!-- / Front -->
 
         <!-- Back WIDGET 9 -->
-        <div  class="fuse-widget-back mat-white-bg mat-elevation-z2">
+        <div class="fuse-widget-back mat-white-bg mat-elevation-z2">
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
 
             <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
               <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
             </div>
 
-            <mat-form-field *ngIf="influxOfUseGaugeChart.timeRanges.length > 0" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
+            <mat-form-field *ngIf="influxOfUseGaugeChart.timeRanges.length > 0" fxLayout="column" fxLayoutAlign="center center" fxFlex="100"
+              fxFlex.gt-sm="25">
               <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange" (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)"
                 aria-label="Change range">
                 <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">

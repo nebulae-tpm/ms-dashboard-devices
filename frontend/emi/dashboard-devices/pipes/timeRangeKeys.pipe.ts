@@ -27,7 +27,6 @@ export class timeRangeKeysWithtoLocaleString implements PipeTransform
         const [firstLimit, lastLimit] = item.timeRange.split(",");
         const firstLimitLabel = new Date(parseInt(firstLimit)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',  hour12: false })
         const lastLimitLabel = new Date(parseInt(lastLimit)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',  hour12: false })
-        console.log(firstLimit, firstLimitLabel, lastLimit, lastLimitLabel);
         keys.push({
           key: firstLimitLabel + " -- " + lastLimitLabel,
           index: index,
