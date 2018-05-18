@@ -325,7 +325,7 @@
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
               <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange" (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)"
                 aria-label="Change range">
-                <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeys" [value]="range.index">
+                <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
                   {{ range.key }}
                 </mat-option>
               </mat-select>
