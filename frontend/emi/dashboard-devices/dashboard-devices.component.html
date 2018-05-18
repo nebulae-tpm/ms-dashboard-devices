@@ -7,16 +7,17 @@
     <div class="widget-group" fxLayout="row" fxFlex="100" fxLayoutWrap fxLayoutAlign="start start" *fuseIfOnDom [@animateStagger]="{value:'50'}">
 
       <!-- ALERTS BY CPU WIDGET -->
-      <fuse-widget *ngIf="alertsByCpu.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByCpu.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100"
+        fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
 
 
-            <mat-form-field *ngIf="alertsByCpu.timeRanges" >
-              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByCpu.currentTimeRange"
-                (change)="alertsByCpu.onChangeTimeRange($event.value)" aria-label="Change range">
+            <mat-form-field *ngIf="alertsByCpu.timeRanges">
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByCpu.currentTimeRange" (change)="alertsByCpu.onChangeTimeRange($event.value)"
+                aria-label="Change range">
                 <mat-option *ngFor="let range of alertsByCpu.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
@@ -38,9 +39,8 @@
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
             <span class="h4 ml-8">
-              {{ alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].devicesCount }}
-              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
-              {{ totalDeviceAccout | async }} </span>
+              {{ alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].devicesCount }} {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }} {{ totalDeviceAccout
+              | async }} </span>
           </div>
         </div>
         <!-- / Front -->
@@ -53,7 +53,8 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-               <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
+              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
+              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
@@ -74,14 +75,14 @@
       <!-- ALERTS BY CPU WIDGET -->
 
       <!-- ALERT BY RAM MEMORY -->
-      <fuse-widget *ngIf="alertsByRamMemory.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByRamMemory.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
+        fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-form-field *ngIf="alertsByRamMemory.timeRanges" >
-              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByRamMemory.currentTimeRange"
-              aria-label="Change range" (change)="alertsByRamMemory.onChangeTimeRange($event.value)">
+            <mat-form-field *ngIf="alertsByRamMemory.timeRanges">
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByRamMemory.currentTimeRange" aria-label="Change range" (change)="alertsByRamMemory.onChangeTimeRange($event.value)">
                 <mat-option *ngFor="let range of alertsByRamMemory.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
@@ -102,9 +103,8 @@
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{ 'DASHBOARD.MINI_WIDGET.DEVICES' | translate }} </span>
             <span class="h4 ml-8">
-              {{ alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].devicesCount }}
-              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
-              {{ totalDeviceAccout | async }}
+              {{ alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].devicesCount }} {{ 'DASHBOARD.MINI_WIDGET.OF' | translate
+              }} {{ totalDeviceAccout | async }}
             </span>
           </div>
         </div>
@@ -118,7 +118,8 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-                <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
+              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
+              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
@@ -138,14 +139,14 @@
       <!-- ALERT BY RAM MEMORY -->
 
       <!-- ALERTS BY VOLTAGE WIDGET -->
-      <fuse-widget *ngIf="alertsByVoltage.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByVoltage.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
+        fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-form-field *ngIf="alertsByVoltage.timeRanges"  >
-              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByVoltage.currentTimeRange"
-                aria-label="Change range" (change)="alertsByVoltage.onChangeTimeRange($event.value)">
+            <mat-form-field *ngIf="alertsByVoltage.timeRanges">
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByVoltage.currentTimeRange" aria-label="Change range" (change)="alertsByVoltage.onChangeTimeRange($event.value)">
                 <mat-option *ngFor="let range of alertsByVoltage.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
@@ -166,10 +167,9 @@
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
             <span class="h4 ml-8">
-              {{alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].devicesCount}}
-              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
+              {{alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].devicesCount}} {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
               {{ totalDeviceAccout | async }}
-             </span>
+            </span>
           </div>
         </div>
         <!-- / Front -->
@@ -182,7 +182,8 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-                <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
+              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
+              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
@@ -202,14 +203,15 @@
       <!-- ALERTS BY VOLTAGE WIDGET -->
 
       <!-- ALERTS BY TEMPERATURE WIDGET -->
-      <fuse-widget *ngIf="alertsByTemperature.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
+      <fuse-widget *ngIf="alertsByTemperature.isReady" [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column"
+        fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="25">
 
         <!-- Front -->
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-form-field *ngIf="alertsByTemperature.timeRanges" >
-              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByTemperature.currentTimeRange"
-                aria-label="Change range" (change)="alertsByTemperature.onChangeTimeRange($event.value)">
+            <mat-form-field *ngIf="alertsByTemperature.timeRanges">
+              <mat-select class="simplified font-size-16" [(ngModel)]="alertsByTemperature.currentTimeRange" aria-label="Change range"
+                (change)="alertsByTemperature.onChangeTimeRange($event.value)">
                 <mat-option *ngFor="let range of alertsByTemperature.timeRanges | timeRangeKeys" [value]="range.index">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
@@ -232,9 +234,8 @@
           <div class="p-16 grey-50-bg border-top" fxLayout="row" fxLayoutAlign="start center">
             <span class="h4 secondary-text text-truncate"> {{'DASHBOARD.MINI_WIDGET.DEVICES' | translate}} </span>
             <span class="h4 ml-8">
-              {{alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].devicesCount}}
-              {{ 'DASHBOARD.MINI_WIDGET.OF' | translate }}
-              {{ totalDeviceAccout | async }}
+              {{alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].devicesCount}} {{ 'DASHBOARD.MINI_WIDGET.OF' | translate
+              }} {{ totalDeviceAccout | async }}
             </span>
           </div>
         </div>
@@ -248,7 +249,8 @@
           <mat-list>
             <mat-list-item *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices">
               <!-- <p [routerLink]="[item.deviceDetailLink]" > -->
-                <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp; <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong>   {{item.alarmsCount}}
+              <strong> Serial: &nbsp; </strong> {{item.sn}} &nbsp;
+              <strong> {{ 'DASHBOARD.MINI_WIDGET.QUANTITY' | translate }} &nbsp; </strong> {{item.alarmsCount}}
               <!-- </p> -->
             </mat-list-item>
 
@@ -268,43 +270,40 @@
       <!-- ALERTS BY TEMPERATURE WIDGET -->
 
       <!-- WIDGET 8 and 9 -->
-      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100" >
+      <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100">
 
         <!-- Front WIDGET 8 -->
         <div *ngIf="influxOfUserAdvancedPieChart.data" class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <!-- header -->
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
-              <!-- text on header -->
-              <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100" fxFlex.gt-sm="95" fxLayoutWrap >
-                <div class="h3 px-8 py-8">
-                  <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
-                </div>
-                <mat-form-field class="px-8 py-8">
-                  <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUserAdvancedPieChart.currentTimeRange"
-                  (change)="influxOfUserAdvancedPieChart.onChangeTimeRange($event.value)" aria-label="Change range">
-                    <mat-option *ngFor="let range of influxOfUserAdvancedPieChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
-                      {{ range.key }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+            <!-- text on header -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100" fxFlex.gt-sm="95" fxLayoutWrap>
+              <div class="h3 px-8 py-8">
+                <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
               </div>
-              <!-- ends text on header -->
-              <!-- toggle Button -->
-              <div fxLayoutAlign="end start" fxFlex="5">
-                <button mat-icon-button fuseWidgetToggle aria-label="more"  >
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-              </div>
-              <!-- end toggle Button -->
+              <mat-form-field class="px-8 py-8">
+                <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUserAdvancedPieChart.currentTimeRange" (change)="influxOfUserAdvancedPieChart.onChangeTimeRange($event.value)"
+                  aria-label="Change range">
+                  <mat-option *ngFor="let range of influxOfUserAdvancedPieChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
+                    {{ range.key }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <!-- ends text on header -->
+            <!-- toggle Button -->
+            <div fxLayoutAlign="end start" fxFlex="5">
+              <button mat-icon-button fuseWidgetToggle aria-label="more">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+            <!-- end toggle Button -->
           </div>
           <!--end header -->
           <!-- chart -->
           <div class="h-420">
-            <ngx-charts-advanced-pie-chart
-              [results]="influxOfUserAdvancedPieChart.data"
-              [label]="'DASHBOARD.TOTAL_USAGES' | translate "
-              [animations]= "true"
-              [scheme]="influxOfUserAdvancedPieChart.scheme" >
+            <ngx-charts-advanced-pie-chart [results]="influxOfUserAdvancedPieChart.data" [label]="'DASHBOARD.TOTAL_USAGES' | translate "
+              [animations]="true" [scheme]="influxOfUserAdvancedPieChart.scheme">
             </ngx-charts-advanced-pie-chart>
           </div>
           <!-- end chart -->
@@ -318,27 +317,21 @@
               <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
             </div>
             <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
-                <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange"
-                (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)" aria-label="Change range">
-                  <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index" >
-                    {{ range.key }}
-                  </mat-option>
-                </mat-select>
+              <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange" (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)"
+                aria-label="Change range">
+                <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
+                  {{ range.key }}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
             <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
-                <mat-icon class="s-16">close</mat-icon>
+              <mat-icon class="s-16">close</mat-icon>
             </button>
           </div>
           <div class="h-420">
-            <ngx-charts-gauge
-              [results]="influxOfUseGaugeChart.data"
-              [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate"
-              [legend]="influxOfUseGaugeChart.legend"
-              [max]="influxOfUseGaugeChart.max"
-              [scheme]="influxOfUseGaugeChart.scheme"
-              [units]=" 'DASHBOARD.TOTAL_USAGES' | translate"
-              [textValue]="influxOfUseGaugeChart.textValue"
-              (select)="influxOfUseGaugeChart.toggleLegend()" >
+            <ngx-charts-gauge [results]="influxOfUseGaugeChart.data" [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate" [legend]="influxOfUseGaugeChart.legend"
+              [max]="influxOfUseGaugeChart.max" [scheme]="influxOfUseGaugeChart.scheme" [units]=" 'DASHBOARD.TOTAL_USAGES' | translate"
+              [textValue]="influxOfUseGaugeChart.textValue" (select)="influxOfUseGaugeChart.toggleLegend()">
             </ngx-charts-gauge>
           </div>
         </div>
@@ -361,18 +354,11 @@
           </div>
 
           <div class="h-420">
-            <ngx-charts-bar-vertical-stacked *fuseIfOnDom
-              [scheme]="onlineVsOfflineByGroupNameWidget.scheme"
-              [results]="onlineVsOfflineByGroupNameWidget.data"
-              [barPadding]= "onlineVsOfflineByGroupNameWidget.barPadding"
-              [gradient]="onlineVsOfflineByGroupNameWidget.gradient"
-              [xAxis]="onlineVsOfflineByGroupNameWidget.xAxis"
-              [yAxis]="onlineVsOfflineByGroupNameWidget.yAxis"
-              [legend]="onlineVsOfflineByGroupNameWidget.legend"
-              [showXAxisLabel]="onlineVsOfflineByGroupNameWidget.showXAxisLabel"
-              [showYAxisLabel]="onlineVsOfflineByGroupNameWidget.showYAxisLabel"
-              [xAxisLabel]="onlineVsOfflineByGroupNameWidget.xAxisLabel"
-              [yAxisLabel]="onlineVsOfflineByGroupNameWidget.yAxisLabel | translate"
+            <ngx-charts-bar-vertical-stacked *fuseIfOnDom [scheme]="onlineVsOfflineByGroupNameWidget.scheme" [results]="onlineVsOfflineByGroupNameWidget.data"
+              [barPadding]="onlineVsOfflineByGroupNameWidget.barPadding" [gradient]="onlineVsOfflineByGroupNameWidget.gradient"
+              [xAxis]="onlineVsOfflineByGroupNameWidget.xAxis" [yAxis]="onlineVsOfflineByGroupNameWidget.yAxis" [legend]="onlineVsOfflineByGroupNameWidget.legend"
+              [showXAxisLabel]="onlineVsOfflineByGroupNameWidget.showXAxisLabel" [showYAxisLabel]="onlineVsOfflineByGroupNameWidget.showYAxisLabel"
+              [xAxisLabel]="onlineVsOfflineByGroupNameWidget.xAxisLabel" [yAxisLabel]="onlineVsOfflineByGroupNameWidget.yAxisLabel | translate"
               (select)="onlineVsOfflineByGroupNameWidget.onSelect($event)">
             </ngx-charts-bar-vertical-stacked>
           </div>
@@ -391,8 +377,9 @@
             <div class="h3 px-8 py-8 txt-a-center" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
               <strong> {{ 'DASHBOARD.USAGES_VS_ERRORS' | translate }} </strong>
             </div>
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
-              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionWidget.currentTimeRange" (change)="successfulAndFailedTransactionWidget.onRangeChanged($event.value)" aria-label="Change range">
+            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
+              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionWidget.currentTimeRange" (change)="successfulAndFailedTransactionWidget.onRangeChanged($event.value)"
+                aria-label="Change range">
                 <mat-option *ngFor="let range of successfulAndFailedTransactionWidget.timeRanges | keys" [value]="range.value">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
                 </mat-option>
@@ -401,11 +388,8 @@
           </div>
 
           <div class="h-400">
-            <canvas baseChart
-              [datasets]="successfulAndFailedTransactionWidget.datasets"
-              [labels]="successfulAndFailedTransactionWidget.labels"
-              [colors]="successfulAndFailedTransactionWidget.colors"
-              [options]="successfulAndFailedTransactionWidget.options"
+            <canvas baseChart [datasets]="successfulAndFailedTransactionWidget.datasets" [labels]="successfulAndFailedTransactionWidget.labels"
+              [colors]="successfulAndFailedTransactionWidget.colors" [options]="successfulAndFailedTransactionWidget.options"
               [chartType]="successfulAndFailedTransactionWidget.chartType">
             </canvas>
           </div>
@@ -439,9 +423,8 @@
               <strong> {{'DASHBOARD.USAGES_VS_ERRORS_by' | translate}} </strong>
             </div>
 
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25"  >
-              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionByGroupNameWidget.currentTimeRange"
-                (change)="successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged($event.value, true)"
+            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
+              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionByGroupNameWidget.currentTimeRange" (change)="successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged($event.value, true)"
                 aria-label="Change range">
                 <mat-option *ngFor="let range of successfulAndFailedTransactionByGroupNameWidget.timeRanges | keys" [value]="range.value">
                   {{ 'DASHBOARD.MINI_WIDGET.TIMERANGES.' + range.key | translate }}
@@ -449,9 +432,8 @@
               </mat-select>
             </mat-form-field>
 
-            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25" >
-              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionByGroupNameWidget.currentCuenca"
-                (change)="successfulAndFailedTransactionByGroupNameWidget.onCuencaFilterChanged($event.value)"
+            <mat-form-field fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="25">
+              <mat-select class="simplified" [(ngModel)]="successfulAndFailedTransactionByGroupNameWidget.currentCuenca" (change)="successfulAndFailedTransactionByGroupNameWidget.onCuencaFilterChanged($event.value)"
                 aria-label="Change range">
                 <mat-option *ngFor="let range of successfulAndFailedTransactionByGroupNameWidget.cuencas | keys" [value]="range.value">
                   {{ range.key }}
@@ -461,11 +443,8 @@
           </div>
 
           <div class="h-400">
-            <canvas baseChart
-              [datasets]="successfulAndFailedTransactionByGroupNameWidget.datasets"
-              [labels]="successfulAndFailedTransactionByGroupNameWidget.labels"
-              [colors]="successfulAndFailedTransactionByGroupNameWidget.colors"
-              [options]="successfulAndFailedTransactionByGroupNameWidget.options"
+            <canvas baseChart [datasets]="successfulAndFailedTransactionByGroupNameWidget.datasets" [labels]="successfulAndFailedTransactionByGroupNameWidget.labels"
+              [colors]="successfulAndFailedTransactionByGroupNameWidget.colors" [options]="successfulAndFailedTransactionByGroupNameWidget.options"
               [chartType]="successfulAndFailedTransactionByGroupNameWidget.chartType">
             </canvas>
           </div>
