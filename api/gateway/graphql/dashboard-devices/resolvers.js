@@ -15,7 +15,7 @@ module.exports = {
           500
         )
         .toPromise();
-    },    
+    },
     getDashBoardDevicesCurrentNetworkStatus(root, args, context) {
       return broker
         .forwardAndGetReply$(
@@ -38,7 +38,7 @@ module.exports = {
         .toPromise();
     },
     getSucessDeviceTransactionsGroupByGroupName(root, args, context) {
-      console.log('[GATEWAY]--getDeviceTransactionsGroupByGroupName', args);
+      // console.log('[GATEWAY]--getDeviceTransactionsGroupByGroupName', args);
       return broker
         .forwardAndGetReply$(
           "Device",

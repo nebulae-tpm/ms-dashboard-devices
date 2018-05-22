@@ -151,7 +151,7 @@ class DeviceTransactionsDA {
 
 
   static getDeviceTransactionGroupByGroupNameInInterval$(startDate, endTime, timeInterval){
-      console.log(startDate, endTime, timeInterval )
+    //   console.log(startDate, endTime, timeInterval )
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(collection.aggregate([
         { $match: { timestamp: { $gte: startDate, $lte: endTime }, success: true } },

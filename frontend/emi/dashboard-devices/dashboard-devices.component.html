@@ -54,7 +54,7 @@
           <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
             <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
               <ul style="padding-left: 0px; text-align: center">
-                <li *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices"
+                <li matTooltip="{{item.hostname}}" *ngFor="let item of alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].topDevices"
                 style="list-style-type:none; padding-top: 5px; font-size: 16px">
                   {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
                 </li>
@@ -118,7 +118,7 @@
           <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
               <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
                 <ul style="padding-left: 0px; text-align: center">
-                  <li *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices"
+                  <li  matTooltip="{{item.hostname}}" *ngFor="let item of alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].topDevices"
                   style="list-style-type:none; padding-top: 5px; font-size: 16px">
                     {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
                   </li>
@@ -185,7 +185,7 @@
           <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
               <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
                 <ul style="padding-left: 0px; text-align: center">
-                  <li *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices"
+                  <li  matTooltip="{{item.hostname}}" *ngFor="let item of alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].topDevices"
                   style="list-style-type:none; padding-top: 5px; font-size: 16px">
                     {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
                   </li>
@@ -254,7 +254,7 @@
           <div fxLayout="column" fxLayoutAlign=" none" style="width: 100%; height: 100%;" >
               <div fxLayout="column" fxLayoutAlign="space-evenly center" style="width: 100%; height: 100%;">
                 <ul style="padding-left: 0px; text-align: center">
-                  <li *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices"
+                  <li  matTooltip="{{item.hostname}}" *ngFor="let item of alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].topDevices"
                   style="list-style-type:none; padding-top: 5px; font-size: 16px">
                     {{item.sn}} &nbsp;:&nbsp; <strong>{{item.alarmsCount}}</strong>
                   </li>

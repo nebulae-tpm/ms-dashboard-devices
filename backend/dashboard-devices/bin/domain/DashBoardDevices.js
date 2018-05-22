@@ -6,7 +6,7 @@ const DeviceStatus = require("../data/DevicesStatusDA");
 const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
 const broker = require("../tools/broker/BrokerFactory.js")();
 
-const MATERIALIZED_VIEW_TOPIC = 'materialized-view-updates';
+const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
 
 let instance;
 
@@ -20,18 +20,23 @@ class DashBoardDevices {
    */
   getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesAlarmReport", args.type);
-    return instance
-      .getTimeRangesToLimit$({}, args.type)
-      .mergeMap(result => AlarmReportDA.getDashBoardDevicesAlarmReport$(result))
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 5))
-      .mergeMap(array => instance.mapToAlarmsWidget$(array))
-      .toArray()
-      .map(timeranges => {
-        return {
-          type: args.type,
-          timeRanges: timeranges
-        };
-      });
+    return (
+      instance
+        .getTimeRangesToLimit$({}, args.type)
+        .mergeMap(result =>
+          AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
+        )
+        .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 5))
+        // since here the client can do it.
+        .mergeMap(array => instance.mapToAlarmsWidget$(array))
+        .toArray()
+        .map(timeranges => {
+          return {
+            type: args.type,
+            timeRanges: timeranges
+          };
+        })
+    );
   }
 
   /**
@@ -42,7 +47,7 @@ class DashBoardDevices {
   getDashBoardDevicesCurrentNetworkStatus({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
-      .map(results => results.filter(result => result._id.cuenca))  
+      .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => instance.mapToCharBarData$(devices))
       .toArray();
   }
@@ -50,7 +55,7 @@ class DashBoardDevices {
   /**
    *  Get the Devices count
    */
-  getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken){
+  getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getDevicesTotalAccount$();
   }
@@ -61,7 +66,7 @@ class DashBoardDevices {
   handleDeviceConnectedEvent$(evt) {
     console.log("handleDeviceConnectedEvent", evt, evt.aid);
     return DeviceStatus.onDeviceOnlineReported(evt.aid)
-    .map(results => results.filter(result => result._id.cuenca))
+      .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
@@ -75,7 +80,7 @@ class DashBoardDevices {
   handleDeviceDisconnectedEvent$(evt) {
     console.log("handleDeviceDisconnectedEvent", evt);
     return DeviceStatus.onDeviceOfflineReported(evt.aid)
-    .map(results => results.filter(result => result._id.cuenca))    
+      .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(msg =>
@@ -90,7 +95,7 @@ class DashBoardDevices {
     return Rx.Observable.from(devices)
       .groupBy(cuenca => cuenca._id.cuenca)
       .mergeMap(group => group.toArray())
-      .map(group => {        
+      .map(group => {
         return {
           name: group[0]._id.cuenca,
           series: [
@@ -105,14 +110,14 @@ class DashBoardDevices {
               value: group.filter(c => !c._id.online)[0]
                 ? group.filter(c => !c._id.online)[0].value
                 : 0
-            }            
+            }
           ]
         };
       });
   }
 
   /**
-   * 
+   *
    * @param {Object} array data with alarms info in range of times
    */
   mapToAlarmsWidget$(array) {
@@ -137,6 +142,7 @@ class DashBoardDevices {
    */
   DeviceCpuUsageAlarmActivated$(evt) {
     return this.getTimeRangesToLimit$(evt, "CPU_USAGE")
+      .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceCpuUsageAlarmActivated(evt))
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
@@ -154,31 +160,49 @@ class DashBoardDevices {
   }
 
   /**
+   * get device's hostname using deviceId to query for it in mongo and persist
+   * the alarm registry with hostname property.
+   * @param {evt} evt
+   */
+  fillHostnameToEvt$(evt) {
+    return Rx.Observable.forkJoin(
+      Rx.Observable.of(evt),
+      DeviceStatus.getDeviceStatusByID$(evt.aid, { hostname: 1 })
+    )
+      .filter(([evt, device]) => device)
+      .map(([evt, device]) => {
+        evt.device = device;
+        return evt;
+      });
+  }
+
+  /**
    * Reaction to Ram usage alarm
    */
   onDeviceRamuUsageAlarmActivated$(evt) {
     console.log(JSON.stringify(evt));
     return (
       this.getTimeRangesToLimit$(evt, "RAM_MEMORY")
-      .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-      // aca se esta desordenando el array 
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))  
-      .mergeMap(array => this.mapToAlarmsWidget$(array))
-      .toArray()
-      .map(timeranges => {
-        return {
-          type: evt.alarmType,
-          timeRanges: timeranges
-        };
-      })
-      .mergeMap(msg =>
-        broker.send$(
-          MATERIALIZED_VIEW_TOPIC,
-          "DeviceRamMemoryAlarmActivated",
-          msg
+        .mergeMap(evt => this.fillHostnameToEvt$(evt))
+        .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
+        // aca se esta desordenando el array
+        .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+        .mergeMap(array => this.mapToAlarmsWidget$(array))
+        .toArray()
+        .map(timeranges => {
+          return {
+            type: evt.alarmType,
+            timeRanges: timeranges
+          };
+        })
+        .mergeMap(msg =>
+          broker.send$(
+            MATERIALIZED_VIEW_TOPIC,
+            "DeviceRamMemoryAlarmActivated",
+            msg
+          )
         )
-        )
-      );
+    );
   }
 
   /**
@@ -186,6 +210,7 @@ class DashBoardDevices {
    */
   onDeviceTemperatureAlarmActivated$(evt) {
     return this.getTimeRangesToLimit$(evt, "TEMPERATURE")
+      .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
@@ -225,10 +250,10 @@ class DashBoardDevices {
    * gets array with datelimits in milliseconds to last one, two and three hours
    */
   getTimeRangesRoundedToLimit$(evt, eventType, dateNow) {
-    console.log("--getTimeRangesRoundedToLimit$", evt, eventType, dateNow );
+    // console.log("--getTimeRangesRoundedToLimit$", evt, eventType, dateNow );
     return Rx.Observable.of(evt).map(evt => {
       const now = new Date(dateNow);
-      now.setMinutes(now.getMinutes() - now.getMinutes() % 10,0, 0);
+      now.setMinutes(now.getMinutes() - now.getMinutes() % 10, 0, 0);
       const lastHourLimit = now - 3600000;
       // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
       const lastTwoHoursLimit = lastHourLimit - 3600000;
@@ -245,13 +270,13 @@ class DashBoardDevices {
     });
   }
 
-
   /**
    * Reaction to Low Voltage alarm
-   * @param {Object} evt 
+   * @param {Object} evt
    */
   handleDeviceLowVoltageAlarmEvent$(evt) {
     return this.getTimeRangesToLimit$(evt, "VOLTAGE")
+      .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
@@ -273,10 +298,11 @@ class DashBoardDevices {
 
   /**
    * Reaction to High Voltage alarm
-   * @param {Object} evt 
+   * @param {Object} evt
    */
   handleDeviceHighVoltageAlarmEvent$(evt) {
     return this.getTimeRangesToLimit$(evt, "VOLTAGE")
+      .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
@@ -301,18 +327,22 @@ class DashBoardDevices {
    * @param {*} param0
    * @param {*} authToken
    */
-  getCuencaNamesWithSuccessTransactionsOnInterval$({ root, args, jwt }, authToken) {
-    console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
-    return DeviceTransactionsDA
-    .getCuencaNamesWithSuccessTransactionsOnInterval$(args.startDate, args.endDate)
-    .map(response => {
+  getCuencaNamesWithSuccessTransactionsOnInterval$(
+    { root, args, jwt },
+    authToken
+  ) {
+    // console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
+    return DeviceTransactionsDA.getCuencaNamesWithSuccessTransactionsOnInterval$(
+      args.startDate,
+      args.endDate
+    ).map(response => {
       const result = [];
       response.forEach(item => {
-          result.push(item.name);
+        result.push(item.name);
       });
-      console.log("getCuencaNamesWithSuccessTransactionsOnInterval ", JSON.stringify(response));
+      // console.log("getCuencaNamesWithSuccessTransactionsOnInterval ", JSON.stringify(response));
       return result;
-    })
+    });
   }
 
   /**
@@ -330,12 +360,15 @@ class DashBoardDevices {
   }
 
   /**
-   * 
+   *
    */
-  getDeviceTransactionsGroupByGroupName$({ root, args, jwt }, authToken){
-    console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
-    return instance.getTimeRangesRoundedToLimit$({}, undefined, args.nowDate)
-    .mergeMap(evt => DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt))
+  getDeviceTransactionsGroupByGroupName$({ root, args, jwt }, authToken) {
+    // console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
+    return instance
+      .getTimeRangesRoundedToLimit$({}, undefined, args.nowDate)
+      .mergeMap(evt =>
+        DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt)
+      );
   }
 
   /**
@@ -356,49 +389,52 @@ class DashBoardDevices {
     return this.handleDeviceMainAppUsosTranspCountReported$(data, false);
   }
 
-    /**
+  /**
    * Persists the amount of transactions reported by a device with a timestamp
    * @param {*} data Reported transaction event
    * @param {*} success boolean that indicates if the transactions were failed or successful
    */
   handleDeviceMainAppUsosTranspCountReported$(data, success) {
     // console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", data )
-    return DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
-    // .do(d => console.log("deviceFound ==> ", d))
-    .filter(device => device)
-      .map(device => {
-        const deviceTransaction = {
-          deviceId: data.aid,
-          timestamp: data.data.timestamp,
-          value: data.data.count,
-          success: success,
-          groupName: device.groupName ? device.groupName : "__Cuenca__"
-        };
-        return deviceTransaction;
-      })
-      .mergeMap(transaction =>
-        DeviceTransactionsDA.insertDeviceTransaction$(transaction)
-      )
-      .throttleTime(30000)
-      .map(deviceTransaction => {
-        const deviceTransactionUpdatedEvent = {
-          timestamp: new Date().getTime()
-        };
-        return deviceTransactionUpdatedEvent;
-      })
-      .mergeMap(deviceTransactionsUpdatedEvent => {
-        console.log("deviceTransactionsUpdatedEvent sent")
-        return broker.send$(
-          MATERIALIZED_VIEW_TOPIC,
-          "deviceTransactionsUpdatedEvent",
-          deviceTransactionsUpdatedEvent
-        );
-      });
+
+    return (
+      DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
+        // .do(d => console.log("deviceFound ==> ", d))
+        .filter(device => device)
+        .map(device => {
+          const deviceTransaction = {
+            deviceId: data.aid,
+            timestamp: data.data.timestamp,
+            value: data.data.count,
+            success: success,
+            groupName: device.groupName ? device.groupName : "__Cuenca__"
+          };
+          return deviceTransaction;
+        })
+        .mergeMap(transaction =>
+          DeviceTransactionsDA.insertDeviceTransaction$(transaction)
+        )
+        .throttleTime(30000)
+        .map(deviceTransaction => {
+          const deviceTransactionUpdatedEvent = {
+            timestamp: new Date().getTime()
+          };
+          return deviceTransactionUpdatedEvent;
+        })
+        .mergeMap(deviceTransactionsUpdatedEvent => {
+          // console.log("deviceTransactionsUpdatedEvent sent")
+          return broker.send$(
+            MATERIALIZED_VIEW_TOPIC,
+            "deviceTransactionsUpdatedEvent",
+            deviceTransactionsUpdatedEvent
+          );
+        })
+    );
   }
 
   /**
    * Update the device state in mongo collection
-   * @param {Object} evt 
+   * @param {Object} evt
    */
   handleDeviceStateReportedEvent$(evt) {
     console.log("handleDeviceStateReportedEvent", evt);

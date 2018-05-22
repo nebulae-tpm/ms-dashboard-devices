@@ -66,11 +66,13 @@ class EventStoreService {
     ////##################################################################
     ///######## SOLO PARA GENERAR  REGISTROS DE ALARMAS##############
     ////##################################################################
+    
     // Rx.Observable.interval(5000).subscribe(() => {
     //   dashBoardDevices.generateAlarms__RANDOM__$()
     //   .subscribe(r => {});
     // });
-    // Rx.Observable.interval(30000).subscribe(() => {
+
+    // Rx.Observable.interval(3000).subscribe(() => {
     //   dashBoardDevices.generateDevices__RANDOM__$()
     //   .subscribe(
     //     r => {},

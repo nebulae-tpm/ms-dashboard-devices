@@ -28,6 +28,7 @@ class AlarmReportDA {
         timestamp: evt.timestamp,
         type: alarmType,
         deviceId: evt.aid,
+        deviceHostname: evt.device.hostname,
         value: evt.data.value,
         unit: evt.data.value
       })
@@ -133,8 +134,6 @@ class AlarmReportDA {
     return Rx.Observable.from(timeRanges)
     .mergeMap(timeRange => {
       return (
-
-        Rx.Observable.forkJoin(
           Rx.Observable.fromPromise(
             collection
               .aggregate([
@@ -142,23 +141,22 @@ class AlarmReportDA {
                 {
                   $group: {
                     _id: { type: "$type", deviceId: "$deviceId" },
-                    value: { $sum: 1 }
+                    value: { $sum: 1 },
+                    hostname:  { $first: "$deviceHostname"  }
                   }
                 },
                 { $sort: { "value": -1 } },
                 { $limit: topLimit }
               ]).toArray()
               )
-        )
-      
-      .map(([aggregateResult, deviceInfo]) => {
+      .map((aggregateResult) => {
         const result =[];
         aggregateResult.forEach((item, index) => {
           if(item._id.deviceId == null) {return}          
           result.push({
             id: item._id.deviceId,
             sn: item._id.deviceId,
-            hostname: "",
+            hostname: item.hostname ? item.hostname : "NULL hostname",
             alarmsCount: item.value,
             deviceDetailLink: ''
           })
