@@ -340,7 +340,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         }
       },
       updateRowData: result => {
-        this.influxOfUseGaugeChart.timeRanges = JSON.parse(JSON.stringify(result));
+        this.influxOfUseGaugeChart.timeRanges = JSON.parse(
+          JSON.stringify(result)
+        );
         let data = this.influxOfUseGaugeChart.timeRanges[
           this.influxOfUseGaugeChart.currentTimeRange
         ].data.slice();
@@ -398,6 +400,16 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // online Vs offline GraphQl Query
       this.graphQlGatewayService.getDevicesOnlineVsOffline().subscribe(
         result => {
+          const originalLength = result.length;
+          while (result.length < 5) {
+            result.push({
+              name: " ".repeat(result.length + 1 - originalLength),
+              series: [
+                { name: "Online", value: 0 },
+                { name: "Offline", value: 0 }
+              ]
+            });
+          }
           this.onlineVsOfflineByGroupNameWidget.data = result;
           // this.widget5.barPadding = Math.floor(Math.random() * 300 + 100);
         },
@@ -408,6 +420,16 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
           result => {
+            const originalLength = result.length;
+            while (result.length < 5) {
+              result.push({
+                name: " ".repeat(result.length + 1 - originalLength),
+                series: [
+                  { name: "Online", value: 0 },
+                  { name: "Offline", value: 0 }
+                ]
+              });
+            }
             this.onlineVsOfflineByGroupNameWidget.data = result;
             // this.widget5.barPadding = (Math.floor(Math.random() * 300 + 100));
           },
@@ -508,7 +530,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             // To update and display the successfulAndFailedTransactionByGroupNameWidget data
             // const cuencaSelected = this.successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
             this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
-              this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
+              this.successfulAndFailedTransactionByGroupNameWidget
+                .currentTimeRange
             );
             // this.successfulAndFailedTransactionByGroupNameWidget.onCuencaFilterChanged(cuencaSelected);
           },
@@ -535,7 +558,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ) %
           10) *
         60000;
-    const startDate = endDate - ((hours * 60 * 60 * 1000) + 10 * 60 * 1000 ) ;
+    const startDate = endDate - (hours * 60 * 60 * 1000 + 10 * 60 * 1000);
 
     // console.log("Date range... ", startDate, endDate);
 
@@ -723,8 +746,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   getMaxUsageMeter(realMax: number): number {
-    if( realMax > (Math.floor( (96/100) * this.influxOfUseGaugeChart.max) ) ){
-      let resp = Math.floor(realMax + (30/100) * realMax);
+    if (realMax > Math.floor(96 / 100 * this.influxOfUseGaugeChart.max)) {
+      let resp = Math.floor(realMax + 30 / 100 * realMax);
       // let resp = realMax;
 
       if (resp % 2 !== 0) {

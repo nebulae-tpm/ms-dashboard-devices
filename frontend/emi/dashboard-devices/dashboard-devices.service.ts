@@ -101,7 +101,7 @@ export class DashboardDevicesService {
         query: getDevicesOnlineVsOffline
       })
       .valueChanges.map(
-        result => result.data.getDashBoardDevicesCurrentNetworkStatus
+        result => JSON.parse(JSON.stringify(result.data.getDashBoardDevicesCurrentNetworkStatus))
       );
   }
 
