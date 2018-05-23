@@ -164,7 +164,8 @@ export class DashboardDevicesService {
       variables: {
         nowDate: now
       },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'network-only',
+      // errorPolicy: 'all'
     })
     .map(result => result.data.getSucessDeviceTransactionsGroupByGroupName)
   }

@@ -14,7 +14,7 @@ const start = () => {
     Rx.Observable.concat(
         eventSourcing.eventStore.start$(),
         eventStoreService.start$(),
-        mongoDB.init$(),
+        mongoDB.start$(),
         graphQlService.start$()
     ).subscribe(
         (evt) => {
