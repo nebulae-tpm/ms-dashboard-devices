@@ -52,6 +52,10 @@ class EventStoreService {
       "DeviceMainAppErrsTranspCountReported":{
         fn: dashBoardDevices.persistFailedDeviceTransaction$,
         obj: dashBoardDevices
+      },
+      "CleanDashBoardHistory": {
+        fn: dashBoardDevices.removeAllObsoleteMongoDocuments$,
+        obj: dashBoardDevices
       }
     };
   }
@@ -190,6 +194,12 @@ class EventStoreService {
         {
           aggregateType: "Device",
           eventType: "DeviceMainAppErrsTranspCountReported",
+          onErrorHandler,
+          onCompleteHandler
+        },
+        {
+          aggregateType: "Cronjob",
+          eventType: "CleanDashBoardHistory",
           onErrorHandler,
           onCompleteHandler
         }

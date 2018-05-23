@@ -223,6 +223,17 @@ class AlarmReportDA {
         ])
         .toArray());
   }
+
+/**
+ * Remove all documents before the obsolete Threshold
+ * @param {double} obsoleteThreshold 
+ */
+  static removeOnsoleteAlarmsReports$(obsoleteThreshold){
+    const collection = mongoDB.db.collection(CollectionName);
+    return Rx.Observable.fromPromise(
+      collection.remove({ timestamp: { $lt: obsoleteThreshold } })
+    ).map(r => r.result)
+  }
 }
 
 

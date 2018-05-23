@@ -187,6 +187,13 @@ class DeviceTransactionsDA {
     })
    
   }
+
+  static removeObsoleteTransactions$(obsoleteThreshold){
+    const collection = mongoDB.db.collection(CollectionName);
+    return Rx.Observable.fromPromise(
+      collection.remove({ timestamp: { $lt: obsoleteThreshold } })
+    ).map(r => r.result)
+  }
   
 }
 
