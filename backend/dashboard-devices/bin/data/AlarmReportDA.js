@@ -16,32 +16,6 @@ class AlarmReportDA {
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[2], evt.alarmType)
     );
   }
-  /**
-   * Add new registry on DeviceAlarmReport
-   * @param {Object} device
-   */
-  static onDeviceCpuUsageAlarmActivated(evt) {
-    const collection = mongoDB.db.collection(CollectionName);
-    const alarmType = "CPU_USAGE";
-    return Rx.Observable.fromPromise(
-      collection.insertOne({
-        timestamp: evt.timestamp,
-        type: alarmType,
-        deviceId: evt.aid,
-        deviceHostname: evt.device.hostname,
-        value: evt.data.value,
-        unit: evt.data.value
-      })
-    )
-      .toArray()
-      .mergeMap(() =>
-        Rx.Observable.forkJoin(
-          AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[0], alarmType),
-          AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[1], alarmType),
-          AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[2], alarmType)
-        )
-      );
-  }
 
   /**
    * Save the alarm document in mongo
@@ -55,6 +29,7 @@ class AlarmReportDA {
         timestamp: evt.timestamp,
         type: alarmType,
         deviceId: evt.aid,
+        deviceHostname: evt.device.hostname,
         value: evt.data.value,
         unit: evt.data.value
       })

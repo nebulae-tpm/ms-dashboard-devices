@@ -746,9 +746,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   getMaxUsageMeter(realMax: number): number {
-    if (realMax > Math.floor(96 / 100 * this.influxOfUseGaugeChart.max)) {
-      let resp = Math.floor(realMax + 30 / 100 * realMax);
-      // let resp = realMax;
+    if(realMax < 1000)     { return 1000; }
+    else if(realMax < 2000){ return 2000; }
+    else if(realMax < 4000){ return 4000; }
+    else if(realMax < 6000){ return 6000; }
+    else if(realMax < 8000){ return 8000; }
+    else {
+      // let resp = Math.floor(realMax + 30 / 100 * realMax);
+      let resp = realMax;
 
       if (resp % 2 !== 0) {
         resp = resp + 1;
@@ -764,7 +769,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       }
       return resp;
     }
-    return this.influxOfUseGaugeChart.max;
   }
 
   /**

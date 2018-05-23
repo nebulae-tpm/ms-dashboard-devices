@@ -143,7 +143,7 @@ class DashBoardDevices {
   DeviceCpuUsageAlarmActivated$(evt) {
     return this.getTimeRangesToLimit$(evt, "CPU_USAGE")
       .mergeMap(evt => this.fillHostnameToEvt$(evt))
-      .mergeMap(evt => AlarmReportDA.onDeviceCpuUsageAlarmActivated(evt))
+      .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
