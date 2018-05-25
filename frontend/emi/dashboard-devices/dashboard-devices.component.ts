@@ -52,7 +52,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   allSubscriptions: Subscription[] = [];
 
   constructor(
-    private graphQlGatewayService: DashboardDevicesService,
+    private dashboardDeviceService: DashboardDevicesService,
     private translationLoader: FuseTranslationLoaderService,
     private datePipe: DatePipe
   ) {
@@ -364,7 +364,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     );
 
     // gets the total number of devices to show in alarms widgets
-    this.totalDeviceAccout = this.graphQlGatewayService.getAllDevicesAccount();
+    this.totalDeviceAccout = this.dashboardDeviceService.getAllDevicesAccount();
 
     // fill the chart of transaction Vs write erros in all System
     this.getDeviceTransactionByInterval(
@@ -387,7 +387,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     nowDate.setMilliseconds(0);
     this.allSubscriptions.push(
       // Fill the data neccesary to display influxOfUserAdvancedPieChart and influxOfUseGaugeChart
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .getSucessTransactionsGroupByGroupName(nowDate.getTime())
         .subscribe(
           result => {
@@ -398,7 +398,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ),
 
       // online Vs offline GraphQl Query
-      this.graphQlGatewayService.getDevicesOnlineVsOffline().subscribe(
+      this.dashboardDeviceService.getDevicesOnlineVsOffline().subscribe(
         result => {
           const originalLength = result.length;
           while (result.length < 5) {
@@ -416,7 +416,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         error => this.errorHandler(error)
       ),
       // online Vs offline GraphQl Subscription
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
           result => {
@@ -437,18 +437,28 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ),
 
       // CPU_USAGE GraphQl Query
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("CPU_USAGE")
-        .map(response => response.data.getDashBoardDevicesAlarmReport)
+        .map(response => {
+          console.log(response);
+          if(response.errors ){
+            // console.log(JSON.parse(response.errors[0].message))
+            console.log(response.errors)
+          }
+          return response.data.getDashBoardDevicesAlarmReport;
+        }
+      )
         .subscribe(
           response => {
-            this.buildWidget("alertsByCpu", response);
+            if(response != null) {
+              this.buildWidget("alertsByCpu", response);
+            }
           },
           error => this.errorHandler(error)
         ),
 
       // CPU_USAGE GraphQl Subscription
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .listenDashboardDeviceCpuAlarmsEvents()
         .subscribe(
           resp => this.buildWidget("alertsByCpu", resp),
@@ -456,7 +466,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ),
 
       // RAM_MEMORY GraphQl Query
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("RAM_MEMORY")
         .map(respond => respond.data.getDashBoardDevicesAlarmReport)
         .subscribe(
@@ -465,14 +475,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ),
 
       // RAM_MEMORY GraphQl Subscription
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .listenDashboardDeviceRamMemoryAlarmsEvents()
         .subscribe(
           response => this.buildWidget("alertsByRamMemory", response),
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Query
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("VOLTAGE")
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
@@ -480,14 +490,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Subscription
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .listenDashboardDeviceVoltageAlarmsEvents()
         .subscribe(
           response => this.buildWidget("alertsByVoltage", response),
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Query
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("TEMPERATURE")
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
@@ -495,14 +505,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Subscription
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .listenDashboardDeviceTemperatureAlarmsEvents()
         .subscribe(
           response => this.buildWidget("alertsByTemperature", response),
           error => this.errorHandler(error)
         ),
       // GraphQl Subscription to let know about an update in transactions
-      this.graphQlGatewayService
+      this.dashboardDeviceService
         .listenDeviceTransactionsUpdates()
         .pipe(
           switchMap(event => {
@@ -510,7 +520,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             now.setMinutes(now.getMinutes() - now.getMinutes() % 10);
             now.setSeconds(0);
             now.setMilliseconds(0);
-            return this.graphQlGatewayService.getSucessTransactionsGroupByGroupName(
+            return this.dashboardDeviceService.getSucessTransactionsGroupByGroupName(
               now.getTime()
             );
           })
@@ -666,7 +676,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         // console.log("------------------> ", timeMap);
         return forkJoin(
           of(timeMap),
-          this.graphQlGatewayService
+          this.dashboardDeviceService
             .getDeviceTransactionsGroupByTimeInterval(
               startDate - 10 * 60 * 1000,
               endDate,
@@ -702,7 +712,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   getAllCuencaNamesWithSuccessTransactionsOnInterval(hours) {
     const now = Date.now();
-    const subcriptionByIntervalAndGroupName = this.graphQlGatewayService
+    const subcriptionByIntervalAndGroupName = this.dashboardDeviceService
       .getCuencaNamesWithSuccessTransactionsOnInterval(
         now - hours * 60 * 60 * 1000,
         now

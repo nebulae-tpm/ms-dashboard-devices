@@ -66,7 +66,8 @@ export class DashboardDevicesService {
       query: getDashBoardDevicesAlarmReport,
       variables: {
         type: alarmType
-      }
+      },
+      errorPolicy: 'all'
     }).valueChanges
   }
 

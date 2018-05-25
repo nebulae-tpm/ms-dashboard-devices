@@ -4,12 +4,39 @@ const mongoDB = require('./MongoDB')();
 const Rx = require('rxjs');
 const CollectionName = "DeviceAlarmReports";
 
+class DeviceAlarmReportError extends Error {
+  constructor(method, code, message) {
+    super(message); 
+    this.code = code;
+    this.name = "DeviceAlarmReportError";
+    this.method = method;
+  }
+
+  getContent(){
+    return {
+      name: this.name,
+      code: this.code,
+      msg: this.message,      
+      method: this.method,
+      stack: this.stack
+    }
+  }
+}
+
 class AlarmReportDA {
   /**
    * gets DashBoardDevicesAlarmReport by type
    * @param {string} type
    */
-  static getDashBoardDevicesAlarmReport$(evt) {
+  static getDashBoardDevicesAlarmReport$(evt) {    
+    if(evt.alarmType === "CPU_USAGE"){   
+        return Rx.Observable.throw(
+          new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", 400, "Error generado para pruebas")
+        );
+          // throw new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", "Error sin RxJs")
+        // console.log(casa);
+        // x.forEach(i => console.log(i));
+    }
     return Rx.Observable.forkJoin(
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[0], evt.alarmType),
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[1], evt.alarmType),
@@ -212,4 +239,7 @@ class AlarmReportDA {
 }
 
 
-module.exports = AlarmReportDA;
+module.exports =  { 
+  AlarmReportDA, 
+  DeviceAlarmReportError 
+} 

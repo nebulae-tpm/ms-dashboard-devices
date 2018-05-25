@@ -1,7 +1,7 @@
 "use strict";
 
 const Rx = require("rxjs");
-const AlarmReportDA = require("../data/AlarmReportDA");
+const { AlarmReportDA, DeviceAlarmReportError } = require("../data/AlarmReportDA");
 const DeviceStatus = require("../data/DevicesStatusDA");
 const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
 const broker = require("../tools/broker/BrokerFactory.js")();
@@ -21,14 +21,14 @@ class DashBoardDevices {
   getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesAlarmReport", args.type);
     return (
-      instance
+      this
         .getTimeRangesToLimit$({}, args.type)
         .mergeMap(result =>
           AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
         )
         .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 5))
         // since here the client can do it.
-        .mergeMap(array => instance.mapToAlarmsWidget$(array))
+        .mergeMap(array => this.mapToAlarmsWidget$(array))
         .toArray()
         .map(timeranges => {
           return {
@@ -36,6 +36,8 @@ class DashBoardDevices {
             timeRanges: timeranges
           };
         })
+        .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+        .catch(err => this.errorHandler$(err))
     );
   }
 
@@ -48,7 +50,7 @@ class DashBoardDevices {
     console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
       .map(results => results.filter(result => result._id.cuenca))
-      .mergeMap(devices => instance.mapToCharBarData$(devices))
+      .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray();
   }
 
@@ -364,7 +366,7 @@ class DashBoardDevices {
    */
   getDeviceTransactionsGroupByGroupName$({ root, args, jwt }, authToken) {
     // console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
-    return instance
+    return this
       .getTimeRangesRoundedToLimit$({}, undefined, args.nowDate)
       .mergeMap(evt =>
         DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt)
@@ -451,6 +453,33 @@ class DashBoardDevices {
       AlarmReportDA.removeOnsoleteAlarmsReports$(obsoleteThreshold),
       DeviceTransactionsDA.removeObsoleteTransactions$(obsoleteThreshold)
     )
+  }
+
+  buildSuccessResponse$(rawRespponse) {
+    return Rx.Observable.of(rawRespponse)
+      .map(resp => {
+        return {
+          data: resp,
+          result: {
+            code: 200
+          }
+        }
+      });
+  }
+
+  errorHandler$(err){
+    const exception = { data: null, result: { code: err.code } }; 
+    if(err instanceof DeviceAlarmReportError ){      
+      exception.result.error = err.getContent();      
+    }else{
+      exception.result.error = {
+        name: this.name,
+        msg: err.toString(),
+        stack: err.stack
+      }      
+    }
+    return Rx.Observable.of(exception);
+    
   }
 
   generateAlarms__RANDOM__$() {

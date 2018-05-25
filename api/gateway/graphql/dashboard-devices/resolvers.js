@@ -4,6 +4,21 @@ const pubsub = new PubSub();
 const Rx = require("rxjs");
 const broker = require("../../broker/BrokerFactory")();
 
+function getReponseFromBackEnd$(response) {
+  return Rx.Observable.of(response)
+    .map(resp => {
+      if (resp.result.code != 200) {
+        const err = new Error();
+        err.name = 'Error';
+        err.message = resp.result.error;
+        this[Symbol()] = resp.result.error;
+        Error.captureStackTrace(err, 'Error');
+        throw err;
+      }
+      return resp.data;
+    });
+}
+
 module.exports = {
   Query: {
     getDashBoardDevicesAlarmReport(root, args, context) {
@@ -14,6 +29,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           500
         )
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getDashBoardDevicesCurrentNetworkStatus(root, args, context) {

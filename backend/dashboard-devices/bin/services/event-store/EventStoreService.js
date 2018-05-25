@@ -13,47 +13,47 @@ class EventStoreService {
 
   generateFunctionMap() {
     return {
-      "DeviceConnected": {
+      DeviceConnected: {
         fn: dashBoardDevices.handleDeviceConnectedEvent$,
         obj: dashBoardDevices
       },
-      "DeviceDisconnected": {
+      DeviceDisconnected: {
         fn: dashBoardDevices.handleDeviceDisconnectedEvent$,
         obj: dashBoardDevices
       },
-      "DeviceCpuUsageAlarmActivated": {
+      DeviceCpuUsageAlarmActivated: {
         fn: dashBoardDevices.DeviceCpuUsageAlarmActivated$,
         obj: dashBoardDevices
       },
-      "DeviceRamuUsageAlarmActivated":{
+      DeviceRamuUsageAlarmActivated: {
         fn: dashBoardDevices.onDeviceRamuUsageAlarmActivated$,
         obj: dashBoardDevices
       },
-      "DeviceTemperatureAlarmActivated":{
+      DeviceTemperatureAlarmActivated: {
         fn: dashBoardDevices.onDeviceTemperatureAlarmActivated$,
         obj: dashBoardDevices
       },
-      "DeviceLowVoltageAlarmReported":{
+      DeviceLowVoltageAlarmReported: {
         fn: dashBoardDevices.handleDeviceLowVoltageAlarmEvent$,
         obj: dashBoardDevices
       },
-      "DeviceHighVoltageAlarmReported":{
+      DeviceHighVoltageAlarmReported: {
         fn: dashBoardDevices.handleDeviceHighVoltageAlarmEvent$,
         obj: dashBoardDevices
       },
-      "DeviceDeviceStateReported":{
+      DeviceDeviceStateReported: {
         fn: dashBoardDevices.handleDeviceStateReportedEvent$,
         obj: dashBoardDevices
       },
-      "DeviceMainAppUsosTranspCountReported":{
+      DeviceMainAppUsosTranspCountReported: {
         fn: dashBoardDevices.persistSuccessDeviceTransaction$,
         obj: dashBoardDevices
       },
-      "DeviceMainAppErrsTranspCountReported":{
+      DeviceMainAppErrsTranspCountReported: {
         fn: dashBoardDevices.persistFailedDeviceTransaction$,
         obj: dashBoardDevices
       },
-      "CleanDashBoardHistory": {
+      CleanDashBoardHistory: {
         fn: dashBoardDevices.removeAllObsoleteMongoDocuments$,
         obj: dashBoardDevices
       }
@@ -66,11 +66,10 @@ class EventStoreService {
    *    emit value: { aggregateType, eventType, handlerName}
    */
   start$() {
-
     ////##################################################################
     ///######## SOLO PARA GENERAR  REGISTROS DE ALARMAS##############
     ////##################################################################
-    
+
     // Rx.Observable.interval(5000).subscribe(() => {
     //   dashBoardDevices.generateAlarms__RANDOM__$()
     //   .subscribe(r => {});
@@ -120,7 +119,7 @@ class EventStoreService {
     //   })
     //   .subscribe(r => {}, e => {});
     // });
-    
+
     ////##################################################################
     ////##################################################################
 
@@ -135,76 +134,74 @@ class EventStoreService {
     };
     console.log("EventStoreService starting ...");
 
-    return Rx.Observable.from(
-      [
-        {
-          aggregateType: "Device",
-          eventType: "DeviceConnected",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceDisconnected",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceDeviceStateReported",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceCpuUsageAlarmActivated",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceRamuUsageAlarmActivated",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceTemperatureAlarmActivated",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceLowVoltageAlarmReported",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceHighVoltageAlarmReported",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceMainAppUsosTranspCountReported",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Device",
-          eventType: "DeviceMainAppErrsTranspCountReported",
-          onErrorHandler,
-          onCompleteHandler
-        },
-        {
-          aggregateType: "Cronjob",
-          eventType: "CleanDashBoardHistory",
-          onErrorHandler,
-          onCompleteHandler
-        }
-    ]
-    ).map(params => this.subscribeEventHandler(params));
+    return Rx.Observable.from([
+      {
+        aggregateType: "Device",
+        eventType: "DeviceConnected",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceDisconnected",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceDeviceStateReported",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceCpuUsageAlarmActivated",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceRamuUsageAlarmActivated",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceTemperatureAlarmActivated",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceLowVoltageAlarmReported",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceHighVoltageAlarmReported",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceMainAppUsosTranspCountReported",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Device",
+        eventType: "DeviceMainAppErrsTranspCountReported",
+        onErrorHandler,
+        onCompleteHandler
+      },
+      {
+        aggregateType: "Cronjob",
+        eventType: "CleanDashBoardHistory",
+        onErrorHandler,
+        onCompleteHandler
+      }
+    ]).map(params => this.subscribeEventHandler(params));
   }
 
   /**
@@ -236,7 +233,7 @@ class EventStoreService {
       .mergeMap(evt => handler.fn.call(handler.obj, evt))
       .subscribe(
         evt => {
-           console.log(`EventStoreService: ${eventType} process: ${evt}`);
+          console.log(`EventStoreService: ${eventType} process: ${evt}`);
         },
         onErrorHandler,
         onCompleteHandler
@@ -262,4 +259,3 @@ module.exports = () => {
   }
   return instance;
 };
-

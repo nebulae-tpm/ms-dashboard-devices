@@ -5,7 +5,7 @@ const Rx = require("rxjs");
 const CollectionName = "deviceState";
 
 class DeviceStatusDA {
-
+  
 
   /**
    * gets DashboardDeviceStatus by sn
