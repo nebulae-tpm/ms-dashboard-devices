@@ -20,25 +20,22 @@ class DashBoardDevices {
    */
   getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
     console.log("getDashBoardDevicesAlarmReport", args.type);
-    return (
-      this
-        .getTimeRangesToLimit$({}, args.type)
-        .mergeMap(result =>
-          AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
-        )
-        .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 5))
-        // since here the client can do it.
-        .mergeMap(array => this.mapToAlarmsWidget$(array))
-        .toArray()
-        .map(timeranges => {
-          return {
-            type: args.type,
-            timeRanges: timeranges
-          };
-        })
-        .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
-        .catch(err => this.errorHandler$(err))
-    );
+    return this.getTimeRangesToLimit$({}, args.type)
+      .mergeMap(result =>
+        AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
+      )
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 5))
+      // since here the client can do it.
+      .mergeMap(array => this.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges => {
+        return {
+          type: args.type,
+          timeRanges: timeranges
+        };
+      })
+      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+      .catch(err => this.errorHandler$(err));
   }
 
   /**

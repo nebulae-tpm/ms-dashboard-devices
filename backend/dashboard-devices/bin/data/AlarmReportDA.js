@@ -29,14 +29,14 @@ class AlarmReportDA {
    * @param {string} type
    */
   static getDashBoardDevicesAlarmReport$(evt) {    
-    if(evt.alarmType === "CPU_USAGE"){   
-        return Rx.Observable.throw(
-          new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", 400, "Error generado para pruebas")
-        );
-          // throw new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", "Error sin RxJs")
-        // console.log(casa);
-        // x.forEach(i => console.log(i));
-    }
+    // if(evt.alarmType === "CPU_USAGE"){   
+    //     // return Rx.Observable.throw(
+    //     //   new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", 400, "Error generado para pruebas")
+    //     // );
+    //       // throw new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", "Error sin RxJs")
+    //     // console.log(casa);
+    //     // x.forEach(i => console.log(i));
+    // }
     return Rx.Observable.forkJoin(
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[0], evt.alarmType),
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[1], evt.alarmType),
