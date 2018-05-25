@@ -34,8 +34,6 @@ class AlarmReportDA {
     //     //   new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", 400, "Error generado para pruebas")
     //     // );
     //       // throw new DeviceAlarmReportError("getDashBoardDevicesAlarmReport$", "Error sin RxJs")
-    //     // console.log(casa);
-    //     // x.forEach(i => console.log(i));
     // }
     return Rx.Observable.forkJoin(
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[0], evt.alarmType),
