@@ -1,7 +1,8 @@
 "use strict";
 
 const Rx = require("rxjs");
-const { AlarmReportDA, DeviceAlarmReportError } = require("../data/AlarmReportDA");
+const AlarmReportDA  = require("../data/AlarmReportDA");
+const { CustomError } = require("../tools/customError");
 const DeviceStatus = require("../data/DevicesStatusDA");
 const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
 const broker = require("../tools/broker/BrokerFactory.js")();
@@ -466,13 +467,14 @@ class DashBoardDevices {
 
   errorHandler$(err){
     const exception = { data: null, result: { code: err.code } }; 
-    if(err instanceof DeviceAlarmReportError ){      
+    if(err instanceof CustomError ){      
       exception.result.error = err.getContent();      
     }else{
       exception.result.error = {
         name: this.name,
+        code: "000-001",
         msg: err.toString(),
-        stack: err.stack
+        // stack: err.stack
       }      
     }
     return Rx.Observable.of(exception);

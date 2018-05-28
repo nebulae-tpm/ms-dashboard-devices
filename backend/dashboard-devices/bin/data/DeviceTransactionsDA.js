@@ -3,6 +3,7 @@
 const mongoDB = require("./MongoDB")();
 const Rx = require("rxjs");
 const CollectionName = "deviceTransactions";
+const { CustomError } = require('../tools/customError');
 
 class DeviceTransactionsDA {
 

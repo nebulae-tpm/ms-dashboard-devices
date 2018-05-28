@@ -3,9 +3,10 @@
 const mongoDB = require("./MongoDB")();
 const Rx = require("rxjs");
 const CollectionName = "deviceState";
+const { CustomError } = require('../tools/customError');
 
 class DeviceStatusDA {
-  
+
 
   /**
    * gets DashboardDeviceStatus by sn
