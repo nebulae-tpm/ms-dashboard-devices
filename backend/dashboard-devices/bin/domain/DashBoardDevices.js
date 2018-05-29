@@ -12,7 +12,26 @@ const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
 let instance;
 
 class DashBoardDevices {
-  constructor() {}
+  constructor() {
+    this.frontendDeviceTransactionsUpdatedEvent$ = new Rx.Subject();
+
+    this.frontendDeviceTransactionsUpdatedEvent$
+      .throttleTime(60000)
+      .subscribe((deviceTransactionsUpdatedEvent) => {
+        broker.send$(
+          MATERIALIZED_VIEW_TOPIC,
+          "deviceTransactionsUpdatedEvent",
+          deviceTransactionsUpdatedEvent
+        ).subscribe(
+          (result) => { console.log("Update transaction sent to front-end", result) },
+          (err) => { console.log(err) },
+          () => { }
+        )
+      },
+        (error) => { },
+        () => { }
+      )
+  }
 
   /**
    * delivers the current status of the alarm by type
@@ -398,7 +417,7 @@ class DashBoardDevices {
 
     return (
       DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
-        // .do(d => console.log("deviceFound ==> ", d))
+        // .do(d => console.log("deviceFound ==> ", d.deviceId))
         .filter(device => device)
         .map(device => {
           const deviceTransaction = {
@@ -412,22 +431,16 @@ class DashBoardDevices {
         })
         .mergeMap(transaction =>
           DeviceTransactionsDA.insertDeviceTransaction$(transaction)
-        )
-        .throttleTime(30000)
+        )               
         .map(deviceTransaction => {
           const deviceTransactionUpdatedEvent = {
             timestamp: new Date().getTime()
           };
-          return deviceTransactionUpdatedEvent;
+          return deviceTransactionUpdatedEvent;          
         })
-        .mergeMap(deviceTransactionsUpdatedEvent => {
-          // console.log("deviceTransactionsUpdatedEvent sent")
-          return broker.send$(
-            MATERIALIZED_VIEW_TOPIC,
-            "deviceTransactionsUpdatedEvent",
-            deviceTransactionsUpdatedEvent
-          );
-        })
+        // TODO check what is the best way to do this
+        .do((deviceTransactionUpdatedEvent) => this.frontendDeviceTransactionsUpdatedEvent$.next(deviceTransactionUpdatedEvent))
+       
     );
   }
 
@@ -444,14 +457,13 @@ class DashBoardDevices {
    * 
    */
   removeAllObsoleteMongoDocuments$(evt){
-    const hoursBefore = 3;
-    const obsoleteThreshold = ((hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
-
-    // console.log("removeAllObsoleteMongoDocuments$(evt)", evt);
+    console.log("removeAllObsoleteMongoDocuments ==> ", evt.data)
+    const hoursBefore = evt.data.obsoleteThreshold;
+    const obsoleteThreshold = ( Date.now() - (hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
     return Rx.Observable.forkJoin(
-      AlarmReportDA.removeOnsoleteAlarmsReports$(obsoleteThreshold),
+      AlarmReportDA.removeObsoleteAlarmsReports$(obsoleteThreshold),
       DeviceTransactionsDA.removeObsoleteTransactions$(obsoleteThreshold)
-    )
+    );
   }
 
   buildSuccessResponse$(rawRespponse) {

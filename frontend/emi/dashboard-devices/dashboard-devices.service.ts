@@ -21,6 +21,7 @@ import {
   deviceTransactionsUpdatedEvent,
   getDeviceDashBoardTotalAccount
 } from "./gql/DashBoardDevices";
+// import { tap, map } from 'rxjs/operators';
 
 @Injectable()
 export class DashboardDevicesService {
