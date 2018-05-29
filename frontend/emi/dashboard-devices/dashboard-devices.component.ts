@@ -391,6 +391,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getSucessTransactionsGroupByGroupName(nowDate.getTime())
         .subscribe(
           result => {
+            console.log(result);
             this.influxOfUserAdvancedPieChart.updateRowData(result);
             this.influxOfUseGaugeChart.updateRowData(result);
           },
@@ -400,6 +401,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // online Vs offline GraphQl Query
       this.dashboardDeviceService.getDevicesOnlineVsOffline().subscribe(
         result => {
+          console.log(result);
           const originalLength = result.length;
           while (result.length < 5) {
             result.push({
@@ -420,6 +422,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
           result => {
+            console.log(result);
             const originalLength = result.length;
             while (result.length < 5) {
               result.push({
@@ -461,7 +464,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this.dashboardDeviceService
         .listenDashboardDeviceCpuAlarmsEvents()
         .subscribe(
-          resp => this.buildWidget("alertsByCpu", resp),
+          resp => {this.buildWidget("alertsByCpu", resp); console.log(resp);},
           error => this.errorHandler(error)
         ),
 
@@ -470,7 +473,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceAlertsBy("RAM_MEMORY")
         .map(respond => respond.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          response => this.buildWidget("alertsByRamMemory", response),
+          response => {this.buildWidget("alertsByRamMemory", response); console.log(response);},
           error => this.errorHandler(error)
         ),
 
@@ -478,7 +481,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this.dashboardDeviceService
         .listenDashboardDeviceRamMemoryAlarmsEvents()
         .subscribe(
-          response => this.buildWidget("alertsByRamMemory", response),
+          response => {this.buildWidget("alertsByRamMemory", response); console.log(response);},
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Query
@@ -486,14 +489,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceAlertsBy("VOLTAGE")
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          response => this.buildWidget("alertsByVoltage", response),
+          response => {this.buildWidget("alertsByVoltage", response); console.log(response);},
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Subscription
       this.dashboardDeviceService
         .listenDashboardDeviceVoltageAlarmsEvents()
         .subscribe(
-          response => this.buildWidget("alertsByVoltage", response),
+          response => {this.buildWidget("alertsByVoltage", response); console.log(response);},
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Query
@@ -501,14 +504,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceAlertsBy("TEMPERATURE")
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          response => this.buildWidget("alertsByTemperature", response),
+          response => {this.buildWidget("alertsByTemperature", response); console.log(response);},
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Subscription
       this.dashboardDeviceService
         .listenDashboardDeviceTemperatureAlarmsEvents()
         .subscribe(
-          response => this.buildWidget("alertsByTemperature", response),
+          response => {this.buildWidget("alertsByTemperature", response); console.log(response);},
           error => this.errorHandler(error)
         ),
       // GraphQl Subscription to let know about an update in transactions
@@ -517,9 +520,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .pipe(
           switchMap(event => {
             const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getMinutes() % 10);
-            now.setSeconds(0);
-            now.setMilliseconds(0);
+            now.setMinutes(now.getMinutes() - now.getMinutes() % 10, 0, 0);
             return this.dashboardDeviceService.getSucessTransactionsGroupByGroupName(
               now.getTime()
             );
@@ -527,7 +528,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           data => {
-            // console.log(".listenDeviceTransactionsUpdates()", data);
+            console.log("listenDeviceTransactionsUpdates()", data);
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);
             this.influxOfUseGaugeChart.updateRowData(data);

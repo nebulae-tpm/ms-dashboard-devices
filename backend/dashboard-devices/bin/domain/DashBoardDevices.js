@@ -394,7 +394,7 @@ class DashBoardDevices {
    * @param {*} success boolean that indicates if the transactions were failed or successful
    */
   handleDeviceMainAppUsosTranspCountReported$(data, success) {
-    console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", success, data )
+    // console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", success, data )
 
     return (
       DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
@@ -446,6 +446,7 @@ class DashBoardDevices {
   removeAllObsoleteMongoDocuments$(evt){
     const hoursBefore = 3;
     const obsoleteThreshold = ((hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
+
     // console.log("removeAllObsoleteMongoDocuments$(evt)", evt);
     return Rx.Observable.forkJoin(
       AlarmReportDA.removeOnsoleteAlarmsReports$(obsoleteThreshold),

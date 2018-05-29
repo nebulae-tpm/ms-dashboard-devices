@@ -29,6 +29,7 @@
                 "roles" : ["operator"],
                 "default" : true
             }
+            
         ],
         "preBuildCommands": [],
         "environmentVars": {
