@@ -180,7 +180,6 @@ class DashBoardDevices {
    * Reaction to Ram usage alarm
    */
   onDeviceRamuUsageAlarmActivated$(evt) {
-    console.log(JSON.stringify(evt));
     return (
       this.getTimeRangesToLimit$(evt, "RAM_MEMORY")
         .mergeMap(evt => this.fillHostnameToEvt$(evt))
