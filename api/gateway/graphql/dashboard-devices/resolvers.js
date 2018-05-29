@@ -19,7 +19,6 @@ function getReponseFromBackEnd$(response) {
     });
 }
 
-
 module.exports = {
   Query: {
     getDashBoardDevicesAlarmReport(root, args, context) {

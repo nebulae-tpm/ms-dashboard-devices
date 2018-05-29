@@ -50,6 +50,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   influxOfUseGaugeChart: any = {};
 
   allSubscriptions: Subscription[] = [];
+  
 
   constructor(
     private dashboardDeviceService: DashboardDevicesService,

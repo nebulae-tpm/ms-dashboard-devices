@@ -6,6 +6,7 @@ const CollectionName = "deviceState";
 const { CustomError } = require('../tools/customError');
 
 class DeviceStatusDA {
+  
 
 
   /**
