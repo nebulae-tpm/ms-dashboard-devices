@@ -20,7 +20,7 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
-    console.log("getDashBoardDevicesAlarmReport", args.type);
+    // console.log("getDashBoardDevicesAlarmReport", args.type);
     return this.getTimeRangesToLimit$({}, args.type)
       .mergeMap(result =>
         AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
@@ -45,7 +45,7 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDashBoardDevicesCurrentNetworkStatus({ root, args, jwt }, authToken) {
-    console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
+    // console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
       .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
@@ -56,7 +56,7 @@ class DashBoardDevices {
    *  Get the Devices count
    */
   getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken) {
-    console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
+    // console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getDevicesTotalAccount$();
   }
 
@@ -64,7 +64,7 @@ class DashBoardDevices {
    * Reaction to deviceOnlineReported
    */
   handleDeviceConnectedEvent$(evt) {
-    console.log("handleDeviceConnectedEvent", evt, evt.aid);
+    // console.log("handleDeviceConnectedEvent", evt, evt.aid);
     return DeviceStatus.onDeviceOnlineReported(evt.aid)
       .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
@@ -78,7 +78,7 @@ class DashBoardDevices {
    * Reaction to deviceofflineReported
    */
   handleDeviceDisconnectedEvent$(evt) {
-    console.log("handleDeviceDisconnectedEvent", evt);
+    // console.log("handleDeviceDisconnectedEvent", evt);
     return DeviceStatus.onDeviceOfflineReported(evt.aid)
       .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
@@ -436,7 +436,7 @@ class DashBoardDevices {
    * @param {Object} evt
    */
   handleDeviceStateReportedEvent$(evt) {
-    console.log("handleDeviceStateReportedEvent", evt);
+    // console.log("handleDeviceStateReportedEvent", evt);
     return DeviceStatus.onDeviceStateReportedEvent$(evt.data);
   }
 
