@@ -50,7 +50,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   influxOfUseGaugeChart: any = {};
 
   allSubscriptions: Subscription[] = [];
-  
+
 
   constructor(
     private dashboardDeviceService: DashboardDevicesService,
@@ -358,7 +358,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("Running Version 0.0.24");
+    console.log("Running Version 0.0.38");
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange

@@ -6,8 +6,6 @@ const CollectionName = "deviceState";
 const { CustomError } = require('../tools/customError');
 
 class DeviceStatusDA {
-  
-
 
   /**
    * gets DashboardDeviceStatus by sn
