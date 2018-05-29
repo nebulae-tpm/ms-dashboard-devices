@@ -172,7 +172,7 @@ class GraphQlService {
 module.exports = () => {
   if (!instance) {
     instance = new GraphQlService();
-    console.log("NEW instance GraphQlService !!");
+    console.log("NEW instance GraphQlService  !!");
   }
   return instance;
 };

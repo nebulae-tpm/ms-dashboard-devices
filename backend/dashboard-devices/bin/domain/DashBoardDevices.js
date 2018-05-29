@@ -394,7 +394,7 @@ class DashBoardDevices {
    * @param {*} success boolean that indicates if the transactions were failed or successful
    */
   handleDeviceMainAppUsosTranspCountReported$(data, success) {
-    // console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", data )
+    console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", success, data )
 
     return (
       DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })

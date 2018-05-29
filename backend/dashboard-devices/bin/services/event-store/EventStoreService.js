@@ -255,7 +255,7 @@ class EventStoreService {
 module.exports = () => {
   if (!instance) {
     instance = new EventStoreService();
-    console.log("NEW  EventStore instance !!");
+    console.log("NEW  EventStore instance  !!");
   }
   return instance;
 };
