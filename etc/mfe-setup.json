@@ -4,15 +4,15 @@
         "src": "frontend/emi/dashboard-devices",
         "groups": [
             {
-                "id": "DASHBOARDS",
-                "icon": "account_circle",
-                "translate": {
-                    "en": "Dashboard",
-                    "es": "Tableros"
-                },
-                "priority": 1000
+              "id": "DEVICES",
+              "icon": "location_searching",
+              "translate": {
+                "en": "Devices",
+                "es": "Dispositivos"
+              },
+              "priority": 1000
             }
-        ],
+          ],
         "contents": [
             {
                 "groupId": "DASHBOARDS",
