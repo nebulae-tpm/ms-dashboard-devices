@@ -38,7 +38,7 @@ class DashBoardDevices {
    * @param {*} param0
    * @param {*} authToken
    */
-  getDashBoardDevicesAlarmReport({ root, args, jwt }, authToken) {
+  getDashBoardDevicesAlarmReport$({ root, args, jwt }, authToken) {
     // console.log("getDashBoardDevicesAlarmReport", args.type);
     return this.getTimeRangesToLimit$({}, args.type)
       .mergeMap(result =>
@@ -63,12 +63,14 @@ class DashBoardDevices {
    * @param {*} param0
    * @param {*} authToken
    */
-  getDashBoardDevicesCurrentNetworkStatus({ root, args, jwt }, authToken) {
+  getDashBoardDevicesCurrentNetworkStatus$({ root, args, jwt }, authToken) {
     // console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
       .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
-      .toArray();
+      .toArray()
+      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+      .catch(err => this.errorHandler$(err));
   }
 
   /**
@@ -76,7 +78,9 @@ class DashBoardDevices {
    */
   getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken) {
     // console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
-    return DeviceStatus.getDevicesTotalAccount$();
+    return DeviceStatus.getDevicesTotalAccount$()
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
   }
 
   /**
@@ -90,7 +94,7 @@ class DashBoardDevices {
       .toArray()
       .mergeMap(msg =>
         broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceConnected", msg)
-      );
+      );   
   }
 
   /**
@@ -105,55 +109,7 @@ class DashBoardDevices {
       .mergeMap(msg =>
         broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceDisconnected", msg)
       );
-  }
-
-  /**
-   * used to convert data to Online vs Offline schema.
-   */
-  mapToCharBarData$(devices) {
-    return Rx.Observable.from(devices)
-      .groupBy(cuenca => cuenca._id.cuenca)
-      .mergeMap(group => group.toArray())
-      .map(group => {
-        return {
-          name: group[0]._id.cuenca,
-          series: [
-            {
-              name: "Online",
-              value: group.filter(c => c._id.online)[0]
-                ? group.filter(c => c._id.online)[0].value
-                : 0
-            },
-            {
-              name: "Offline",
-              value: group.filter(c => !c._id.online)[0]
-                ? group.filter(c => !c._id.online)[0].value
-                : 0
-            }
-          ]
-        };
-      });
-  }
-
-  /**
-   *
-   * @param {Object} array data with alarms info in range of times
-   */
-  mapToAlarmsWidget$(array) {
-    const result = [];
-    const timeRanges = ["ONE_HOUR", "TWO_HOURS", "THREE_HOURS"];
-    array.forEach((item, index) => {
-      result.push({
-        timeRange: timeRanges[index],
-        alarmsCount: item[0].value,
-        devicesCount: item[0].informers,
-        order: index,
-        topDevices: item[0].topDevices,
-        fullDevicesListLink: "htttp://www.google.com"
-      });
-    });
-    return result;
-  }
+  } 
 
   /**
    * Reaction to  DeviceCpuUsageAlarmActivated
@@ -178,22 +134,7 @@ class DashBoardDevices {
       );
   }
 
-  /**
-   * get device's hostname using deviceId to query for it in mongo and persist
-   * the alarm registry with hostname property.
-   * @param {evt} evt
-   */
-  fillHostnameToEvt$(evt) {
-    return Rx.Observable.forkJoin(
-      Rx.Observable.of(evt),
-      DeviceStatus.getDeviceStatusByID$(evt.aid, { hostname: 1 })
-    )
-      .filter(([evt, device]) => device)
-      .map(([evt, device]) => {
-        evt.device = device;
-        return evt;
-      });
-  }
+
 
   /**
    * Reaction to Ram usage alarm
@@ -248,45 +189,7 @@ class DashBoardDevices {
       );
   }
 
-  /**
-   * gets array with datelimits in milliseconds to last one, two and three hours
-   */
-  getTimeRangesToLimit$(evt, eventType) {
-    return Rx.Observable.of(evt).map(evt => {
-      const now = new Date();
-      const lastHourLimit = now - 3600000;
-      // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
-      const lastTwoHoursLimit = lastHourLimit - 3600000;
-      const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
-      evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
-      evt.alarmType = eventType;
-      return evt;
-    });
-  }
-
-  /**
-   * gets array with datelimits in milliseconds to last one, two and three hours
-   */
-  getTimeRangesRoundedToLimit$(evt, eventType, dateNow) {
-    // console.log("--getTimeRangesRoundedToLimit$", evt, eventType, dateNow );
-    return Rx.Observable.of(evt).map(evt => {
-      const now = new Date(dateNow);
-      now.setMinutes(now.getMinutes() - now.getMinutes() % 10, 0, 0);
-      const lastHourLimit = now - 3600000;
-      // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
-      const lastTwoHoursLimit = lastHourLimit - 3600000;
-      const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
-      evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
-      evt.timeRangesLabel = [
-        lastHourLimit + "," + now.getTime(),
-        lastTwoHoursLimit + "," + now.getTime(),
-        lastThreeHoursLimit + "," + now.getTime()
-      ];
-      evt.alarmType = eventType;
-      evt.endTimeLimit = now.getTime();
-      return evt;
-    });
-  }
+ 
 
   /**
    * Reaction to Low Voltage alarm
@@ -358,9 +261,10 @@ class DashBoardDevices {
       response.forEach(item => {
         result.push(item.name);
       });
-      // console.log("getCuencaNamesWithSuccessTransactionsOnInterval ", JSON.stringify(response));
       return result;
-    });
+    })
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
   }
 
   /**
@@ -374,7 +278,9 @@ class DashBoardDevices {
       args.startDate,
       args.endDate,
       args.groupName
-    );
+    )
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
   }
 
   /**
@@ -386,7 +292,10 @@ class DashBoardDevices {
       .getTimeRangesRoundedToLimit$({}, undefined, args.nowDate)
       .mergeMap(evt =>
         DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt)
-      );
+      )
+      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+      .catch(err => this.errorHandler$(err));
+
   }
 
   /**
@@ -466,17 +375,7 @@ class DashBoardDevices {
     );
   }
 
-  buildSuccessResponse$(rawRespponse) {
-    return Rx.Observable.of(rawRespponse)
-      .map(resp => {
-        return {
-          data: resp,
-          result: {
-            code: 200
-          }
-        }
-      });
-  }
+  
 
   errorHandler$(err){
     const exception = { data: null, result: { code: err.code } }; 
@@ -490,9 +389,131 @@ class DashBoardDevices {
         // stack: err.stack
       }      
     }
-    return Rx.Observable.of(exception);
-    
+    return Rx.Observable.of(exception);    
   }
+
+  //#region Mappers
+  buildSuccessResponse$(rawRespponse) {
+    return Rx.Observable.of(rawRespponse)
+      .map(resp => {
+        return {
+          data: resp,
+          result: {
+            code: 200
+          }
+        }
+      });
+  }
+
+    /**
+   * get device's hostname using deviceId to query for it in mongo and persist
+   * the alarm registry with hostname property.
+   * @param {evt} evt
+   */
+  fillHostnameToEvt$(evt) {
+    return Rx.Observable.forkJoin(
+      Rx.Observable.of(evt),
+      DeviceStatus.getDeviceStatusByID$(evt.aid, { hostname: 1 })
+    )
+      .filter(([evt, device]) => device)
+      .map(([evt, device]) => {
+        evt.device = device;
+        return evt;
+      });
+  }
+
+   /**
+   * used to convert data to Online vs Offline schema.
+   */
+  mapToCharBarData$(devices) {
+    return Rx.Observable.from(devices)
+      .groupBy(cuenca => cuenca._id.cuenca)
+      .mergeMap(group => group.toArray())
+      .map(group => {
+        return {
+          name: group[0]._id.cuenca,
+          series: [
+            {
+              name: "Online",
+              value: group.filter(c => c._id.online)[0]
+                ? group.filter(c => c._id.online)[0].value
+                : 0
+            },
+            {
+              name: "Offline",
+              value: group.filter(c => !c._id.online)[0]
+                ? group.filter(c => !c._id.online)[0].value
+                : 0
+            }
+          ]
+        };
+      });
+  }
+
+  /**
+   *
+   * @param {Object} array data with alarms info in range of times
+   */
+  mapToAlarmsWidget$(array) {
+    const result = [];
+    const timeRanges = ["ONE_HOUR", "TWO_HOURS", "THREE_HOURS"];
+    array.forEach((item, index) => {
+      result.push({
+        timeRange: timeRanges[index],
+        alarmsCount: item[0].value,
+        devicesCount: item[0].informers,
+        order: index,
+        topDevices: item[0].topDevices,
+        fullDevicesListLink: "htttp://www.google.com"
+      });
+    });
+    return result;
+  }
+
+   /**
+   * gets array with datelimits in milliseconds to last one, two and three hours
+   */
+  getTimeRangesToLimit$(evt, eventType) {
+    return Rx.Observable.of(evt).map(evt => {
+      const now = new Date();
+      const lastHourLimit = now - 3600000;
+      // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+      const lastTwoHoursLimit = lastHourLimit - 3600000;
+      const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
+      evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
+      evt.alarmType = eventType;
+      return evt;
+    });
+  }
+
+  /**
+   * gets array with datelimits in milliseconds to last one, two and three hours
+   */
+  getTimeRangesRoundedToLimit$(evt, eventType, dateNow) {
+    // console.log("--getTimeRangesRoundedToLimit$", evt, eventType, dateNow );
+    return Rx.Observable.of(evt).map(evt => {
+      const now = new Date(dateNow);
+      now.setMinutes(now.getMinutes() - now.getMinutes() % 10, 0, 0);
+      const lastHourLimit = now - 3600000;
+      // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
+      const lastTwoHoursLimit = lastHourLimit - 3600000;
+      const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
+      evt.timeRanges = [lastHourLimit, lastTwoHoursLimit, lastThreeHoursLimit];
+      evt.timeRangesLabel = [
+        lastHourLimit + "," + now.getTime(),
+        lastTwoHoursLimit + "," + now.getTime(),
+        lastThreeHoursLimit + "," + now.getTime()
+      ];
+      evt.alarmType = eventType;
+      evt.endTimeLimit = now.getTime();
+      return evt;
+    });
+  }
+
+
+  //endregion
+
+  //#region random data generator
 
   generateAlarms__RANDOM__$() {
     return AlarmReportDA.generateAlarms__RANDOM__();
@@ -501,6 +522,9 @@ class DashBoardDevices {
   generateDevices__RANDOM__$() {
     return DeviceStatus.generateDevices__RANDOM__$();
   }
+
+  //#endregion 
+  
 }
 
 module.exports = () => {

@@ -17,11 +17,11 @@ class GraphQlService {
   generateFunctionMap() {
     return {
       "gateway.graphql.query.getDashBoardDevicesAlarmReport": {
-        fn: dashBoardDevices.getDashBoardDevicesAlarmReport,
+        fn: dashBoardDevices.getDashBoardDevicesAlarmReport$,
         obj: dashBoardDevices
       },
       "gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus": {
-        fn: dashBoardDevices.getDashBoardDevicesCurrentNetworkStatus,
+        fn: dashBoardDevices.getDashBoardDevicesCurrentNetworkStatus$,
         obj: dashBoardDevices
       },
       "gateway.graphql.query.getDeviceTransactionsGroupByTimeInterval": {

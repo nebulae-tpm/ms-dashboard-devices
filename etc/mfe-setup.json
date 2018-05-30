@@ -19,8 +19,8 @@
                 "id": "dashboard-devices",
                 "icon": "dashboard",
                 "translate": {
-                    "en": "Devices",
-                    "es": "Dispositivos"
+                    "en": "Dashboard",
+                    "es": "Tablero"
                 },
                 "navURL": "/dashboard-devices",
                 "path": "dashboard-devices",

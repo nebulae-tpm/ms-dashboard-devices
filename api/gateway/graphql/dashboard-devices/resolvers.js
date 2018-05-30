@@ -40,6 +40,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           500
         )
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getCuencaNamesWithSuccessTransactionsOnInterval(root, args, context) {
@@ -51,6 +52,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           500
         )
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getSucessDeviceTransactionsGroupByGroupName(root, args, context) {
@@ -62,6 +64,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           500
         )
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getDeviceTransactionsGroupByTimeInterval(root, args, context) {
@@ -73,6 +76,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           500
         )
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getDeviceDashBoardTotalAccount(root, args, context) {
@@ -84,6 +88,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           500
         )
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     }
   },
