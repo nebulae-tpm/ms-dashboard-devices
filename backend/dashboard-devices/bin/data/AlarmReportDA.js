@@ -111,7 +111,7 @@ class AlarmReportDA {
    * @param {Object} timeRanges contains the information to show in the card about just one frame hour 
    * @param {int} topLimit Top devices  limit
    */
-  static getTopAlarmDevices$(timeRanges, topLimit) {
+  static getTopAlarmDevices$(timeRanges) {
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.from(timeRanges)
     .mergeMap(timeRange => {
@@ -127,8 +127,7 @@ class AlarmReportDA {
                     hostname:  { $first: "$deviceHostname"  }
                   }
                 },
-                { $sort: { "value": -1 } },
-                { $limit: topLimit }
+                { $sort: { "value": -1 } }
               ]).toArray()
               )
       .map((aggregateResult) => {

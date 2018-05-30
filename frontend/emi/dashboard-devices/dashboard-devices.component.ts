@@ -27,6 +27,7 @@ import { DatePipe } from "@angular/common";
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { of } from "rxjs/observable/of";
 import { from } from "rxjs/observable/from";
+import {Router, NavigationExtras} from "@angular/router";
 
 @Component({
   selector: "fuse-dashboard-devices",
@@ -55,7 +56,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   constructor(
     private dashboardDeviceService: DashboardDevicesService,
     private translationLoader: FuseTranslationLoaderService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private router: Router
   ) {
     this.translationLoader.loadTranslations(english, spanish);
 
@@ -358,7 +360,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("Running Version 0.0.38");
+    console.log("ngOnInit on Dashboard, Running Version 0.0.38");
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
@@ -465,7 +467,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this.dashboardDeviceService
         .listenDashboardDeviceCpuAlarmsEvents()
         .subscribe(
-          resp => {this.buildWidget("alertsByCpu", resp); console.log(resp);},
+          resp => this.buildWidget("alertsByCpu", resp),
           error => this.errorHandler(error)
         ),
 
@@ -474,7 +476,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceAlertsBy("RAM_MEMORY")
         .map(respond => respond.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          response => {this.buildWidget("alertsByRamMemory", response); console.log(response);},
+          response => this.buildWidget("alertsByRamMemory", response),
           error => this.errorHandler(error)
         ),
 
@@ -482,7 +484,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this.dashboardDeviceService
         .listenDashboardDeviceRamMemoryAlarmsEvents()
         .subscribe(
-          response => {this.buildWidget("alertsByRamMemory", response); console.log(response);},
+          response => this.buildWidget("alertsByRamMemory", response),
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Query
@@ -490,14 +492,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceAlertsBy("VOLTAGE")
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          response => {this.buildWidget("alertsByVoltage", response); console.log(response);},
+          response => this.buildWidget("alertsByVoltage", response),
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Subscription
       this.dashboardDeviceService
         .listenDashboardDeviceVoltageAlarmsEvents()
         .subscribe(
-          response => {this.buildWidget("alertsByVoltage", response); console.log(response);},
+          response => this.buildWidget("alertsByVoltage", response),
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Query
@@ -505,14 +507,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceAlertsBy("TEMPERATURE")
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
-          response => {this.buildWidget("alertsByTemperature", response); console.log(response);},
+          response => this.buildWidget("alertsByTemperature", response),
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Subscription
       this.dashboardDeviceService
         .listenDashboardDeviceTemperatureAlarmsEvents()
         .subscribe(
-          response => {this.buildWidget("alertsByTemperature", response); console.log(response);},
+          response => this.buildWidget("alertsByTemperature", response),
           error => this.errorHandler(error)
         ),
       // GraphQl Subscription to let know about an update in transactions
@@ -749,7 +751,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log("ngOnDestroy ...");
+    console.log("ngOnDestroy on Dashboard ...");
     this.allSubscriptions.forEach(s => s.unsubscribe());
   }
 
@@ -799,21 +801,44 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   buildWidget(widgetName: string, widgetContent: any): void {
-    const isNew = this[widgetName].currentTimeRange ? false : true;
     let lastTimeRange = 0;
-    if (!isNew) {
+    if (this[widgetName].isReady) {
       lastTimeRange = this[widgetName].currentTimeRange;
-      this[widgetName].timeRanges[this[widgetName].currentTimeRange].topDevices;
     }
     this[widgetName] = JSON.parse(JSON.stringify(widgetContent));
+
     this[widgetName].timeRanges = this[widgetName].timeRanges.sort(
       (a: any, b: any) => a.order - b.order
     );
+    // limit each timerange to hace only 5 element to shpw but keeps all the devices in other prop
+    this[widgetName].timeRanges.forEach((timeRange) => {
+      timeRange.fullDeviceTopList = timeRange.topDevices;
+      timeRange.topDevices = timeRange.topDevices.slice(0, 5);
+    });
+
     this[widgetName].currentTimeRange = lastTimeRange;
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
 
+    this[widgetName].goToTopList = (alarmType: string, timeRange: string) => {
+      const idList = [];
+      this[widgetName].timeRanges[this[widgetName].currentTimeRange].fullDeviceTopList.forEach(device => {
+        idList.push(device.sn);
+      });
+      let navigationParams: NavigationExtras = {
+        queryParams: {
+          alarmType: alarmType,
+          timeRange: timeRange,
+          idList: idList
+        }
+      };
+
+      // this.router.navigate(["/devices"], navigationParams )
+      console.log(["/devices"], navigationParams);
+    }
+
     this[widgetName].isReady = true;
+    console.log(this[widgetName]);
   }
 
   errorHandler(error: any): void {

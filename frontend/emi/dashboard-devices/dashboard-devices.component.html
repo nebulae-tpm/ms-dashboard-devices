@@ -66,8 +66,11 @@
                 </li>
               </ul>
             </div>
-            <button mat-button color="accent" [routerLink]="['/devices']"
-            [queryParams]="{ alarmType: alertsByCpu.type, timeRange: alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].timeRange }">
+
+            <!-- [routerLink]="['/devices']"
+            [queryParams]="{ alarmType: alertsByCpu.type, timeRange: alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].timeRange }" -->
+
+            <button mat-button color="accent" (click)="alertsByCpu.goToTopList('CPU_USAGE', alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].timeRange )"  >
               {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
             </button>
           </div>

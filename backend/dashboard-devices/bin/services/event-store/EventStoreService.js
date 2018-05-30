@@ -234,7 +234,6 @@ class EventStoreService {
       .subscribe(
         evt => {
           // console.log(`EventStoreService: ${eventType} process: ${evt}`);
-          console.log(`EventStoreService: ${eventType}`);
         },
         onErrorHandler,
         onCompleteHandler

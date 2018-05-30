@@ -44,7 +44,7 @@ class DashBoardDevices {
       .mergeMap(result =>
         AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
       )
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 5))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       // since here the client can do it.
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
