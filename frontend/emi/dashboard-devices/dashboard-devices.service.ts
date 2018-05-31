@@ -21,7 +21,7 @@ import {
   deviceTransactionsUpdatedEvent,
   getDeviceDashBoardTotalAccount
 } from "./gql/DashBoardDevices";
-// import { tap, map } from 'rxjs/operators';
+import { tap } from "rxjs/operators";
 
 @Injectable()
 export class DashboardDevicesService {
@@ -62,11 +62,12 @@ export class DashboardDevicesService {
     .map(respond => respond.data.getCuencaNamesWithSuccessTransactionsOnInterval)
   }
 
-  getDashboardDeviceAlertsBy(alarmType: string) {
+  getDashboardDeviceAlertsBy(alarmType: string, startTime: number) {
     return this.gateway.apollo.watchQuery<any>({
       query: getDashBoardDevicesAlarmReport,
       variables: {
-        type: alarmType
+        type: alarmType,
+        startTime: startTime
       },
       errorPolicy: 'all'
     }).valueChanges

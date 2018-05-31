@@ -56,10 +56,12 @@ type DashBoardDevicesAlarmReportTimeRange{
 
 "Alarm report type used for DashBoardDevices"
 type DashBoardDevicesAlarmReport {
-  "Report type"
+  "Report alarm type"
   type: DashBoardDevicesAlarmReportType!
-  "Time ranges"
+  "Time ranges with each timeframe data"
   timeRanges: [DashBoardDevicesAlarmReportTimeRange]
+  "start time applied to the query"
+  queriedTime: BigInt
 }
 
 "Device Network status event type used for DashBoardDevices"
@@ -114,7 +116,7 @@ type DeviceTransactionsUpdatedEvent{
 
 type Query {
   "Get a report summary of alarmed devices.  this is used on DashBoardDevices section"
-  getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!): DashBoardDevicesAlarmReport
+  getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!, startTime: BigInt!): DashBoardDevicesAlarmReport
   getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
   getCuencaNamesWithSuccessTransactionsOnInterval(startDate: BigInt, endDate: BigInt): [String]!
   getSucessDeviceTransactionsGroupByGroupName(nowDate: BigInt!): [DashboardDeviceTransactionSucessArray]!

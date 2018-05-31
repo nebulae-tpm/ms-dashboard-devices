@@ -143,7 +143,7 @@ class GraphQlService {
       })
       .subscribe(
         msg => {
-          console.log(`GraphQlService: ${messageType} process: ${msg}`);
+          // console.log(`GraphQlService: ${messageType} process: ${msg}`);
         },
         onErrorHandler,
         onCompleteHandler

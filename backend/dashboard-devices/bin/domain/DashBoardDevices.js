@@ -39,8 +39,8 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDashBoardDevicesAlarmReport$({ root, args, jwt }, authToken) {
-    // console.log("getDashBoardDevicesAlarmReport", args.type);
-    return this.getTimeRangesToLimit$({}, args.type)
+    // console.log("getDashBoardDevicesAlarmReport", args);
+    return this.getTimeRangesToLimit$({}, args.type, args.startTime)
       .mergeMap(result =>
         AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
       )
@@ -49,8 +49,10 @@ class DashBoardDevices {
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
+        // console.log(JSON.stringify(timeranges));
         return {
           type: args.type,
+          queriedTime: args.startTime,
           timeRanges: timeranges
         };
       })
@@ -116,14 +118,15 @@ class DashBoardDevices {
    * @param {Object} evt
    */
   DeviceCpuUsageAlarmActivated$(evt) {
-    return this.getTimeRangesToLimit$(evt, "CPU_USAGE")
+    const queriedTime = Date.now();
+    return this.getTimeRangesToLimit$(evt, "CPU_USAGE", queriedTime)
       .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
-        return { type: evt.alarmType, timeRanges: timeranges };
+        return { type: evt.alarmType, timeRanges: timeranges, queriedTime: queriedTime };
       })
       .mergeMap(msg =>
         broker.send$(
@@ -134,24 +137,23 @@ class DashBoardDevices {
       );
   }
 
-
-
   /**
    * Reaction to Ram usage alarm
    */
   onDeviceRamuUsageAlarmActivated$(evt) {
-    return (
-      this.getTimeRangesToLimit$(evt, "RAM_MEMORY")
+    const queriedTime = Date.now();
+    return this.getTimeRangesToLimit$(evt, "RAM_MEMORY", queriedTime)
         .mergeMap(evt => this.fillHostnameToEvt$(evt))
         .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-        // aca se esta desordenando el array
-        .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+        // aca se estaba desordenando el array
+        .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
         .mergeMap(array => this.mapToAlarmsWidget$(array))
         .toArray()
         .map(timeranges => {
           return {
             type: evt.alarmType,
-            timeRanges: timeranges
+            timeRanges: timeranges,
+            queriedTime: queriedTime
           };
         })
         .mergeMap(msg =>
@@ -160,24 +162,25 @@ class DashBoardDevices {
             "DeviceRamMemoryAlarmActivated",
             msg
           )
-        )
-    );
+        );
   }
 
   /**
    * Reaction to DeviceTemperatureAlarmActivated event
    */
   onDeviceTemperatureAlarmActivated$(evt) {
-    return this.getTimeRangesToLimit$(evt, "TEMPERATURE")
+    const queriedTime = Date.now();
+    return this.getTimeRangesToLimit$(evt, "TEMPERATURE", queriedTime )
       .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
         return {
           type: evt.alarmType,
-          timeRanges: timeranges
+          timeRanges: timeranges,
+          queriedTime: queriedTime
         };
       })
       .mergeMap(msg =>
@@ -196,16 +199,18 @@ class DashBoardDevices {
    * @param {Object} evt
    */
   handleDeviceLowVoltageAlarmEvent$(evt) {
-    return this.getTimeRangesToLimit$(evt, "VOLTAGE")
+    const queriedTime = Date.now();
+    return this.getTimeRangesToLimit$(evt, "VOLTAGE", queriedTime)
       .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
         return {
           type: evt.alarmType,
-          timeRanges: timeranges
+          timeRanges: timeranges,
+          queriedTime: queriedTime
         };
       })
       .mergeMap(msg =>
@@ -222,16 +227,18 @@ class DashBoardDevices {
    * @param {Object} evt
    */
   handleDeviceHighVoltageAlarmEvent$(evt) {
-    return this.getTimeRangesToLimit$(evt, "VOLTAGE")
+    const queriedTime = Date.now();
+    return this.getTimeRangesToLimit$(evt, "VOLTAGE", queriedTime)
       .mergeMap(evt => this.fillHostnameToEvt$(evt))
       .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result, 3))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
       .map(timeranges => {
         return {
           type: evt.alarmType,
-          timeRanges: timeranges
+          timeRanges: timeranges,
+          queriedTime : queriedTime
         };
       })
       .mergeMap(msg =>
@@ -473,10 +480,10 @@ class DashBoardDevices {
    /**
    * gets array with datelimits in milliseconds to last one, two and three hours
    */
-  getTimeRangesToLimit$(evt, eventType) {
+  getTimeRangesToLimit$(evt, eventType, startDate) {
     return Rx.Observable.of(evt).map(evt => {
-      const now = new Date();
-      const lastHourLimit = now - 3600000;
+      const startTime = startDate ? startDate : Date.now();
+      const lastHourLimit = startTime - 3600000;
       // const lastHourLimit = Date.now() - (now.getMinutes() * 60 + now.getSeconds()) * 1000;
       const lastTwoHoursLimit = lastHourLimit - 3600000;
       const lastThreeHoursLimit = lastTwoHoursLimit - 3600000;
@@ -509,8 +516,6 @@ class DashBoardDevices {
       return evt;
     });
   }
-
-
   //endregion
 
   //#region random data generator

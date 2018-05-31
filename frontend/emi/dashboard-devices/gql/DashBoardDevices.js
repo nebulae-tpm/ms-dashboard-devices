@@ -3,9 +3,10 @@ import gql from "graphql-tag";
 // We use the gql tag to parse our query string into a query document
 
 export const getDashBoardDevicesAlarmReport = gql`
-  query getAlarmReportByType($type: DashBoardDevicesAlarmReportType!){
-    getDashBoardDevicesAlarmReport(type: $type){
+  query getAlarmReportByType($type: DashBoardDevicesAlarmReportType!, $startTime: BigInt!){
+    getDashBoardDevicesAlarmReport(type: $type, startTime: $startTime){
       type,
+      queriedTime,
       timeRanges {
         timeRange,
         alarmsCount,
@@ -82,6 +83,7 @@ export const onDeviceCpuUsageAlarmActivated = gql`
   subscription {
     onDashBoardDeviceCpuUsageAlarmActivated {
       type
+      queriedTime
       timeRanges {
         timeRange
         alarmsCount
@@ -103,6 +105,7 @@ export const onDeviceRamMemoryAlarmActivated = gql`
   subscription {
     onDashBoardDeviceRamMemoryAlarmActivated {
       type
+      queriedTime
       timeRanges {
         timeRange
         alarmsCount
@@ -124,6 +127,7 @@ export const onDeviceTemperatureAlarmActivated = gql`
   subscription {
     onDashBoardDeviceTemperatureAlarmActivated {
       type
+      queriedTime
       timeRanges {
         timeRange
         alarmsCount
@@ -145,6 +149,7 @@ export const onDeviceLowVoltageAlarmActivated = gql`
   subscription {
     onDashBoardDeviceLowVoltageAlarmReported {
       type
+      queriedTime
       timeRanges {
         timeRange
         alarmsCount
@@ -166,6 +171,7 @@ export const onDeviceHighVoltageAlarmActivated = gql`
   subscription {
     onDashBoardDeviceHighVoltageAlarmReported {
       type
+      queriedTime
       timeRanges {
         timeRange
         alarmsCount

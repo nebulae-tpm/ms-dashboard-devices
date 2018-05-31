@@ -70,7 +70,7 @@
             <!-- [routerLink]="['/devices']"
             [queryParams]="{ alarmType: alertsByCpu.type, timeRange: alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].timeRange }" -->
 
-            <button mat-button color="accent" (click)="alertsByCpu.goToTopList('CPU_USAGE', alertsByCpu.timeRanges[alertsByCpu.currentTimeRange].timeRange )"  >
+            <button mat-button color="accent" (click)="alertsByCpu.goToTopList()"  >
               {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
             </button>
           </div>
@@ -135,8 +135,7 @@
                 </li>
               </ul>
             </div>
-            <button mat-button color="accent" [routerLink]="['/devices']"
-            [queryParams]="{ alarmType: alertsByRamMemory.type, timeRange: alertsByRamMemory.timeRanges[alertsByRamMemory.currentTimeRange].timeRange }">
+            <button mat-button color="accent" (click)="alertsByRamMemory.goToTopList()" >
               {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
             </button>
           </div>
@@ -204,8 +203,7 @@
                 </li>
               </ul>
             </div>
-            <button mat-button color="accent" [routerLink]="['/devices']"
-            [queryParams]="{ alarmType: alertsByVoltage.type, timeRange: alertsByVoltage.timeRanges[alertsByVoltage.currentTimeRange].timeRange }">
+            <button mat-button color="accent" (click)="alertsByVoltage.goToTopList()"  >
               {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
             </button>
           </div>
@@ -275,8 +273,7 @@
                 </li>
               </ul>
             </div>
-            <button mat-button color="accent" [routerLink]="['/devices']"
-            [queryParams]="{ alarmType: alertsByTemperature.type, timeRange: alertsByTemperature.timeRanges[alertsByTemperature.currentTimeRange].timeRange }">
+            <button mat-button color="accent" (click)="alertsByTemperature.goToTopList()" >
               {{ 'DASHBOARD.MINI_WIDGET.VIEW_COMPLETE_LIST' | translate }}
             </button>
           </div>

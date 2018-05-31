@@ -28,6 +28,7 @@ import { forkJoin } from "rxjs/observable/forkJoin";
 import { of } from "rxjs/observable/of";
 import { from } from "rxjs/observable/from";
 import {Router, NavigationExtras} from "@angular/router";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: "fuse-dashboard-devices",
@@ -56,6 +57,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   constructor(
     private dashboardDeviceService: DashboardDevicesService,
     private translationLoader: FuseTranslationLoaderService,
+    private translate: TranslateService,
     private datePipe: DatePipe,
     private router: Router
   ) {
@@ -444,11 +446,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
       // CPU_USAGE GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("CPU_USAGE")
+        .getDashboardDeviceAlertsBy("CPU_USAGE", Date.now())
         .map(response => {
-          console.log(response);
           if(response.errors ){
-            // console.log(JSON.parse(response.errors[0].message))
             console.log(response.errors)
           }
           return response.data.getDashBoardDevicesAlarmReport;
@@ -473,7 +473,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
       // RAM_MEMORY GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("RAM_MEMORY")
+        .getDashboardDeviceAlertsBy("RAM_MEMORY", Date.now())
         .map(respond => respond.data.getDashBoardDevicesAlarmReport)
         .subscribe(
           response => this.buildWidget("alertsByRamMemory", response),
@@ -489,7 +489,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ),
       // VOLTAGE GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("VOLTAGE")
+        .getDashboardDeviceAlertsBy("VOLTAGE", Date.now())
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
           response => this.buildWidget("alertsByVoltage", response),
@@ -504,7 +504,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ),
       // TEMPERATURE GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("TEMPERATURE")
+        .getDashboardDeviceAlertsBy("TEMPERATURE", Date.now())
         .map(response => response.data.getDashBoardDevicesAlarmReport)
         .subscribe(
           response => this.buildWidget("alertsByTemperature", response),
@@ -820,21 +820,39 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     this[widgetName].onChangeTimeRange = (ev: any) =>
       (this[widgetName].currentTimeRange = ev);
 
-    this[widgetName].goToTopList = (alarmType: string, timeRange: string) => {
-      const idList = [];
-      this[widgetName].timeRanges[this[widgetName].currentTimeRange].fullDeviceTopList.forEach(device => {
-        idList.push(device.sn);
-      });
-      let navigationParams: NavigationExtras = {
-        queryParams: {
-          alarmType: alarmType,
-          timeRange: timeRange,
-          idList: idList
-        }
-      };
+    this[widgetName].goToTopList = () => {
+      const startTime =  this[widgetName].queriedTime - ( (this[widgetName].currentTimeRange + 1) *60*60*1000);
+      const endTime =   this[widgetName].queriedTime
+      this.allSubscriptions.push(
 
-      // this.router.navigate(["/devices"], navigationParams )
-      console.log(["/devices"], navigationParams);
+        Rx.Observable.forkJoin(
+          this.translate.get('DASHBOARD.LABEL_FOR_DEVICES_FILTER'),
+          this.translate.get(`DASHBOARD.ALARMS_TYPES.${this[widgetName].type}`),
+          this.translate.get('DASHBOARD.BETWEEN'),
+          Rx.Observable.of(new Date(startTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false })),
+          this.translate.get('DASHBOARD.AND'),
+          Rx.Observable.of(new Date(endTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false }))
+
+        ).map(([label, alarmType, between, firstTime, and, secondTime]) => {
+          return label + " " + alarmType + " " + between + " " + firstTime + " " + and + " " + secondTime;
+        }).subscribe(labelTranslation => {
+          let navigationParams: NavigationExtras = {
+            queryParams: {
+              ft: "FT-002",
+              alarmType: this[widgetName].type,
+              startTime: startTime,
+              endTime: endTime,
+              label: labelTranslation
+            }
+          };
+
+          this.router.navigate(["/devices"], navigationParams);
+          // console.log(["/devices"], navigationParams);
+
+        })
+
+      );
+
     }
 
     this[widgetName].isReady = true;
