@@ -867,13 +867,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     let navigationParams: NavigationExtras = {
       queryParams: {
         ft: "FT-001",
-        deviceId: deviceId,
         alarmType: alarmType,
         timeRange: timeRange,
         queriedTime: queriedTime
       }
     };
-    console.log(["/devices/device"], navigationParams);
-    this.router.navigate(["/devices/device"], navigationParams );
+    console.log(["/devices/device", deviceId], navigationParams);
+    this.router.navigate(["/devices/device", deviceId ], navigationParams );
   }
 }
