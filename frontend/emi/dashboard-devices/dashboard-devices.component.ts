@@ -862,4 +862,18 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   errorHandler(error: any): void {
     console.log(error);
   }
+
+  onItemWithAlarmClick(deviceId: string, alarmType: string, timeRange: string, queriedTime: number): void {
+    let navigationParams: NavigationExtras = {
+      queryParams: {
+        ft: "FT-001",
+        deviceId: deviceId,
+        alarmType: alarmType,
+        timeRange: timeRange,
+        queriedTime: queriedTime
+      }
+    };
+    console.log(['/devices/device'], navigationParams);
+    this.router.navigate(['/devices/device'], navigationParams );
+  }
 }
