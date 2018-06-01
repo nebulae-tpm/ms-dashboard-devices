@@ -374,7 +374,7 @@ class DashBoardDevices {
    */
   removeAllObsoleteMongoDocuments$(evt){
     console.log("removeAllObsoleteMongoDocuments ==> ", evt.data)
-    const hoursBefore = evt.data.obsoleteThreshold;
+    const hoursBefore = evt.data ?  evt.data.obsoleteThreshold : 3
     const obsoleteThreshold = ( Date.now() - (hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
     return Rx.Observable.forkJoin(
       AlarmReportDA.removeObsoleteAlarmsReports$(obsoleteThreshold),

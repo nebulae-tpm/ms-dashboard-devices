@@ -13,7 +13,7 @@ spec:
         app: dashboard-devices
     spec:      
       containers:
-      - image: nebulaetpm/dashboard-devices.backend.dashboard-devices:0.0.41
+      - image: nebulaetpm/dashboard-devices.backend.dashboard-devices:0.0.43
         name: dashboard-devices
         volumeMounts:
         - name: google-application-credentials
@@ -50,6 +50,9 @@ spec:
           value: '2000'
         - name: BROKER_TYPE
           value: PUBSUB
+        # RESET LOCK INITIALIZE BACKED
+        - name: LOCKVERSION
+          value: "0.0.0"
         
       volumes:
       - name: google-application-credentials

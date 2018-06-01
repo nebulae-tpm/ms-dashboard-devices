@@ -31,6 +31,18 @@ class MongoDB {
             });
     }
 
+      /**
+     * Stops DB connections
+     * Returns an Obserable that resolve to a string log
+     */
+    stop$() {
+        return Rx.Observable.create((observer) => {
+        this.client.close();
+        observer.next('Mongo DB Client closed');
+        observer.complete();
+        });
+    }
+
     /**
      * Ensure Index creation
      * Returns an Obserable that resolve to a string log
@@ -57,19 +69,6 @@ class MongoDB {
         observer.complete();
         });
     }
-
-    /**
-     * Stops DB connections
-     * Returns an Obserable that resolve to a string log
-     */
-    stop$() {
-        return Rx.Observable.create((observer) => {
-        this.client.close();
-        observer.next('Mongo DB Client closed');
-        observer.complete();
-        });
-    }
-
 
 }
 
