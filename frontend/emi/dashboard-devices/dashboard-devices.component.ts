@@ -873,6 +873,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       }
     };
     console.log(["/devices/device", deviceId], navigationParams);
-    // this.router.navigate(["/devices/device", deviceId ], navigationParams );
+    this.router.navigate(["/devices/device", deviceId ], navigationParams );
   }
 }
