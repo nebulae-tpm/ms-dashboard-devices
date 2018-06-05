@@ -868,7 +868,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       queryParams: {
         id: 2,
         type: alarmType.slice(0,4).replace('_', ''),
-        timeRange: timeRange,
+        range: timeRange,
         // queriedTime: queriedTime
       }
     };
