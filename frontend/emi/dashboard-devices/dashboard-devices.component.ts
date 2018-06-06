@@ -839,13 +839,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         }).subscribe(labelTranslation => {
           let navigationParams: NavigationExtras = {
             queryParams: {
-              filterTemplate: {
+              filterTemplate: JSON.stringify({
                 id: 1,
                 type: this[widgetName].type.slice(0, 4).replace('_', ''),
                 initTime: startTime,
                 endTime: endTime,
                 label: labelTranslation
-              }
+              })
             }
           };
           console.log(["/devices"], navigationParams);
@@ -868,12 +868,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   onItemWithAlarmClick(deviceId: string, alarmType: string, timeRange: string, queriedTime: number): void {
     let navigationParams: NavigationExtras = {
       queryParams: {
-        filterTemplate: {
+        filterTemplate: JSON.stringify({
           id: 2,
           type: alarmType.slice(0, 4).replace('_', ''),
           range: timeRange,
           // queriedTime: queriedTime
-        }
+        })
       }
     };
     console.log(["/devices/device", deviceId], navigationParams);
