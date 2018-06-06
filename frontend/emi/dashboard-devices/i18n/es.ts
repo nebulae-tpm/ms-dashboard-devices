@@ -32,7 +32,7 @@ export const locale = {
       BETWEEN: "entre",
       AND: "y",
       ALARMS_TYPES:{
-        CPU_USAGE: "sobreprocesamiento",
+        CPU_USAGE: "CPU",
         RAM_MEMORY: "memoria RAM",
         VOLTAGE: "voltaje",
         TEMPERATURE: "temperatura",
