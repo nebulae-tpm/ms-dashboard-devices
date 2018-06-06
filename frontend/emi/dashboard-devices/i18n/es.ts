@@ -33,7 +33,7 @@ export const locale = {
       AND: "y",
       ALARMS_TYPES:{
         CPU_USAGE: "CPU",
-        RAM_MEMORY: "memoria RAM",
+        RAM_MEMORY: "RAM",
         VOLTAGE: "voltaje",
         TEMPERATURE: "temperatura",
       }
