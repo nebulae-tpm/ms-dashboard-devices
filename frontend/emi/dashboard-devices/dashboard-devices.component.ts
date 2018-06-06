@@ -829,13 +829,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         Rx.Observable.forkJoin(
           this.translate.get('DASHBOARD.LABEL_FOR_DEVICES_FILTER'),
           this.translate.get(`DASHBOARD.ALARMS_TYPES.${this[widgetName].type}`),
-          this.translate.get('DASHBOARD.BETWEEN'),
-          Rx.Observable.of(new Date(startTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false })),
-          this.translate.get('DASHBOARD.AND'),
-          Rx.Observable.of(new Date(endTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false }))
+          // this.translate.get('DASHBOARD.BETWEEN'),
+          // Rx.Observable.of(new Date(startTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false })),
+          // this.translate.get('DASHBOARD.AND'),
+          // Rx.Observable.of(new Date(endTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false }))
 
-        ).map(([label, alarmType, between, firstTime, and, secondTime]) => {
-          return label + " " + alarmType + " " + between + " " + firstTime + " " + and + " " + secondTime;
+        ).map(([label, alarmType]) => {
+          return label + " " + alarmType ;
         }).subscribe(labelTranslation => {
           let navigationParams: NavigationExtras = {
             queryParams: {
