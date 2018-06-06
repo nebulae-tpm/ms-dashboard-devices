@@ -740,6 +740,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             ] = index;
           });
         }
+        
         // console.log(
         //   this.successfulAndFailedTransactionByGroupNameWidget.cuencas
         // );

@@ -14,8 +14,7 @@ function getReponseFromBackEnd$(response) {
         // this[Symbol()] = resp.result.error;
         Error.captureStackTrace(err, 'Error');
         throw err;
-      }
-      
+      }      
       return resp.data;
     });
 }

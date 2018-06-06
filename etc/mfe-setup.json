@@ -15,7 +15,7 @@
           ],
         "contents": [
             {
-                "groupId": "DASHBOARDS",
+                "groupId": "DEVICES",
                 "id": "dashboard-devices",
                 "icon": "dashboard",
                 "translate": {
