@@ -68,6 +68,7 @@ class MongoDB {
         observer.next('All indexes created');
         observer.complete();
         });
+        
     }
 
 }

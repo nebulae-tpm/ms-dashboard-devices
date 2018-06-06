@@ -25,7 +25,7 @@
                 "navURL": "/dashboard-devices",
                 "path": "dashboard-devices",
                 "loadChildren": "./main/content/dashboard-devices/dashboard-devices.module#DashboardDevicesModule",
-                "priority": 110000,
+                "priority": 100000,
                 "roles" : ["operator"],
                 "default" : true
             }

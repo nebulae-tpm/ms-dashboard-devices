@@ -362,7 +362,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("ngOnInit on Dashboard, Running Version 0.0.38");
+    console.log("ngOnInit on Dashboard, Running Version 0.0.44");
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
@@ -875,4 +875,5 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     console.log(["/devices/device", deviceId], navigationParams);
     this.router.navigate(["/devices/device", deviceId ], navigationParams );
   }
+
 }

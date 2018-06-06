@@ -15,6 +15,7 @@ function getReponseFromBackEnd$(response) {
         Error.captureStackTrace(err, 'Error');
         throw err;
       }
+      
       return resp.data;
     });
 }
