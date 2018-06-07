@@ -90,7 +90,7 @@ class DashBoardDevices {
    */
   handleDeviceConnectedEvent$(evt) {
     // console.log("handleDeviceConnectedEvent", evt, evt.aid);
-    return DeviceStatus.onDeviceOnlineReported(evt.aid)
+    return DeviceStatus.onDeviceOnlineReported(evt)
       .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
@@ -370,7 +370,7 @@ class DashBoardDevices {
   }
 
   /**
-   * 
+   * obsoleteThreshold in hours
    */
   removeAllObsoleteMongoDocuments$(evt){
     console.log("removeAllObsoleteMongoDocuments ==> ", evt.data)

@@ -19,10 +19,10 @@ class EventStoreService {
         fn: dashBoardDevices.handleDeviceConnectedEvent$,
         obj: dashBoardDevices
       },
-      DeviceDisconnected: {
-        fn: dashBoardDevices.handleDeviceDisconnectedEvent$,
-        obj: dashBoardDevices
-      },
+      // DeviceDisconnected: {
+      //   fn: dashBoardDevices.handleDeviceDisconnectedEvent$,
+      //   obj: dashBoardDevices
+      // },
       DeviceCpuUsageAlarmActivated: {
         fn: dashBoardDevices.DeviceCpuUsageAlarmActivated$,
         obj: dashBoardDevices
@@ -55,7 +55,7 @@ class EventStoreService {
         fn: dashBoardDevices.persistFailedDeviceTransaction$,
         obj: dashBoardDevices
       },
-      ClearDashboardHistory: {
+      CleanDashBoardDevicesHistoryJobTriggered: {
         fn: dashBoardDevices.removeAllObsoleteMongoDocuments$,
         obj: dashBoardDevices
       }
@@ -217,10 +217,10 @@ class EventStoreService {
         aggregateType: "Device",
         eventType: "DeviceConnected"
       },
-      {
-        aggregateType: "Device",
-        eventType: "DeviceDisconnected"
-      },
+      // {
+      //   aggregateType: "Device",
+      //   eventType: "DeviceDisconnected"
+      // },
       {
         aggregateType: "Device",
         eventType: "DeviceDeviceStateReported"
@@ -255,7 +255,7 @@ class EventStoreService {
       },
       {
         aggregateType: "Cronjob",
-        eventType: "ClearDashboardHistory"
+        eventType: "CleanDashBoardDevicesHistoryJobTriggered"
       }
     ]
   }

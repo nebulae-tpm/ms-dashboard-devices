@@ -36,10 +36,10 @@ class DeviceStatusDA {
    * Updates the device state in DB and gets the new data for front-end chart interested
    * @param {String} sn device sn to update the state in DB
    */
-  static onDeviceOnlineReported(deviceId) {
+  static onDeviceOnlineReported(evt) {
     return this.updateOne$(
-      { deviceId: deviceId },
-      { $set: { online: true } },
+      { deviceId: evt.aid },
+      { $set: { online: evt.data.connected } },
       { upsert: true}
     ).mergeMap((updateResult) =>  this.getTotalDeviceByCuencaAndNetworkState$());
   }

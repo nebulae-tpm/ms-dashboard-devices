@@ -766,6 +766,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     else if(realMax < 4000){ return 4000; }
     else if(realMax < 6000){ return 6000; }
     else if(realMax < 8000){ return 8000; }
+    else if(realMax < 10000){ return 10000; }
+    else if(realMax < 12000){ return 12000; }
     else {
       // let resp = Math.floor(realMax + 30 / 100 * realMax);
       let resp = realMax;
