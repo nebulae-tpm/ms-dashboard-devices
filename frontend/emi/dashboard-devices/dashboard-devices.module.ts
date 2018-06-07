@@ -8,6 +8,7 @@ import { FuseWidgetModule } from '../../../core/components/widget/widget.module'
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { DashboardDevicesService } from './dashboard-devices.service';
 import { RangeTimeKeys, timeRangeKeysWithtoLocaleString } from './pipes/timeRangeKeys.pipe';
+import { SelectedItemDirective } from './dashboard-devices.directive';
 
 const routes: Routes = [
   {
@@ -23,7 +24,12 @@ const routes: Routes = [
     FuseWidgetModule,
     NgxChartsModule
   ],
-  declarations: [ DashboardDevicesComponent, RangeTimeKeys, timeRangeKeysWithtoLocaleString],
+  declarations: [
+    DashboardDevicesComponent,
+    RangeTimeKeys,
+    timeRangeKeysWithtoLocaleString,
+    SelectedItemDirective
+  ],
   providers: [ DashboardDevicesService, DatePipe]
 })
 export class DashboardDevicesModule {}
