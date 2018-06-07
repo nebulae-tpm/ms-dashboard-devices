@@ -23,7 +23,7 @@ class DashBoardDevices {
           "deviceTransactionsUpdatedEvent",
           deviceTransactionsUpdatedEvent
         ).subscribe(
-          (result) => { console.log("Update transaction sent to front-end", result) },
+          (result) => { },
           (err) => { console.log(err) },
           () => { }
         )

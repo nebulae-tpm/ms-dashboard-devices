@@ -15,9 +15,7 @@ class DeviceTransactionsDA {
    */
   static insertDeviceTransaction$(deviceTransaction, update, options) {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection.insertOne(deviceTransaction)
-    );
+    return Rx.Observable.defer(() => collection.insertOne(deviceTransaction));
   }
 
   /**
@@ -28,9 +26,7 @@ class DeviceTransactionsDA {
    */
   static handleDeviceMainAppErrsTranspCountReported$(filter, update, options) {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection.updateOne(filter, update, options)
-    );
+    return Rx.Observable.defer(() => collection.updateOne(filter, update, options));
   }
 
   /**
@@ -40,58 +36,56 @@ class DeviceTransactionsDA {
    */
   static getCuencaNamesWithSuccessTransactionsOnInterval$(startDate, endDate) {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection
-        .aggregate(
-          [
-            { $match: { 
-                $and: [ 
-                    { timestamp: { $gte: startDate, $lt: endDate } } ,
-                    { groupName: { $ne: null } }
-                ]} 
-            },
-            {
-                "$project": {
-                    "date": { "$add": [new Date(0), "$timestamp"] },
-                    "timestamp": 1,
-                    "value": 1,
-                    "success": 1,
-                    "groupName": 1
-                }
-            },
-            { 
-                "$group": {
-                    "_id": {
-                        "interval": {"$add": ["$timestamp",     {"$subtract": [{"$multiply": [{"$subtract": [ 10,{ "$mod": [{ "$minute": "$date"}, 10 ]}]}, 60000]},{"$add": [( {"$multiply": [{"$second": "$date"}, 1000]}), {"$millisecond": "$date"}]}]}    ]},
-                        "groupName": "$groupName"
-                    },
-                    "transactions": { "$sum": { "$cond": [ { "$eq": ["$success", true] }, "$value", 0] }},
-                    "errors": { "$sum": { "$cond": [ { "$eq": ["$success", false] }, "$value", 0] }}
-                }
-            },
-            {
-                "$project":{
-                    "interval": "$_id.interval",
-                    "groupName": "$_id.groupName",
-                    "transactions": 1,
-                    "errors": 1
-                }
-            },
-            {
-                $group: {
-                    _id: "$groupName"
-                }
-            },
-            {
-                $project : {
-                    _id: 0,
-                    name: "$_id"
-                }
+    return Rx.Observable.defer(() => collection
+    .aggregate(
+      [
+        { $match: { 
+            $and: [ 
+                { timestamp: { $gte: startDate, $lt: endDate } } ,
+                { groupName: { $ne: null } }
+            ]} 
+        },
+        {
+            "$project": {
+                "date": { "$add": [new Date(0), "$timestamp"] },
+                "timestamp": 1,
+                "value": 1,
+                "success": 1,
+                "groupName": 1
             }
-        ]
-        )
-        .toArray()
-    )    
+        },
+        { 
+            "$group": {
+                "_id": {
+                    "interval": {"$add": ["$timestamp",     {"$subtract": [{"$multiply": [{"$subtract": [ 10,{ "$mod": [{ "$minute": "$date"}, 10 ]}]}, 60000]},{"$add": [( {"$multiply": [{"$second": "$date"}, 1000]}), {"$millisecond": "$date"}]}]}    ]},
+                    "groupName": "$groupName"
+                },
+                "transactions": { "$sum": { "$cond": [ { "$eq": ["$success", true] }, "$value", 0] }},
+                "errors": { "$sum": { "$cond": [ { "$eq": ["$success", false] }, "$value", 0] }}
+            }
+        },
+        {
+            "$project":{
+                "interval": "$_id.interval",
+                "groupName": "$_id.groupName",
+                "transactions": 1,
+                "errors": 1
+            }
+        },
+        {
+            $group: {
+                _id: "$groupName"
+            }
+        },
+        {
+            $project : {
+                _id: 0,
+                name: "$_id"
+            }
+        }
+    ]
+    )
+    .toArray());
   }
 
     /**
@@ -106,39 +100,37 @@ class DeviceTransactionsDA {
         matchCriteria = { $match: { timestamp: { $gte: startDate, $lt: endDate }, groupName: cuenca  } }
     }
     // console.log(startDate, endDate, cuenca, matchCriteria);
-    return Rx.Observable.fromPromise(
-      collection
-        .aggregate(
-          [
-            matchCriteria,
-            {
-                "$project": {
-                    "date": { "$add": [new Date(0), "$timestamp"] },
-                    "timestamp": 1,
-                    "value": 1,
-                    "success": 1
-                }
-            },
-            { 
-                "$group": {
-                    "_id": {
-                        "interval": {"$add": ["$timestamp",     {"$subtract": [{"$multiply": [{"$subtract": [ 10,{ "$mod": [{ "$minute": "$date"}, 10 ]}]}, 60000]},{"$add": [( {"$multiply": [{"$second": "$date"}, 1000]}), {"$millisecond": "$date"}]}]}    ]}
-                    },
-                    "transactions": { "$sum": { "$cond": [ { "$eq": ["$success", true] }, "$value", 0] }},
-                    "errors": { "$sum": { "$cond": [ { "$eq": ["$success", false] }, "$value", 0] }}
-                }
-            },
-            {
-                "$project":{
-                    "interval": "$_id.interval",
-                    "transactions": 1,
-                    "errors": 1
-                }
+    return Rx.Observable.defer(() => collection
+    .aggregate(
+      [
+        matchCriteria,
+        {
+            "$project": {
+                "date": { "$add": [new Date(0), "$timestamp"] },
+                "timestamp": 1,
+                "value": 1,
+                "success": 1
             }
-        ]
-        )
-        .toArray()
+        },
+        { 
+            "$group": {
+                "_id": {
+                    "interval": {"$add": ["$timestamp",     {"$subtract": [{"$multiply": [{"$subtract": [ 10,{ "$mod": [{ "$minute": "$date"}, 10 ]}]}, 60000]},{"$add": [( {"$multiply": [{"$second": "$date"}, 1000]}), {"$millisecond": "$date"}]}]}    ]}
+                },
+                "transactions": { "$sum": { "$cond": [ { "$eq": ["$success", true] }, "$value", 0] }},
+                "errors": { "$sum": { "$cond": [ { "$eq": ["$success", false] }, "$value", 0] }}
+            }
+        },
+        {
+            "$project":{
+                "interval": "$_id.interval",
+                "transactions": 1,
+                "errors": 1
+            }
+        }
+    ]
     )
+    .toArray());
     // .do(val => console.log('getDeviceTransactionGroupByTimeInterval RESULT ===========> ', val));
   }
 
@@ -154,7 +146,8 @@ class DeviceTransactionsDA {
   static getDeviceTransactionGroupByGroupNameInInterval$(startDate, endTime, timeInterval){
     //   console.log(startDate, endTime, timeInterval )
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(collection.aggregate([
+    return Rx.Observable.defer(() =>
+    collection.aggregate([
         { $match: { timestamp: { $gte: startDate, $lte: endTime }, success: true } },
         {
           $project: {
@@ -189,12 +182,12 @@ class DeviceTransactionsDA {
    
   }
 
-  static removeObsoleteTransactions$(obsoleteThreshold){
-    const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection.remove({ timestamp: { $lt: obsoleteThreshold } })
-    ).map(r => r.result)
-  }
+    static removeObsoleteTransactions$(obsoleteThreshold) {
+        const collection = mongoDB.db.collection(CollectionName);
+        return Rx.Observable.defer(() =>
+            collection.remove({ timestamp: { $lt: obsoleteThreshold } }))
+            .map(r => r.result)
+    }
   
 }
 

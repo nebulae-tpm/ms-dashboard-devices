@@ -32,16 +32,14 @@ class AlarmReportDA {
     console.log("onDeviceAlarmActivated$", JSON.stringify(evt));
     const collection = mongoDB.db.collection(CollectionName);
     const alarmType = evt.alarmType;
-    return Rx.Observable.fromPromise(
-      collection.insertOne({
-        timestamp: evt.timestamp,
-        type: alarmType,
-        deviceId: evt.aid,
-        deviceHostname: evt.device.hostname,
-        value: evt.data.value,
-        unit: evt.data.value
-      })
-    )
+    return Rx.Observable.defer(() => collection.insertOne({
+      timestamp: evt.timestamp,
+      type: alarmType,
+      deviceId: evt.aid,
+      deviceHostname: evt.device.hostname,
+      value: evt.data.value,
+      unit: evt.data.value
+    }))
     // get the information of alerts in frames for lastHour, lastTwohours, lastThreeHours
     .mergeMap(() =>
         Rx.Observable.forkJoin(
@@ -58,42 +56,38 @@ class AlarmReportDA {
    */
   static getAlarmsInRangeOfTime(lowestLimit, alarmType) {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection
-        .aggregate([
-          { $match: { timestamp: { $gte: lowestLimit }, type: alarmType } },
-          {
-            $group: {
-              _id: "$type",
-              value: { $sum: 1 }
-            }
+    return Rx.Observable.defer(() => collection
+      .aggregate([
+        { $match: { timestamp: { $gte: lowestLimit }, type: alarmType } },
+        {
+          $group: {
+            _id: "$type",
+            value: { $sum: 1 }
           }
-        ])
-        .toArray()
-    )
-    .mergeMap(result => this.getDistinctDevicesOnAlarm$(result, lowestLimit, alarmType))
-    .map(item => {
-      item[0].startTime = lowestLimit;
-      item[0].alarmType = alarmType;
-      return item;
-    })
+        }
+      ])
+      .toArray())
+      .mergeMap(result => this.getDistinctDevicesOnAlarm$(result, lowestLimit, alarmType))
+      .map(item => {
+        item[0].startTime = lowestLimit;
+        item[0].alarmType = alarmType;
+        return item;
+      })
   }
 
 
   static getDistinctDevicesOnAlarm$(result, lowestLimit, alarmType){
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection
-        .aggregate([
-          { $match: { timestamp: { $gte: lowestLimit }, type: alarmType } },
-          {
-            $group: {
-              _id: "$deviceId",
-            }
-          }
-        ])
-        .toArray()
-    )
+    return Rx.Observable.defer(() => collection
+    .aggregate([
+      { $match: { timestamp: { $gte: lowestLimit }, type: alarmType } },
+      {
+        $group: {
+          _id: "$deviceId",
+        }
+      }
+    ])
+    .toArray())
     .map(res => {
       // if in the last hour there are not alarms it will create a empty registry 
       if(result[0] == undefined){
@@ -115,44 +109,40 @@ class AlarmReportDA {
   static getTopAlarmDevices$(timeRanges) {
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.from(timeRanges)
-    .mergeMap(timeRange => {
-      return (
-          Rx.Observable.fromPromise(
-            collection
-              .aggregate([
-                { $match: { timestamp: { $gte: timeRange[0].startTime }, type: timeRange[0].alarmType } },
-                {
-                  $group: {
-                    _id: { type: "$type", deviceId: "$deviceId" },
-                    value: { $sum: 1 },
-                    hostname:  { $first: "$deviceHostname"  }
-                  }
-                },
-                { $sort: { "value": -1 } }
-              ]).toArray()
-              )
-      .map((aggregateResult) => {
-        const result =[];
-        aggregateResult.forEach((item, index) => {
-          if(item._id.deviceId == null) {return}          
-          result.push({
-            id: item._id.deviceId,
-            sn: item._id.deviceId,
-            hostname: item.hostname ? item.hostname : "NULL hostname",
-            alarmsCount: item.value,
-            deviceDetailLink: ''
-          })
-        });
-        return result;
+      .mergeMap(timeRange => {      
+          return Rx.Observable.defer(() => collection
+            .aggregate([
+              { $match: { timestamp: { $gte: timeRange[0].startTime }, type: timeRange[0].alarmType } },
+              {
+                $group: {
+                  _id: { type: "$type", deviceId: "$deviceId" },
+                  value: { $sum: 1 },
+                  hostname: { $first: "$deviceHostname" }
+                }
+              },
+              { $sort: { "value": -1 } }
+            ]).toArray())
+            .map((aggregateResult) => {
+              const result = [];
+              aggregateResult.forEach((item, index) => {
+                if (item._id.deviceId == null) { return }
+                result.push({
+                  id: item._id.deviceId,
+                  sn: item._id.deviceId,
+                  hostname: item.hostname ? item.hostname : "NULL hostname",
+                  alarmsCount: item.value,
+                  deviceDetailLink: ''
+                })
+              });
+              return result;
+            })
+            .map(aggregateResult => {
+              timeRange[0].topDevices = aggregateResult;
+              return timeRange;
+            })
       })
-      .map(aggregateResult => {
-        timeRange[0].topDevices = aggregateResult; 
-        return timeRange;
-      })      
-    );
-    } )
-    .toArray()
-    .map(timeranges => timeRanges)
+      .toArray()
+      .map(timeranges => timeRanges)
   }
 
   static generateAlarms__RANDOM__() {
@@ -161,49 +151,47 @@ class AlarmReportDA {
     const units = ["V", "C", "%", "%"];
     const selection = Math.floor(Math.random() * 4);
     const id = `sn0000-000${Math.floor(Math.random() * 10)}-TEST`;
-    return Rx.Observable.fromPromise(
-      collection.insertOne({
-        timestamp: Date.now(),
-        type: types[selection],
-        deviceId: id,
-        value: Math.floor(Math.random() * 100 + 5),
-        unit: units[selection]
-      })
-    );
+    return Rx.Observable.defer(() => collection.insertOne({
+      timestamp: Date.now(),
+      type: types[selection],
+      deviceId: id,
+      value: Math.floor(Math.random() * 100 + 5),
+      unit: units[selection]
+    }));    
   }
 
   static calculateTimeRanges$(evt) {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(collection
-        .aggregate([
-          { $match: { type: evt.data.alarmType } },
-          {
-            $project: {
-              date: { $add: [new Date(0), "$timestamp"] },
-              timestamp: 1,
-              deviceId: 1
+    return Rx.Observable.defer(() => collection
+    .aggregate([
+      { $match: { type: evt.data.alarmType } },
+      {
+        $project: {
+          date: { $add: [new Date(0), "$timestamp"] },
+          timestamp: 1,
+          deviceId: 1
+        }
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: { date: "$date", timezone: "-0500" } },
+            month: { $month: { date: "$date", timezone: "-0500" } },
+            interval: {
+              $subtract: [
+                { $minute: { date: "$date", timezone: "-0500" } },
+                { $mod: [{ $minute: new Date(1524779294) }, 40] }
+              ]
             }
           },
-          {
-            $group: {
-              _id: {
-                year: { $year: { date: "$date", timezone: "-0500" } },
-                month: { $month: { date: "$date", timezone: "-0500" } },
-                interval: {
-                  $subtract: [
-                    { $minute: { date: "$date", timezone: "-0500" } },
-                    { $mod: [{ $minute: new Date(1524779294) }, 40] }
-                  ]
-                }
-              },
-              grouped_data: {
-                $push: { timestamp: "$timestamp", value: "$deviceId" }
-              }
-            }
-          },
-          { $limit: 1 }
-        ])
-        .toArray());
+          grouped_data: {
+            $push: { timestamp: "$timestamp", value: "$deviceId" }
+          }
+        }
+      },
+      { $limit: 1 }
+    ])
+    .toArray());
   }
 
 /**
@@ -212,9 +200,9 @@ class AlarmReportDA {
  */
   static removeObsoleteAlarmsReports$(obsoleteThreshold){
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection.remove({ timestamp: { $lt: obsoleteThreshold } })
-    ).map(r => r.result)
+    return Rx.Observable.defer(() => 
+    collection.remove({ timestamp: { $lt: obsoleteThreshold } }))
+    .map(r => r.result)
   }
 }
 

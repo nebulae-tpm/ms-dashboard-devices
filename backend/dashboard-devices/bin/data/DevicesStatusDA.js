@@ -15,9 +15,9 @@ class DeviceStatusDA {
     const collection = mongoDB.db.collection(CollectionName);
     let observ = null;
     if(projection){
-      observ = Rx.Observable.fromPromise(collection.findOne({ deviceId }, projection));
+      observ = Rx.Observable.defer(() => collection.findOne({ deviceId }, projection) );
     }else{
-      observ = Rx.Observable.fromPromise(collection.findOne({ deviceId }));
+      observ = Rx.Observable.defer(() => collection.findOne({ deviceId }));
     }
     return observ;
   }
@@ -27,9 +27,7 @@ class DeviceStatusDA {
    */
   static getDevicesTotalAccount$(){
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection.find().count()
-    );
+    return Rx.Observable.defer(() => collection.find().count());
   }
 
   /**
@@ -59,20 +57,18 @@ class DeviceStatusDA {
    */
   static getTotalDeviceByCuencaAndNetworkState$() {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection
-        .aggregate([
-          // { $match: { active: true } },
-          {
-            $group: {
-              _id: { cuenca: "$groupName", online: "$online" },
-              value: { $sum: 1 }   
-            }            
-          },
-          { $sort: { _id: 1 } }
-        ])
-        .toArray()
-    );
+    return Rx.Observable.defer(() => collection
+    .aggregate([
+      // { $match: { active: true } },
+      {
+        $group: {
+          _id: { cuenca: "$groupName", online: "$online" },
+          value: { $sum: 1 }   
+        }            
+      },
+      { $sort: { _id: 1 } }
+    ])
+    .toArray())
   }
   /**
    * Updates a document in the collection
@@ -82,28 +78,26 @@ class DeviceStatusDA {
    */
   static updateOne$(filter, update, options) {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(
-      collection.updateOne(filter, update, options)
-    );
+    return Rx.Observable.defer(() => collection.updateOne(filter, update, options));
   }
 
 
-  static generateDevices__RANDOM__$(){        
+  static generateDevices__RANDOM__$() {
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.fromPromise(collection.insertOne(
-        {
-            active: true,
-            deviceId : `sn0000-000${Math.floor((Math.random() * 10) )}-TEST`,
-            hostname: `ABC${Math.floor((Math.random() * 999 ) + 100 )}`,
-            groupName: `Cuenca ${Math.floor((Math.random() * 5) + 1)}`,
-            online: true,
-            ramMemoryAlert: false,
-            cpuAlert: false,
-            temperatureAlert: false,
-            voltageAlert: false
-        }
-    ));
-}
+    return Rx.Observable.defer(() => collection.insertOne(
+      {
+        active: true,
+        deviceId: `sn0000-000${Math.floor((Math.random() * 10))}-TEST`,
+        hostname: `ABC${Math.floor((Math.random() * 999) + 100)}`,
+        groupName: `Cuenca ${Math.floor((Math.random() * 5) + 1)}`,
+        online: true,
+        ramMemoryAlert: false,
+        cpuAlert: false,
+        temperatureAlert: false,
+        voltageAlert: false
+      }
+    ))
+  }
 
 /**
  * On device state Report event:

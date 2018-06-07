@@ -101,7 +101,8 @@ export class DashboardDevicesService {
   getDevicesOnlineVsOffline() {
     return this.gateway.apollo
       .watchQuery<any>({
-        query: getDevicesOnlineVsOffline
+        query: getDevicesOnlineVsOffline,
+        fetchPolicy: 'network-only'
       })
       .valueChanges.map(
         result => JSON.parse(JSON.stringify(result.data.getDashBoardDevicesCurrentNetworkStatus))
