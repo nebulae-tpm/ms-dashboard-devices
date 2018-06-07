@@ -33,7 +33,7 @@ class AlarmReportDA {
     const collection = mongoDB.db.collection(CollectionName);
     const alarmType = evt.alarmType;
     return Rx.Observable.defer(() => collection.insertOne({
-      timestamp: evt.timestamp,
+      timestamp: evt.data.timestamp,
       type: alarmType,
       deviceId: evt.aid,
       deviceHostname: evt.device.hostname,
