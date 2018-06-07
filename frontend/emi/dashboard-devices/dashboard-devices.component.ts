@@ -329,9 +329,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       max: 100,
       min: 0,
       textValue: "",
-      legend: false,
+      legend: true,
       toggleLegend: () => {
-        this.influxOfUseGaugeChart.legend = !this.influxOfUseGaugeChart.legend;
+        // this.influxOfUseGaugeChart.legend = !this.influxOfUseGaugeChart.legend;
       },
       onChangeTimeRange: index => {
         this.influxOfUseGaugeChart.currentTimeRange = index;
