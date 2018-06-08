@@ -18,8 +18,17 @@ class CustomError extends Error {
         stack: this.stack
       }
     }
+  };
+
+  class DefaultError extends Error{
+    constructor(message){
+      super(message)
+      this.code = 12001;
+      this.msg = message;
+    }
   }
 
   module.exports =  { 
-    CustomError 
+    CustomError,
+    DefaultError
   } 

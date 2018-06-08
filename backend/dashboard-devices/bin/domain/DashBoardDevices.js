@@ -2,7 +2,7 @@
 
 const Rx = require("rxjs");
 const AlarmReportDA  = require("../data/AlarmReportDA");
-const { CustomError } = require("../tools/customError");
+const { CustomError, DefaultError } = require("../tools/customError");
 const DeviceStatus = require("../data/DevicesStatusDA");
 const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
 const broker = require("../tools/broker/BrokerFactory.js")();
@@ -89,7 +89,7 @@ class DashBoardDevices {
    * Reaction to deviceOnlineReported
    */
   handleDeviceConnectedEvent$(evt) {
-    // console.log("handleDeviceConnectedEvent", evt, evt.aid);
+    console.log("handleDeviceConnectedEvent", evt, evt.aid);
     return DeviceStatus.onDeviceOnlineReported(evt)
       .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
@@ -382,21 +382,26 @@ class DashBoardDevices {
     );
   }
 
-  
-
-  errorHandler$(err){
-    const exception = { data: null, result: { code: err.code } }; 
-    if(err instanceof CustomError ){      
-      exception.result.error = err.getContent();      
-    }else{
-      exception.result.error = {
-        name: this.name,
-        code: "000-001",
-        msg: err.toString(),
-        // stack: err.stack
-      }      
-    }
-    return Rx.Observable.of(exception);    
+  errorHandler$(err) {
+    return Rx.Observable.of(err)
+      .map(err => {
+        const exception = { data: null, result: {} }
+        if (err instanceof CustomError) {
+          exception.result = {
+            code: err.code,
+            error: err.getContent()
+          }
+        } else {
+          exception.result = {
+            code: new DefaultError(err.message).code,
+            error: {
+              name: 'Error',
+              msg: err.toString()
+            }
+          }
+        }
+        return exception;
+      });
   }
 
   //#region Mappers

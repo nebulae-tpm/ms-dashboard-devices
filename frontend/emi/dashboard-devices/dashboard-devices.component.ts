@@ -7,17 +7,11 @@ import { fuseAnimations } from "../../../core/animations";
 import { Subscription } from "rxjs/Subscription";
 // tslint:disable-next-line:import-blacklist
 import * as Rx from "rxjs";
-import * as Util from "util";
 import {
   map,
   first,
   mergeMap,
   toArray,
-  pairwise,
-  filter,
-  throttleTime,
-  groupBy,
-  tap,
   switchMap
 } from "rxjs/operators";
 import { range } from "rxjs/observable/range";
@@ -40,10 +34,10 @@ import { TranslateService } from "@ngx-translate/core";
 export class DashboardDevicesComponent implements OnInit, OnDestroy {
   totalDeviceAccout: Rx.Observable<number>; // total number of devices to show in alarms widgets
 
-  alertsByCpu: any = {};
-  alertsByRamMemory: any = {};
-  alertsByVoltage: any = {};
-  alertsByTemperature: any = {};
+  alertsByCpu: any = {isReady: false};
+  alertsByRamMemory: any = {isReady: false};
+  alertsByVoltage: any = {isReady: false};
+  alertsByTemperature: any = {isReady: false};
 
   onlineVsOfflineByGroupNameWidget: any = {};
   successfulAndFailedTransactionWidget: any = {};
@@ -447,16 +441,21 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // CPU_USAGE GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("CPU_USAGE", Date.now())
+        // .pipe(
+        //   mergeMap(resp => this.graphQlErrorHandler$(resp))
+        // )
         .map(response => {
-          if(response.errors ){
-            console.log(response.errors)
+          if(!response.errors){
+            return response.data.getDashBoardDevicesAlarmReport;
           }
-          return response.data.getDashBoardDevicesAlarmReport;
+          console.log(response.errors);
+          return null;
         }
       )
         .subscribe(
           response => {
-            if(response != null) {
+            console.log(".getDashboardDeviceAlertsBy_CPU_USAGE ==> ", response)
+            if(response != null ) {
               this.buildWidget("alertsByCpu", response);
             }
           },

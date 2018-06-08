@@ -27,7 +27,7 @@ module.exports = {
           "Device",
           "gateway.graphql.query.getDashBoardDevicesAlarmReport",
           { root, args, jwt: context.encodedToken },
-          500
+          2000
         )
         .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
@@ -38,7 +38,7 @@ module.exports = {
           "Device",
           "gateway.graphql.query.getDashBoardDevicesCurrentNetworkStatus",
           { root, args, jwt: context.encodedToken },
-          500
+          2000
         )
         .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
@@ -50,7 +50,7 @@ module.exports = {
           "Device",
           "gateway.graphql.query.getCuencaNamesWithSuccessTransactionsOnInterval",
           { root, args, jwt: context.encodedToken },
-          500
+          2000
         )
         .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
@@ -62,7 +62,7 @@ module.exports = {
           "Device",
           "gateway.graphql.query.getDeviceTransactionsGroupByGroupName",
           { root, args, jwt: context.encodedToken },
-          500
+          2000
         )
         .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
@@ -74,7 +74,7 @@ module.exports = {
           "Device",
           "gateway.graphql.query.getDeviceTransactionsGroupByTimeInterval",
           { root, args, jwt: context.encodedToken },
-          500
+          2000
         )
         .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
@@ -86,7 +86,7 @@ module.exports = {
           "Device",
           "gateway.graphql.query.getDeviceDashBoardTotalAccount",
           { root, args, jwt: context.encodedToken },
-          500
+          2000
         )
         .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();

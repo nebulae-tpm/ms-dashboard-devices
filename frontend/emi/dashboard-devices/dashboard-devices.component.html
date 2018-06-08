@@ -292,16 +292,16 @@
       </fuse-widget>
       <!-- ALERTS BY TEMPERATURE WIDGET -->
 
-      <!-- WIDGET 8 and 9 -->
+      <!-- WIDGET AdvancedPieChart and GaugeChart -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="column" fxFlex="100">
 
 
-        <!-- Front WIDGET 8 -->
+        <!-- Front AdvancedPieChart WIDGET -->
         <div *ngIf="influxOfUserAdvancedPieChart.data" class="fuse-widget-front mat-white-bg mat-elevation-z2">
 
           <!-- header -->
           <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
-            <!-- text on header -->
+            <!-- text and timerange selector on header-->
             <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100" fxFlex.gt-sm="95" fxLayoutWrap>
               <div class="h3 px-8 py-8">
                 <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
@@ -315,7 +315,7 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <!-- ends text on header -->
+            <!-- ends text and timerange selector on header -->
             <!-- toggle Button -->
             <div fxLayoutAlign="end start" fxFlex="5">
               <button mat-icon-button fuseWidgetToggle aria-label="more">
@@ -337,29 +337,38 @@
         </div>
         <!-- / Front -->
 
-        <!-- Back WIDGET 9 -->
+        <!-- Back GaugeChart WIDGET  -->
         <div class="fuse-widget-back mat-white-bg mat-elevation-z2">
-          <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutWrap>
+          <!-- header -->
+          <div class="px-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between center">
 
-            <div class="h3 px-8 py-8" fxLayout="column" fxLayoutAlign="center center" fxFlex="100" fxFlex.gt-sm="75">
-              <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
+            <!-- text and timerange selector on header -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100" fxFlex.gt-sm="95" fxLayoutWrap>
+                  <div class="h3 px-8 py-8">
+                    <strong> {{'DASHBOARD.INFLUX_OF_USERS' | translate}} </strong>
+                  </div>
+
+                  <mat-form-field *ngIf="influxOfUseGaugeChart.timeRanges.length > 0" class="px-8 py-8" >
+                    <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange" (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)"
+                      aria-label="Change range">
+                      <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
+                        {{ range.key }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
             </div>
+            <!-- ends text and timerange selector on header -->
 
-            <mat-form-field *ngIf="influxOfUseGaugeChart.timeRanges.length > 0" fxLayout="column" fxLayoutAlign="center center" fxFlex="100"
-              fxFlex.gt-sm="25">
-              <mat-select class="simplified font-size-16" [(ngModel)]="influxOfUseGaugeChart.currentTimeRange" (change)="influxOfUseGaugeChart.onChangeTimeRange($event.value)"
-                aria-label="Change range">
-                <mat-option *ngFor="let range of influxOfUseGaugeChart.timeRanges | timeRangeKeysWithtoLocaleString" [value]="range.index">
-                  {{ range.key }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
 
+
+            <!-- toggle Button -->
             <button mat-icon-button fuseWidgetToggle class="fuse-widget-flip-button" aria-label="Flip widget">
               <mat-icon class="s-16">close</mat-icon>
             </button>
+            <!-- end toggle Button -->
 
           </div>
+          <!-- end header -->
 
           <div *ngIf="influxOfUseGaugeChart.timeRanges.length > 0" class="h-420">
             <ngx-charts-gauge [results]="influxOfUseGaugeChart.data" [legendTitle]="'DASHBOARD.TOTAL_USAGES' | translate" [legend]="influxOfUseGaugeChart.legend"
@@ -372,7 +381,7 @@
         <!-- / Back -->
 
       </fuse-widget>
-      <!-- WIDGET 8 and 9 -->
+      <!-- WIDGET AdvancedPieChart and GaugeChart -->
 
 
       <!-- WIDGET 5 -->
