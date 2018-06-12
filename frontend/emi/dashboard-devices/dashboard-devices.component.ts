@@ -247,12 +247,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         ev: number,
         updateCuencaOptions: boolean = false
       ) => {
-        // console.log(
-        //   "onTimeRangeFilterChanged",
-        //   ev,
-        //   updateCuencaOptions,
-        //   this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
-        // );
         const cuencaNumberSelected = this
           .successfulAndFailedTransactionByGroupNameWidget.currentCuenca;
         const cuencaNameSelected = Object.keys(
@@ -389,7 +383,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getSucessTransactionsGroupByGroupName(nowDate.getTime())
         .subscribe(
           result => {
-            console.log(result);
             this.influxOfUserAdvancedPieChart.updateRowData(result);
             this.influxOfUseGaugeChart.updateRowData(result);
           },
@@ -399,7 +392,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // online Vs offline GraphQl Query
       this.dashboardDeviceService.getDevicesOnlineVsOffline().subscribe(
         result => {
-          console.log(result);
           const originalLength = result.length;
           while (result.length < 5) {
             result.push({
@@ -420,7 +412,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
           result => {
-            console.log(result);
             const originalLength = result.length;
             while (result.length < 5) {
               result.push({
@@ -568,9 +559,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           10) *
         60000;
     const startDate = endDate - (hours * 60 * 60 * 1000 + 10 * 60 * 1000);
-
-    // console.log("Date range... ", startDate, endDate);
-
     this.getDeviceTransactionGroupByTimeInterval(
       startDate,
       endDate,
@@ -629,16 +617,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           )
         )
         .subscribe(val => {
-          // console.log("Final interval => ", val);
-
           this[widgetName].labels.length = 0;
           for (let i = 0; i < val.labels.length; i++) {
             this[widgetName].labels.push(val.labels[i]);
           }
 
           this[widgetName].datasets = val.datasets;
-
-          // console.log(this.widget6.datasets);
           this[widgetName].usagesCount = this.getCountInArray(
             this[widgetName].datasets[0].data
           );
@@ -667,12 +651,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           transactions: 0,
           errors: 0
         };
-        // console.log("value ", value.interval, new Date(value.interval));
         return value;
       }),
       toArray(),
       mergeMap(timeMap => {
-        // console.log("------------------> ", timeMap);
         return forkJoin(
           of(timeMap),
           this.dashboardDeviceService
@@ -735,13 +717,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             ] = index;
           });
         }
-
-        // console.log(
-        //   this.successfulAndFailedTransactionByGroupNameWidget.cuencas
-        // );
-        // this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
-        //   1
-        // );
         subcriptionByIntervalAndGroupName.unsubscribe();
       });
   }
@@ -749,10 +724,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     console.log("ngOnDestroy on Dashboard ...");
     this.allSubscriptions.forEach(s => s.unsubscribe());
-  }
-
-  onSelectChart(e) {
-    console.log(e);
   }
 
   getMaxUsageMeter(realMax: number): number {
@@ -847,11 +818,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           };
           console.log(["/devices"], navigationParams);
           this.router.navigate(["/devices"], navigationParams);
-
         })
-
       );
-
     }
 
     this[widgetName].isReady = true;
@@ -859,7 +827,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   errorHandler(error: any): void {
-    console.log(error);
+    console.log("errorHandler", error);
   }
 
   onItemWithAlarmClick(deviceId: string, alarmType: string, timeRange: string, queriedTime: number): void {
@@ -882,7 +850,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     return Rx.Observable.of(JSON.parse(JSON.stringify(response)))
     .pipe(
       map((resp) => {
-        console.log(resp);
         if (resp.errors){
           // TO-DO
           // show alerts in client propt
