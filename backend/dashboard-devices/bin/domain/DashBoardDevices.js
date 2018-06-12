@@ -14,23 +14,30 @@ let instance;
 class DashBoardDevices {
   constructor() {
     this.frontendDeviceTransactionsUpdatedEvent$ = new Rx.Subject();
+    this.lastFrontendDeviceTransactionsUpdatedEventSent = 0;
 
     this.frontendDeviceTransactionsUpdatedEvent$
-      .throttleTime(60000)
-      .subscribe((deviceTransactionsUpdatedEvent) => {
+      .filter(transactionUpdate => {
+        // The value of 10 is established, because only every 10 minutes there will be useful
+        // information to show in the graphs of transactions
+        const timerange = 10;
+        const eventMinutes = Math.floor(new Date(transactionUpdate.timestamp).getMinutes() / timerange);
+        const lastSentMinutes = Math.floor(new Date(this.lastFrontendDeviceTransactionsUpdatedEventSent).getMinutes() / timerange);
+        return (eventMinutes > lastSentMinutes)
+               || ((eventMinutes < lastSentMinutes) && transactionUpdate.timestamp > this.lastFrontendDeviceTransactionsUpdatedEventSent )
+               || this.lastFrontendDeviceTransactionsUpdatedEventSent == 0; // is the mbe is just turn on.
+      })
+      .do(transactionUpdateEvent => 
+        this.lastFrontendDeviceTransactionsUpdatedEventSent = transactionUpdateEvent.timestamp
+      )
+      .mergeMap(deviceTransactionsUpdatedEvent =>
         broker.send$(
           MATERIALIZED_VIEW_TOPIC,
           "deviceTransactionsUpdatedEvent",
           deviceTransactionsUpdatedEvent
-        ).subscribe(
-          (result) => { },
-          (err) => { console.log(err) },
-          () => { }
         )
-      },
-        (error) => { },
-        () => { }
       )
+      .subscribe(() => {});
   }
 
   /**
@@ -347,13 +354,8 @@ class DashBoardDevices {
         })
         .mergeMap(transaction =>
           DeviceTransactionsDA.insertDeviceTransaction$(transaction)
-        )               
-        .map(deviceTransaction => {
-          const deviceTransactionUpdatedEvent = {
-            timestamp: new Date().getTime()
-          };
-          return deviceTransactionUpdatedEvent;          
-        })
+        )              
+        .map(() => {return { timestamp: new Date().getTime() }})
         // TODO check what is the best way to do this
         .do((deviceTransactionUpdatedEvent) => this.frontendDeviceTransactionsUpdatedEvent$.next(deviceTransactionUpdatedEvent))
        
