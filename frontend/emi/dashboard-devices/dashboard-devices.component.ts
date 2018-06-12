@@ -1,5 +1,4 @@
 import { transition } from "@angular/animations";
-import { Observable } from "rxjs/Observable";
 import { FuseTranslationLoaderService } from "./../../../core/services/translation-loader.service";
 import { DashboardDevicesService } from "./dashboard-devices.service";
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
@@ -441,22 +440,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // CPU_USAGE GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("CPU_USAGE", Date.now())
-        // .pipe(
-        //   mergeMap(resp => this.graphQlErrorHandler$(resp))
-        // )
-        .map(response => {
-          if(!response.errors){
-            return response.data.getDashBoardDevicesAlarmReport;
-          }
-          console.log(response.errors);
-          return null;
-        }
-      )
-        .subscribe(
+        .pipe(
+          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
+        ).subscribe(
           response => {
-            console.log(".getDashboardDeviceAlertsBy_CPU_USAGE ==> ", response)
-            if(response != null ) {
-              this.buildWidget("alertsByCpu", response);
+            if (response !== null) {
+              this.buildWidget("alertsByCpu", response)
             }
           },
           error => this.errorHandler(error)
@@ -473,9 +462,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // RAM_MEMORY GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("RAM_MEMORY", Date.now())
-        .map(respond => respond.data.getDashBoardDevicesAlarmReport)
-        .subscribe(
-          response => this.buildWidget("alertsByRamMemory", response),
+        .pipe(
+          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
+        ).subscribe(
+          response => {
+            if(response !== null){
+              this.buildWidget("alertsByRamMemory", response)
+            }
+          },
           error => this.errorHandler(error)
         ),
 
@@ -489,8 +483,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // VOLTAGE GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("VOLTAGE", Date.now())
-        .map(response => response.data.getDashBoardDevicesAlarmReport)
-        .subscribe(
+        .pipe(
+          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
+        ).subscribe(
           response => this.buildWidget("alertsByVoltage", response),
           error => this.errorHandler(error)
         ),
@@ -504,8 +499,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // TEMPERATURE GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("TEMPERATURE", Date.now())
-        .map(response => response.data.getDashBoardDevicesAlarmReport)
-        .subscribe(
+        .pipe(
+          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
+        ).subscribe(
           response => this.buildWidget("alertsByTemperature", response),
           error => this.errorHandler(error)
         ),
@@ -879,6 +875,24 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     };
     console.log(["/devices/device", deviceId], navigationParams);
     this.router.navigate(["/devices/device", deviceId ], navigationParams );
+  }
+
+
+  graphQlAlarmsErrorHandler$(response){
+    return Rx.Observable.of(JSON.parse(JSON.stringify(response)))
+    .pipe(
+      map((resp) => {
+        console.log(resp);
+        if (resp.errors){
+          // TO-DO
+          // show alerts in client propt
+          console.log('ERRORS IN GRAPHQL ==> ', resp.errors);
+          return null;
+        }else  if(resp.data){
+          return resp.data["getDashBoardDevicesAlarmReport"];
+        }
+      })
+    )
   }
 
 }

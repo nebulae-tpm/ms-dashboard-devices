@@ -12,12 +12,12 @@ class AlarmReportDA {
    * @param {string} type
    */
   static getDashBoardDevicesAlarmReport$(evt) {    
-    // if(evt.alarmType === "CPU_USAGE"){   
-    //     // return Rx.Observable.throw(
-    //     //   new CustomError("DashboardDA", "getDashBoardDevicesAlarmReport$(", "001001",  {body: "cuerpo del mensahe"})
-    //     // );
-    //      console.log(dfer);
-    // }    
+    if(evt.alarmType === "CPU_USAGE"){   
+        // return Rx.Observable.throw(
+        //   new CustomError("DashboardDA", "getDashBoardDevicesAlarmReport$(", "001001",  {body: "cuerpo del mensahe"})
+        // );
+         console.log(dfer);
+    }    
     return Rx.Observable.forkJoin(
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[0], evt.alarmType),
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[1], evt.alarmType),

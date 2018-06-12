@@ -106,7 +106,7 @@ class DeviceStatusDA {
 static onDeviceStateReportedEvent$(info){
   return this.updateOne$(
     { deviceId: info.sn },
-    { $set :  Object.assign(info, {online: false})  },
+    { $set :  {...info}  },
     { upsert: true }
   )
 }
