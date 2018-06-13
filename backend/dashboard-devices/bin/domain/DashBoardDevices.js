@@ -5,6 +5,7 @@ const AlarmReportDA  = require("../data/AlarmReportDA");
 const { CustomError, DefaultError } = require("../tools/customError");
 const DeviceStatus = require("../data/DevicesStatusDA");
 const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
+const CommonVarsDA = require("../data/CommonVars");
 const broker = require("../tools/broker/BrokerFactory.js")();
 
 const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
@@ -14,22 +15,37 @@ let instance;
 class DashBoardDevices {
   constructor() {
     this.frontendDeviceTransactionsUpdatedEvent$ = new Rx.Subject();
-    this.lastFrontendDeviceTransactionsUpdatedEventSent = 0;
 
     this.frontendDeviceTransactionsUpdatedEvent$
-      .filter(transactionUpdate => {
-        // The value of 10 is established, because only every 10 minutes there will be useful
-        // information to show in the graphs of transactions
-        const timerange = 10;
-        const eventMinutes = Math.floor(new Date(transactionUpdate.timestamp).getMinutes() / timerange);
-        const lastSentMinutes = Math.floor(new Date(this.lastFrontendDeviceTransactionsUpdatedEventSent).getMinutes() / timerange);
-        return (eventMinutes > lastSentMinutes)
-               || ((eventMinutes < lastSentMinutes) && transactionUpdate.timestamp > this.lastFrontendDeviceTransactionsUpdatedEventSent )
-               || this.lastFrontendDeviceTransactionsUpdatedEventSent == 0; // is the mbe is just turn on.
+      // The value of 10 is established, because only every 10 minutes there will be useful
+      // information to show in the graphs of transactions
+      .map((transactionUpdate) => { return { data: { ...transactionUpdate }, timeRange: 2 } })
+      // merge transactionUpdateObj with lastEventSentTimestamp in DB
+      .mergeMap((transactionUpdate) => Rx.Observable.forkJoin(
+        Rx.Observable.of(transactionUpdate),
+        CommonVarsDA.getVarValue$('lastTransactionUpdateSentToClient')
+          .map(result => result ? result.value : null )
+      ))
+      .map(([transactionUpdate, lastFrontendTransactionsUpdatedSent]) => {
+        return { ...transactionUpdate, lastFrontendTransactionsUpdatedSent }
       })
-      .do(transactionUpdateEvent => 
-        this.lastFrontendDeviceTransactionsUpdatedEventSent = transactionUpdateEvent.timestamp
-      )
+      .mergeMap((transactionUpdate) => Rx.Observable.forkJoin(
+        Rx.Observable.of(transactionUpdate),
+        Rx.Observable.of(Math.floor(new Date(transactionUpdate.data.timestamp).getMinutes() / transactionUpdate.timeRange)),
+        Rx.Observable.of(Math.floor(new Date(transactionUpdate.lastFrontendTransactionsUpdatedSent).getMinutes() / transactionUpdate.timeRange))
+      ))
+      .filter(([transactionUpdate, eventMinutes, lastSentMinutes]) => {
+        return (eventMinutes > lastSentMinutes)
+          || ((eventMinutes < lastSentMinutes) && transactionUpdate.data.timestamp > transactionUpdate.lastFrontendTransactionsUpdatedSent)
+          || transactionUpdate.lastFrontendTransactionsUpdatedSent == null;
+      })      
+      .mergeMap((transactionUpdateEvent) => {
+        return Rx.Observable.forkJoin(
+          Rx.Observable.of(transactionUpdateEvent[0].data),
+          CommonVarsDA.updateVarValue$({ key: 'lastTransactionUpdateSentToClient', value: Date.now() }),
+        )
+      })
+      .map(transaction => transaction[0])
       .mergeMap(deviceTransactionsUpdatedEvent =>
         broker.send$(
           MATERIALIZED_VIEW_TOPIC,
@@ -37,7 +53,7 @@ class DashBoardDevices {
           deviceTransactionsUpdatedEvent
         )
       )
-      .subscribe(() => {});
+      .subscribe(() => { });
   }
 
   /**
