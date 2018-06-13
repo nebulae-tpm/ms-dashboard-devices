@@ -22,6 +22,7 @@ import { of } from "rxjs/observable/of";
 import { from } from "rxjs/observable/from";
 import {Router, NavigationExtras} from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: "fuse-dashboard-devices",
@@ -52,7 +53,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     private translationLoader: FuseTranslationLoaderService,
     private translate: TranslateService,
     private datePipe: DatePipe,
-    private router: Router
+    private router: Router,
+    public snackBar: MatSnackBar
   ) {
     this.translationLoader.loadTranslations(english, spanish);
 
@@ -854,12 +856,25 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           // TO-DO
           // show alerts in client propt
           console.log('ERRORS IN GRAPHQL ==> ', resp.errors);
+          this.openSnackBar(resp.errors[0].message, 6000);
           return null;
         }else  if(resp.data){
           return resp.data["getDashBoardDevicesAlarmReport"];
         }
       })
     )
+  }
+
+  openSnackBar(error: any, duration: number, action?: string): void {
+    this.translate.get("DASHBOARD.GRAPHQL_ERRORS." + error.code).subscribe(translation => {
+      this.snackBar.open(translation, action, {
+        duration: duration
+      });
+    });
+
+    // snackbarRef.onAction().subscribe((data) => {
+    //   console.log("snackbarRef.onAction()", data);
+    // })
   }
 
 }

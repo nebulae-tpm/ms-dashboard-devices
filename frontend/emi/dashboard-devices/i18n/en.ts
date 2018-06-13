@@ -36,6 +36,9 @@ export const locale = {
         RAM_MEMORY: "memory RAM alerts",
         VOLTAGE: "voltage alerts",
         TEMPERATURE: "temperature alerts",
+      },
+      GRAPHQL_ERRORS:{
+        12001: "Internal server error"
       }
     }
   }
