@@ -7,8 +7,9 @@ enum DashBoardDevicesAlarmReportTimeRangeType{
   "Last three hours"
   THREE_HOURS
 }
+
 "type of network status"
-enum DeviceNetworkStatus{
+enum DashBoardDevicesDeviceNetworkStatus{
   "online status"
   ONLINE,
   "offline status"
@@ -67,7 +68,7 @@ type DashBoardDevicesAlarmReport {
 "Device Network status event type used for DashBoardDevices"
 type DashBoardDevicesNetworkEvent{
   "Network status"
-  state: DeviceNetworkStatus!
+  state: DashBoardDevicesDeviceNetworkStatus!
   "Serial of device"
   serial: String!
   "hostname of device"
@@ -76,7 +77,7 @@ type DashBoardDevicesNetworkEvent{
   cuenca: String!
 }
 
-"Object used to represents data on Dashboard chart"
+"Object used to represent subgroups data on devices online Vs offline chart"
 type DashBoardDeviceNetworkStatusSubSerie{
   "serie name"
   name: String!
@@ -84,54 +85,75 @@ type DashBoardDeviceNetworkStatusSubSerie{
   value: Int!
 }
 
+"Object to provide data at device network status chart in DashboardDevices. (online Vs offline) chart"
 type DashBoardDeviceNetworkStatus{
   "Cuenca name used to show in devices on Vs devices off chart"
   name: String!
+  "Custom object type to provide data to chart in DasboardDevice microservice"
   series: [DashBoardDeviceNetworkStatusSubSerie]!
 }
 
+"Device transactions group by interval and groupName"
 type DashboardDeviceTransaction{
-  "Device transactions group by interval and groupName"
   interval: BigInt!
+  "Cuenca name which serves as a grouping criterion"
   groupName: String
+  "Success transaction quantity "
   transactions: Int!
+  "failed transaction quantity"
   errors: Int!
 }
 
 type DashboardDeviceTransactionSucess{
-  "Device sucessfull transactions group and groupName"
+  "Group or cuenca name "
   name: String!
+  "Success transaction quantity"
   value: Int!
 }
+"Object to provide data at influx of user chart"
 type DashboardDeviceTransactionSucessArray{
+  "TimeRange of sucess transaction"
   timeRange: String!
+  ""
   data: [DashboardDeviceTransactionSucess]!
 }
 
-
-type DeviceTransactionsUpdatedEvent{
-  "Event that informs when it's necessary to update the device transaction stats"
+"Event that informs when it's necessary to update the device transaction stats"
+type DeviceTransactionsUpdatedEvent{  
   timestamp: BigInt!
 }
 
 type Query {
-  "Get a report summary of alarmed devices.  this is used on DashBoardDevices section"
+  "Get a report summary of alarmed devices to provide data to alarm card charts in Dashboard-devices"
   getDashBoardDevicesAlarmReport(type: DashBoardDevicesAlarmReportType!, startTime: BigInt!): DashBoardDevicesAlarmReport
+  "Get data agrouped by groupName to show in Dashboard Devices online Vs Ofline"
   getDashBoardDevicesCurrentNetworkStatus: [DashBoardDeviceNetworkStatus]!
+  "get the group names list in wich success transactions were made"
   getCuencaNamesWithSuccessTransactionsOnInterval(startDate: BigInt, endDate: BigInt): [String]!
+  "get the sucess transactions grouped by Groupname "
   getSucessDeviceTransactionsGroupByGroupName(nowDate: BigInt!): [DashboardDeviceTransactionSucessArray]!
+  "get the sucess and failed transactions grouped by Groupname "
   getDeviceTransactionsGroupByTimeInterval(startDate: BigInt, endDate: BigInt, groupName: String): [DashboardDeviceTransaction]!
+  "get total number of devices registred in the platform"
   getDeviceDashBoardTotalAccount: Int!
   
 }
 
 type Subscription {
+  "Executed when a Device is reported as online "
   onDashBoardDeviceOnlineReported: [DashBoardDeviceNetworkStatus]!
+  "Executed when a Device is reported as offline"
   onDashBoardDeviceOfflineReported: [DashBoardDeviceNetworkStatus]!
+  "Executed when a device reports A Cpu_usage alarm"
   onDashBoardDeviceCpuUsageAlarmActivated: DashBoardDevicesAlarmReport!
+  "Executed when a device reports A Ram memory alarm"
   onDashBoardDeviceRamMemoryAlarmActivated: DashBoardDevicesAlarmReport!
+  "Executed when a device reports A temperature alarm"
   onDashBoardDeviceTemperatureAlarmActivated: DashBoardDevicesAlarmReport!
+  "Executed when a device reports A low voltage alarm"
   onDashBoardDeviceLowVoltageAlarmReported: DashBoardDevicesAlarmReport!
+  "Executed when a device reports A high voltage alarm"
   onDashBoardDeviceHighVoltageAlarmReported: DashBoardDevicesAlarmReport!
+  "Executed when there is new available data to show in charts about transactions"
   deviceTransactionsUpdatedEvent: DeviceTransactionsUpdatedEvent!
 }

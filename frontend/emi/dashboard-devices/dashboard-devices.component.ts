@@ -5,21 +5,18 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { fuseAnimations } from "../../../core/animations";
 import { Subscription } from "rxjs/Subscription";
 // tslint:disable-next-line:import-blacklist
-import * as Rx from "rxjs";
+import * as Rx from "rxjs/Rx";
 import {
   map,
   first,
   mergeMap,
   toArray,
-  switchMap
+  switchMap,
 } from "rxjs/operators";
 import { range } from "rxjs/observable/range";
 import { locale as english } from "./i18n/en";
 import { locale as spanish } from "./i18n/es";
 import { DatePipe } from "@angular/common";
-import { forkJoin } from "rxjs/observable/forkJoin";
-import { of } from "rxjs/observable/of";
-import { from } from "rxjs/observable/from";
 import {Router, NavigationExtras} from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
 import {MatSnackBar} from '@angular/material';
@@ -580,24 +577,24 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         }
       }
 
-      of(timeIntervals)
+      Rx.Observable.of(timeIntervals)
         .pipe(
-          mergeMap(val =>
-            forkJoin(
-              from(val).pipe(
-                map(val => {
+          mergeMap((val: any) =>
+            Rx.Observable.forkJoin(
+              Rx.Observable.from(val).pipe(
+                map((val: any) => {
                   return val.transactions;
                 }),
                 toArray()
               ),
-              from(val).pipe(
-                map(val => {
+              Rx.Observable.from(val).pipe(
+                map((val: any) => {
                   return val.errors;
                 }),
                 toArray()
               ),
-              from(val).pipe(
-                map(val => {
+              Rx.Observable.from(val).pipe(
+                map((val: any) => {
                   return new Date(val.interval).toLocaleString("en-US", {
                     hour: "numeric",
                     minute: "numeric",
@@ -657,8 +654,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       }),
       toArray(),
       mergeMap(timeMap => {
-        return forkJoin(
-          of(timeMap),
+        return Rx.Observable.forkJoin(
+          Rx.Observable.of(timeMap),
           this.dashboardDeviceService
             .getDeviceTransactionsGroupByTimeInterval(
               startDate - 10 * 60 * 1000,

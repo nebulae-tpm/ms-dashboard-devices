@@ -69,13 +69,15 @@ export class DashboardDevicesService {
         type: alarmType,
         startTime: startTime
       },
+      fetchPolicy: 'network-only',
       errorPolicy: 'all'
     }).valueChanges
   }
 
   getAllDevicesAccount(){
     return this.gateway.apollo.watchQuery<any>({
-      query: getDeviceDashBoardTotalAccount
+      query: getDeviceDashBoardTotalAccount,
+      fetchPolicy: 'network-only'
     }).valueChanges
     .map(result => result.data.getDeviceDashBoardTotalAccount);
   }
