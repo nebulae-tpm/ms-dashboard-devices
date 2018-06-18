@@ -44,7 +44,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   allSubscriptions: Subscription[] = [];
 
-
   constructor(
     private dashboardDeviceService: DashboardDevicesService,
     private translationLoader: FuseTranslationLoaderService,

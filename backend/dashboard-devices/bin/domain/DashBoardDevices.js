@@ -112,7 +112,7 @@ class DashBoardDevices {
    * Reaction to deviceOnlineReported
    */
   handleDeviceConnectedEvent$(evt) {
-    console.log("handleDeviceConnectedEvent", evt, evt.aid);
+    // console.log("handleDeviceConnectedEvent", evt, evt.aid);
     return DeviceStatus.onDeviceOnlineReported(evt)
       .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
@@ -391,7 +391,7 @@ class DashBoardDevices {
    * obsoleteThreshold in hours
    */
   removeAllObsoleteMongoDocuments$(evt){
-    console.log("removeAllObsoleteMongoDocuments ==> ", evt.data)
+    // console.log("removeAllObsoleteMongoDocuments ==> ", evt.data)
     const hoursBefore = evt.data ?  evt.data.obsoleteThreshold : 3
     const obsoleteThreshold = ( Date.now() - (hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
     return Rx.Observable.forkJoin(
