@@ -10,19 +10,16 @@ _This MicroService is built on top of NebulaE MicroService Framework.  Please se
 # Table of Contents
   * [Project Structure](#structure)
   * [FrontEnd](#frontend)
-    *  [Charts available](#frontend_charts)
+    *  [Available charts](#frontend_charts)
     *  [Environment variables](#frontend_env_vars) - not yet available  
   * [API](#api)
     * [GraphQL throught Gateway API](#api_gateway_graphql)
   * [BackEnd](#backend)
-    *  [Recepcionist](#backend_recepcionist)
-        *  [Environment variables](#backend_dashboard-devices)
-    *  [Handler](#backend_handler)
-        *  [Environment variables](#backend_handler_env_vars)
-        *  [CronJobs](#backend_handler_cronjobs)
-        *  [Event Sourcing](#backend_handler_eventsourcing)
+    *  [Dasboard devices](#backend_dashboard-devices)
+        * [Environment variables](#backend_dashboard-devices_env_vars)
+        * [Event Sourcing](#backend_dashboard-devices_eventsourcing)
+        * [CronJobs](#backend_dashboard-devices_cronjobs)
   * [Prepare development environment](#prepare_dev_env)
-  * [License](#license)
 
   # Project structure <a name="structure"></a>
 
@@ -52,34 +49,16 @@ Shows by charts the summarized information of the devices connected to the platf
 These are the exposed the charts available in the webform [Dashboard-devices frontend](https://github.com/nebulae-tpm/ms-dashboard-devices)
 
 ### Alarms card charts
-There are four card of this type in webpage top, each one belong to CPU usage, RAM memory, Voltage and temperature alarms type. Each one have front and back side
-#### front side
-##### toggle-side-button
-    Button to toggle the card side is located in the right-top of the card.
-#####  Timerange selector
-    Time range selector to show the quantity of alarms in the time range selected.
-##### Number reported alarms
-    Number of alarms of the corresponding alarm type reported by the EventStore in the selected time range.
-##### Alarm type label
-    Label to make known what the number in the card center refers to.
-##### Device quantity with alarms
-    Label to announce what is the quantity of devices with alarms and the total quantity of devices registred in the platform.    
-#### back side
-##### toggle-side-button
-    Button to toggle the card side is located in the right-top of the card.
-##### Top List
-    List that allow to know what are the devices with most alarms quantity reported in the time range selected.
-    Note: the user is allowed to see the device details clicking on each item of the list.
-##### complete list button
-    It allows to navigate to other component to see the complete list with the devices that reported alarms in the time range selected.
+There are four card of this type in webpage top, each one belong to CPU usage, RAM memory, Voltage and temperature alarms type. Each one have front and back side, the front side allow us to know the quantity of alarms reported in the timerange selected, the back side allow us to know the top list with the five devices with most quantity of reported alarms and there is a button to navigate to see the complete list.
 
 ### Influx of user
 This Chart allow at user to know the influx of user in the total system grouped by cuencas in two differents chart located in the front and back side
-#### Front side
-#### Back side
 
-### ...
+### Online Vs Offline devices
+This chart allow us to know the devices network status agrouped by Cuencas or group name.
 
+### sucess and failed transactions
+this chart allow us to know the quantity of sucess and failed transactions in the timerange selected.
 # API <a name="api"></a>
 Exposed interfaces to send Commands and Queries by the CQRS principles.
 The MicroService exposes its interfaces as Micro-APIs that are nested on the general API.
@@ -240,11 +219,92 @@ Each BackEnd has the following running commands:
   * npm run sync-state:  syncs backend state by reading all missing Events from the event-store
   * npm test: runs unit tests
 
-## Devices location <a name="backend_dashboard-devices"></a>
+## Dasboard-Devices <a name="backend_dashboard-devices"></a>
 
 
+### Environment variables <a name="backend_dashboard-devices_env_vars"></a>
+All the time, the [devices-report](https://github.com/nebulae-tpm/ms-devices-report/tree/master/backend/devices-report-receptionist) reports events belonging to the different devices registered on the system, these events detail information about the device status.  The Dasboard-Devices backend gathers these events and persists the relevant information for this microservice (Eg. hostname, groupName, alarms, transactions etc). At the end, all of the received information become in three main persisted states: General status of each device, device alarms reported and transactions made.
 
+```
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+|                 VARIABLE                 | TYPE   |                                          DESCRIPTION                                         |  DEF. | MANDATORY |
+|                                          |        |                                                                                              | VALUE |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| production                               | bool   | Production enviroment flag                                                                   | false |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_BROKER_TYPE                  | enum   | Event store broker type to use.                                                              |       |     X     |
+|                                          | string | Ops: PUBSUB, MQTT                                                                            |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_BROKER_EVENTS_TOPIC          | enum   | Event store topic's name.                                                                    |       |     X     |
+|                                          | string |                                                                                              |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_TYPE                   | enum   | Event store storage type to use.                                                             |       |     X     |
+|                                          | string | Ops: MONGO                                                                                   |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_URL                    | string | Event store storage URL or connection string.                                                |       |     X     |
+|                                          |        | Eg.: mongodb://127.0.0.1:27017/test                                                          |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_AGGREGATES_DB_NAME     | string | Event store storage database name for Aggregates                                             |       |     X     |
+|                                          |        | Eg.: Aggregates                                                                              |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_EVENTSTORE_DB_NAME     | string | Event store storage database name prefix for Event Sourcing Events                           |       |     X     |
+|                                          |        | Eg.: EventStore                                                                              |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| GOOGLE_APPLICATION_CREDENTIALS           | string | Production only.                                                                             |       |     X     |
+|                                          |        | Google service account key path to access google cloud resources.                            |       |           |
+|                                          |        |                                                                                              |       |           |
+|                                          |        | Eg.: /etc/GOOGLE_APPLICATION_CREDENTIALS/gcloud-service-key.json                             |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| LOCKVERSION                              | string | Production only.                                                                             |       |     X     |
+|                                          |        | word or phrase used to evaluate if the sync task should be run before starting this backend. |       |           |
+|                                          |        | This value must be changed to force state sync task.                                         |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| MONGODB_URL                              | string | Materialized views MONGO DB URL                                                              |       |     X     |
+|                                          |        | Eg.: mongodb://127.0.0.1:27017/test                                                          |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| MONGODB_DB_NAME                          | string | Materialized views MONGO DB name                                                             |       |     X     |
+|                                          |        | Eg.: DeviceAlarmReports                                                                  |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| JWT_PUBLIC_KEY                           | string | RSA Public key to verify JWT Tokens.                                                         |       |     X     |
+|                                          |        | Format: -----BEGIN PUBLIC KEY-----\nPUBLIC_KEY\n-----END PUBLIC KEY-----                     |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| REPLY_TIMEOUT                            | number | TimeOut in milliseconds in case of sending data through the broker and waiting the response. |  2000 |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| BROKER_TYPE                              | enum   | Broker type to use for inter-process communication.                                          |       |     X     |
+|                                          | string | Ops: PUBSUB, MQTT                                                                            |       |           |
++------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+```
+#### Notes: 
+  * ENV VARS for development are [here](backend/dashboard-devices/.env)
+  * ENV VARS for production are [here](deployment/gke/deployment-devices-location.yaml)
 
+### Event Sourcing <a name="backend_dashboard-devices_eventsourcing"></a>
+    Event sourcing events this Micro-BackEnd is subscribed to or is publishing.
+#### Subscribed events:    
+*   onDashBoardDeviceOnlineReported             : Device reports online networkstatus 
+*   onDashBoardDeviceOfflineReported            : Device reports offline networkstatus 
+*   onDashBoardDeviceCpuUsageAlarmActivated     : Device reports a Cpu usage alarm
+*   onDashBoardDeviceRamMemoryAlarmActivated    : Device reports a RAM memory alarm
+*   onDashBoardDeviceTemperatureAlarmActivated  : Device reports a temperature alarm
+*   onDashBoardDeviceLowVoltageAlarmReported    : Device reports a low voltage alarm
+*   onDashBoardDeviceHighVoltageAlarmReported   : Device reports a high voltage alarm
+*   deviceTransactionsUpdatedEvent              : Transaction update from backend 
+
+#### Published events: 
+* N/A
+
+### CronJobs <a name="backend_dashboard-devices_cronjobs"></a>
+Time-based jobs that are configured and triggered by the [CronJob MicroService](https://github.com/nebulae-tpm/ms-cronjob)
+
+#### Clean DashBoard Devices History
+Cleans the alarms and transactions history of each device registered on the system. removes all registries before N hours in transaction and alarms collections, where N is configured on the cronjob properties.
+specs:  
+  * Event type: CleanDashBoardDevicesHistoryJobTriggered
+  * Payload properties: 
+     * obsoleteThreshold (int): number of hours needed to consider a record as obsolete to be able to remove it.
+# Prepare development environment <a name="prepare_dev_env"></a>
+
+![Development environment](docs/images/ms-devices-location-dev-env.png "Dev_environment")
 
 
 
