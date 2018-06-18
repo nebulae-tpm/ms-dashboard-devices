@@ -16,8 +16,7 @@ _This MicroService is built on top of NebulaE MicroService Framework.  Please se
     * [GraphQL throught Gateway API](#api_gateway_graphql)
   * [BackEnd](#backend)
     *  [Recepcionist](#backend_recepcionist)
-        *  [Environment variables](#backend_recepcionist_env_vars)
-        *  [Event Sourcing](#backend_recepcionist_eventsourcing)
+        *  [Environment variables](#backend_dashboard-devices)
     *  [Handler](#backend_handler)
         *  [Environment variables](#backend_handler_env_vars)
         *  [CronJobs](#backend_handler_cronjobs)
@@ -228,6 +227,20 @@ Note: You may find the GraphQL schema [here](api/gateway/graphql/dashboard-devic
 #### deviceTransactionsUpdatedEvent
     Executed when there is new available data to show in charts about transactions
 * Data: DeviceTransactionsUpdatedEvent object
+
+### GraphQL Mutations
+    N/A
+# BackEnd <a name="backend"></a>
+Backends are defined processes within a docker container.  
+Each process is responsible to build, run and maintain itself.  
+
+Each BackEnd has the following running commands:
+  * npm start: executes main program
+  * npm run prepare: execute maintenance routines such DB indexes creation
+  * npm run sync-state:  syncs backend state by reading all missing Events from the event-store
+  * npm test: runs unit tests
+
+## Devices location <a name="backend_dashboard-devices"></a>
 
 
 
