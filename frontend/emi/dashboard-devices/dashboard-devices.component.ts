@@ -821,7 +821,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     }
 
     this[widgetName].isReady = true;
-    console.log(this[widgetName]);
   }
 
   errorHandler(error: any): void {
