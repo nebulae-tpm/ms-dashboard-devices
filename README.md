@@ -137,32 +137,32 @@ Note: You may find the GraphQL schema [here](api/gateway/graphql/dashboard-devic
 
 ### GraphQL Queries
 #### getDashBoardDevicesAlarmReport
-    Get a report summary of alarmed devices to provide data to alarm card charts in Dashboard-devices
+* Description : Get a report summary of alarmed devices to provide data to alarm card charts in Dashboard-devices
 * Parms:
     * type: DashBoardDevicesAlarmReportType! => Alarm type
     * startTime: BigInt! => query timestamp
 * returns : DashBoardDevicesAlarmReport object.
 
 #### getDashBoardDevicesCurrentNetworkStatus
-    Get data agrouped by groupName to show in Dashboard Devices online Vs Ofline
+* Description: Get data agrouped by groupName to show in Dashboard Devices online Vs Ofline
 * Params : none
 * returns : DashBoardDeviceNetworkStatus Array
 
 #### getCuencaNamesWithSuccessTransactionsOnInterval
-    get the group names list in wich success transactions were made
+* Description: get the group names list in wich success transactions were made
 * params:
     * startDate: BigInt => lower limit date to search registries in the database
     * endDate: BigInt => higher limit date to search registries in the database
 * returns: String array where each string is a group name
 
 #### getSucessDeviceTransactionsGroupByGroupName
-    get the sucess transactions grouped by Groupname 
+* Description: get the sucess transactions grouped by Groupname 
 * params: 
     * nowDate: BigInt! => query timestamp
 * returns: DashboardDeviceTransactionSucessArray objects array
 
 ####  getDeviceTransactionsGroupByTimeInterval
-    get the sucess and failed transactions grouped by Groupname
+* Description: get the sucess and failed transactions grouped by Groupname
 * params:
     * startDate: BigInt => Lower limit date to search registries in the database
     * endDate: BigInt => Higher limit date to search registries in the database
@@ -170,7 +170,7 @@ Note: You may find the GraphQL schema [here](api/gateway/graphql/dashboard-devic
 * returns: DashboardDeviceTransaction objects array
 
 #### getDeviceDashBoardTotalAccount
-    get total number of devices registred in the platform
+* Description: get total number of devices registred in the platform
 * Params: none
 * Return: Integer
 
@@ -180,31 +180,31 @@ Note: You may find the GraphQL schema [here](api/gateway/graphql/dashboard-devic
 * Data: DashBoardDeviceNetworkStatus object array
 
 #### onDashBoardDeviceOfflineReported
-    Executed when a Device is reported as offline
+* Description: Executed when a Device is reported as offline
 * Data: DashBoardDeviceNetworkStatus object array
 
 #### onDashBoardDeviceCpuUsageAlarmActivated
-    Executed when a device reports A CPU usage alarm
+* Description: Executed when a device reports A CPU usage alarm
 * Data: DashBoardDevicesAlarmReport object
 
 #### onDashBoardDeviceRamMemoryAlarmActivated
-    Executed when a device reports A RAM memory alarm
+* Description: Executed when a device reports A RAM memory alarm
 * Data: DashBoardDevicesAlarmReport object
 
 #### onDashBoardDeviceTemperatureAlarmActivated
-    Executed when a device reports A temperature alarm
+* Description: Executed when a device reports A temperature alarm
 * Data: DashBoardDevicesAlarmReport object
 
 #### onDashBoardDeviceLowVoltageAlarmReported
-    Executed when a device reports A low voltage alarm
+* Description: Executed when a device reports A low voltage alarm
 * Data: DashBoardDevicesAlarmReport object
 
 #### onDashBoardDeviceHighVoltageAlarmReported
-    Executed when a device reports A high voltage alarm
+* Description: Executed when a device reports A high voltage alarm
 * Data: DashBoardDevicesAlarmReport object
 
 #### deviceTransactionsUpdatedEvent
-    Executed when there is new available data to show in charts about transactions
+* Description: Executed when there is new available data to show in charts about transactions
 * Data: DeviceTransactionsUpdatedEvent object
 
 ### GraphQL Mutations
@@ -276,7 +276,7 @@ All the time, the [devices-report](https://github.com/nebulae-tpm/ms-devices-rep
 ```
 #### Notes: 
   * ENV VARS for development are [here](backend/dashboard-devices/.env)
-  * ENV VARS for production are [here](deployment/gke/deployment-devices-location.yaml)
+  * ENV VARS for production are [here](deployment/gke/deployment-dashboard-devices.yaml)
 
 ### Event Sourcing <a name="backend_dashboard-devices_eventsourcing"></a>
     Event sourcing events this Micro-BackEnd is subscribed to or is publishing.
