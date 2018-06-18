@@ -19,7 +19,7 @@ class DashBoardDevices {
     this.frontendDeviceTransactionsUpdatedEvent$
       // The value of 10 is established, because only every 10 minutes there will be useful
       // information to show in the graphs of transactions
-      .map((transactionUpdate) => { return { data: { ...transactionUpdate }, timeRange: 2 } })
+      .map((transactionUpdate) => { return { data: { ...transactionUpdate }, timeRange: 10 } })
       // merge transactionUpdateObj with lastEventSentTimestamp in DB
       .mergeMap((transactionUpdate) => Rx.Observable.forkJoin(
         Rx.Observable.of(transactionUpdate),

@@ -141,7 +141,7 @@ jobs:
             mkdir ~/nebulae/backend
             cp ~/nebulae/go/mbinit ~/nebulae/repo/backend/dashboard-devices/
             export DOCKERHUB_IMAGE=dashboard-devices.backend.dashboard-devices
-            export DOCKERHUB_TAG=0.0.55
+            export DOCKERHUB_TAG=0.0.56
             gitChanged backend/dashboard-devices || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/dashboard-devices/
             gitChanged backend/dashboard-devices || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/dashboard-devices || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
