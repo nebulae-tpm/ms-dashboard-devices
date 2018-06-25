@@ -15,6 +15,7 @@ import { Router, NavigationExtras } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
 import { MatSnackBar } from "@angular/material";
 
+
 @Component({
   selector: "fuse-dashboard-devices",
   templateUrl: "./dashboard-devices.component.html",

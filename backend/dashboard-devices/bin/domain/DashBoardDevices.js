@@ -78,6 +78,7 @@ class DashBoardDevices {
       .subscribe(() => {}, err => console.log(err));
 
   }
+  
 
   /**
    * delivers the current status of the alarm by type
