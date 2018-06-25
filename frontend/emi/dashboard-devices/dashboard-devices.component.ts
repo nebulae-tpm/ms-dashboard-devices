@@ -6,20 +6,14 @@ import { fuseAnimations } from "../../../core/animations";
 import { Subscription } from "rxjs/Subscription";
 // tslint:disable-next-line:import-blacklist
 import * as Rx from "rxjs/Rx";
-import {
-  map,
-  first,
-  mergeMap,
-  toArray,
-  switchMap,
-} from "rxjs/operators";
+import { map, first, mergeMap, toArray, switchMap } from "rxjs/operators";
 import { range } from "rxjs/observable/range";
 import { locale as english } from "./i18n/en";
 import { locale as spanish } from "./i18n/es";
 import { DatePipe } from "@angular/common";
-import {Router, NavigationExtras} from "@angular/router";
+import { Router, NavigationExtras } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "fuse-dashboard-devices",
@@ -31,10 +25,10 @@ import {MatSnackBar} from '@angular/material';
 export class DashboardDevicesComponent implements OnInit, OnDestroy {
   totalDeviceAccout: Rx.Observable<number>; // total number of devices to show in alarms widgets
 
-  alertsByCpu: any = {isReady: false};
-  alertsByRamMemory: any = {isReady: false};
-  alertsByVoltage: any = {isReady: false};
-  alertsByTemperature: any = {isReady: false};
+  alertsByCpu: any = { isReady: false };
+  alertsByRamMemory: any = { isReady: false };
+  alertsByVoltage: any = { isReady: false };
+  alertsByTemperature: any = { isReady: false };
 
   onlineVsOfflineByGroupNameWidget: any = {};
   successfulAndFailedTransactionWidget: any = {};
@@ -372,7 +366,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     // All RxJs Subscriptions with querie and subscriptions of grahpQl
 
     const nowDate = new Date();
-    nowDate.setMinutes(nowDate.getMinutes() - nowDate.getMinutes() % 10);
+    nowDate.setMinutes(nowDate.getMinutes() - (nowDate.getMinutes() % 10));
     nowDate.setSeconds(0);
     nowDate.setMilliseconds(0);
     this.allSubscriptions.push(
@@ -410,6 +404,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
           result => {
+            console.log(" ## Updating online Vs offline devices chart");
             const originalLength = result.length;
             while (result.length < 5) {
               result.push({
@@ -429,12 +424,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // CPU_USAGE GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("CPU_USAGE", Date.now())
-        .pipe(
-          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
-        ).subscribe(
+        .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
+        .subscribe(
           response => {
             if (response !== null) {
-              this.buildWidget("alertsByCpu", response)
+              this.buildWidget("alertsByCpu", response);
             }
           },
           error => this.errorHandler(error)
@@ -451,12 +445,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // RAM_MEMORY GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("RAM_MEMORY", Date.now())
-        .pipe(
-          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
-        ).subscribe(
+        .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
+        .subscribe(
           response => {
-            if(response !== null){
-              this.buildWidget("alertsByRamMemory", response)
+            if (response !== null) {
+              this.buildWidget("alertsByRamMemory", response);
             }
           },
           error => this.errorHandler(error)
@@ -472,9 +465,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // VOLTAGE GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("VOLTAGE", Date.now())
-        .pipe(
-          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
-        ).subscribe(
+        .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
+        .subscribe(
           response => this.buildWidget("alertsByVoltage", response),
           error => this.errorHandler(error)
         ),
@@ -488,9 +480,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       // TEMPERATURE GraphQl Query
       this.dashboardDeviceService
         .getDashboardDeviceAlertsBy("TEMPERATURE", Date.now())
-        .pipe(
-          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp))
-        ).subscribe(
+        .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
+        .subscribe(
           response => this.buildWidget("alertsByTemperature", response),
           error => this.errorHandler(error)
         ),
@@ -507,7 +498,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .pipe(
           switchMap(event => {
             const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getMinutes() % 10, 0, 0);
+            now.setMinutes(now.getMinutes() - (now.getMinutes() % 10), 0, 0);
             return this.dashboardDeviceService.getSucessTransactionsGroupByGroupName(
               now.getTime()
             );
@@ -551,10 +542,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     const endDate =
       currentDate1.getTime() +
       (10 -
-        Number(
+        (Number(
           this.datePipe.transform(new Date(currentDate1.getTime()), "mm")
         ) %
-          10) *
+          10)) *
         60000;
     const startDate = endDate - (hours * 60 * 60 * 1000 + 10 * 60 * 1000);
     this.getDeviceTransactionGroupByTimeInterval(
@@ -725,14 +716,21 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   getMaxUsageMeter(realMax: number): number {
-    if(realMax < 1000)     { return 1000; }
-    else if(realMax < 2000){ return 2000; }
-    else if(realMax < 4000){ return 4000; }
-    else if(realMax < 6000){ return 6000; }
-    else if(realMax < 8000){ return 8000; }
-    else if(realMax < 10000){ return 10000; }
-    else if(realMax < 12000){ return 12000; }
-    else {
+    if (realMax < 1000) {
+      return 1000;
+    } else if (realMax < 2000) {
+      return 2000;
+    } else if (realMax < 4000) {
+      return 4000;
+    } else if (realMax < 6000) {
+      return 6000;
+    } else if (realMax < 8000) {
+      return 8000;
+    } else if (realMax < 10000) {
+      return 10000;
+    } else if (realMax < 12000) {
+      return 12000;
+    } else {
       // let resp = Math.floor(realMax + 30 / 100 * realMax);
       let resp = realMax;
 
@@ -778,7 +776,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       (a: any, b: any) => a.order - b.order
     );
     // limit each timerange to hace only 5 element to shpw but keeps all the devices in other prop
-    this[widgetName].timeRanges.forEach((timeRange) => {
+    this[widgetName].timeRanges.forEach(timeRange => {
       timeRange.fullDeviceTopList = timeRange.topDevices;
       timeRange.topDevices = timeRange.topDevices.slice(0, 5);
     });
@@ -788,37 +786,39 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       (this[widgetName].currentTimeRange = ev);
 
     this[widgetName].goToTopList = () => {
-      const startTime =  this[widgetName].queriedTime - ( (this[widgetName].currentTimeRange + 1) *60*60*1000);
-      const endTime =   this[widgetName].queriedTime
+      const startTime =
+        this[widgetName].queriedTime -
+        (this[widgetName].currentTimeRange + 1) * 60 * 60 * 1000;
+      const endTime = this[widgetName].queriedTime;
       this.allSubscriptions.push(
-
         Rx.Observable.forkJoin(
-          this.translate.get('DASHBOARD.LABEL_FOR_DEVICES_FILTER'),
-          this.translate.get(`DASHBOARD.ALARMS_TYPES.${this[widgetName].type}`),
+          this.translate.get("DASHBOARD.LABEL_FOR_DEVICES_FILTER"),
+          this.translate.get(`DASHBOARD.ALARMS_TYPES.${this[widgetName].type}`)
           // this.translate.get('DASHBOARD.BETWEEN'),
           // Rx.Observable.of(new Date(startTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false })),
           // this.translate.get('DASHBOARD.AND'),
           // Rx.Observable.of(new Date(endTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false }))
-
-        ).map(([label, alarmType]) => {
-          return label + " " + alarmType ;
-        }).subscribe(labelTranslation => {
-          let navigationParams: NavigationExtras = {
-            queryParams: {
-              filterTemplate: JSON.stringify({
-                id: 1,
-                type: this[widgetName].type.slice(0, 4).replace('_', ''),
-                initTime: startTime,
-                endTime: endTime,
-                label: labelTranslation
-              })
-            }
-          };
-          console.log(["/devices"], navigationParams);
-          this.router.navigate(["/devices"], navigationParams);
-        })
+        )
+          .map(([label, alarmType]) => {
+            return label + " " + alarmType;
+          })
+          .subscribe(labelTranslation => {
+            let navigationParams: NavigationExtras = {
+              queryParams: {
+                filterTemplate: JSON.stringify({
+                  id: 1,
+                  type: this[widgetName].type.slice(0, 4).replace("_", ""),
+                  initTime: startTime,
+                  endTime: endTime,
+                  label: labelTranslation
+                })
+              }
+            };
+            console.log(["/devices"], navigationParams);
+            this.router.navigate(["/devices"], navigationParams);
+          })
       );
-    }
+    };
 
     this[widgetName].isReady = true;
   }
@@ -827,48 +827,52 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     console.log("errorHandler", error);
   }
 
-  onItemWithAlarmClick(deviceId: string, alarmType: string, timeRange: string, queriedTime: number): void {
+  onItemWithAlarmClick(
+    deviceId: string,
+    alarmType: string,
+    timeRange: string,
+    queriedTime: number
+  ): void {
     let navigationParams: NavigationExtras = {
       queryParams: {
         filterTemplate: JSON.stringify({
           id: 2,
-          type: alarmType.slice(0, 4).replace('_', ''),
-          range: timeRange,
+          type: alarmType.slice(0, 4).replace("_", ""),
+          range: timeRange
           // queriedTime: queriedTime
         })
       }
     };
     console.log(["/devices/device", deviceId], navigationParams);
-    this.router.navigate(["/devices/device", deviceId ], navigationParams );
+    this.router.navigate(["/devices/device", deviceId], navigationParams);
   }
 
-
-  graphQlAlarmsErrorHandler$(response){
-    return Rx.Observable.of(JSON.parse(JSON.stringify(response)))
-    .pipe(
-      map((resp) => {
-        if (resp.errors){
+  graphQlAlarmsErrorHandler$(response) {
+    return Rx.Observable.of(JSON.parse(JSON.stringify(response))).pipe(
+      map(resp => {
+        if (resp.errors) {
           // TO-DO
           // show alerts in client propt
-          console.log('ERRORS IN GRAPHQL ==> ', resp.errors);
+          console.log("ERRORS IN GRAPHQL ==> ", resp.errors);
           this.openSnackBar(resp.errors[0].message, 6000);
           return null;
-        }else  if(resp.data){
+        } else if (resp.data) {
           return resp.data["getDashBoardDevicesAlarmReport"];
         }
       })
-    )
+    );
   }
 
   openSnackBar(error: any, duration: number, action?: string): void {
-    this.translate.get("DASHBOARD.GRAPHQL_ERRORS." + error.code).subscribe(translation => {
-      this.snackBar.open(translation, action, {
-        duration: duration
+    this.translate
+      .get("DASHBOARD.GRAPHQL_ERRORS." + error.code)
+      .subscribe(translation => {
+        this.snackBar.open(translation, action, {
+          duration: duration
+        });
       });
-    });
     // snackbarRef.onAction().subscribe((data) => {
     //   console.log("snackbarRef.onAction()", data);
     // })
   }
-
 }

@@ -10,10 +10,10 @@ class CommonVarsDA {
     return Rx.Observable.defer(() => collection.findOne({ key: keyVar }, {value: 1}));
   }
 
-  static updateVarValue$(variable){
+  static updateVarValue$(key, value){
     return this.updateOne$(
-        { key: variable.key },
-        { $set: { value: variable.value } },
+        { key: key },
+        { $set: { value: value } },
         { upsert: true }
     );
   }

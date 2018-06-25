@@ -8,6 +8,9 @@ const DeviceTransactionsDA = require("../data/DeviceTransactionsDA");
 const CommonVarsDA = require("../data/CommonVars");
 const broker = require("../tools/broker/BrokerFactory.js")();
 
+const lastTransactionUpdateSentToClientDBKey = "lastTransactionUpdateSentToClient";
+const lastOnlineVsOffUpdateSentToDashboardDBKey = "lastOnlineVsOffUpdateSentToDashboard";
+
 const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
 
 let instance;
@@ -15,6 +18,7 @@ let instance;
 class DashBoardDevices {
   constructor() {
     this.frontendDeviceTransactionsUpdatedEvent$ = new Rx.Subject();
+    this.frontendOnlineVsOfflineDevicesDebounce$ = new Rx.Subject();
 
     this.frontendDeviceTransactionsUpdatedEvent$
       // The value of 10 is established, because only every 10 minutes there will be useful
@@ -23,7 +27,7 @@ class DashBoardDevices {
       // merge transactionUpdateObj with lastEventSentTimestamp in DB
       .mergeMap((transactionUpdate) => Rx.Observable.forkJoin(
         Rx.Observable.of(transactionUpdate),
-        CommonVarsDA.getVarValue$('lastTransactionUpdateSentToClient')
+        CommonVarsDA.getVarValue$(lastTransactionUpdateSentToClientDBKey)
           .map(result => result ? result.value : null )
       ))
       .map(([transactionUpdate, lastFrontendTransactionsUpdatedSent]) => {
@@ -42,7 +46,7 @@ class DashBoardDevices {
       .mergeMap((transactionUpdateEvent) => {
         return Rx.Observable.forkJoin(
           Rx.Observable.of(transactionUpdateEvent[0].data),
-          CommonVarsDA.updateVarValue$({ key: 'lastTransactionUpdateSentToClient', value: Date.now() }),
+          CommonVarsDA.updateVarValue$(lastTransactionUpdateSentToClientDBKey, Date.now()),
         )
       })
       .map(transaction => transaction[0])
@@ -54,6 +58,25 @@ class DashBoardDevices {
         )
       )
       .subscribe(() => { });
+      
+      this.frontendOnlineVsOfflineDevicesDebounce$
+      .switchMap(update => Rx.Observable.forkJoin(
+        Rx.Observable.of(update),
+        CommonVarsDA.getVarValue$(lastOnlineVsOffUpdateSentToDashboardDBKey)
+          .map(result => result ? result.value : null )
+      ))
+      .do(r => console.log("frontendOnlineVsOfflineDevicesDebounce$", r) )
+      // if more than 10 seconds have elapsed since the last event generated then we can sen another event
+      .filter(([currentUpdate, lastUpdate]) => lastUpdate == null || currentUpdate > lastUpdate + 10000) 
+      .mergeMap(() => {
+        return  DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
+          .mergeMap(devices => this.mapToCharBarData$(devices))
+          .toArray()          
+      })
+      .mergeMap(msg =>  broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceConnected", msg)) // send update
+      .mergeMap(() => CommonVarsDA.updateVarValue$( lastOnlineVsOffUpdateSentToDashboardDBKey, Date.now())) // update the last update in DB
+      .subscribe(() => {}, err => console.log(err));
+
   }
 
   /**
@@ -91,7 +114,6 @@ class DashBoardDevices {
   getDashBoardDevicesCurrentNetworkStatus$({ root, args, jwt }, authToken) {
     // console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
-      .map(results => results.filter(result => result._id.cuenca))
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
       .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
@@ -112,29 +134,9 @@ class DashBoardDevices {
    * Reaction to deviceOnlineReported
    */
   handleDeviceConnectedEvent$(evt) {
-    // console.log("handleDeviceConnectedEvent", evt, evt.aid);
     return DeviceStatus.onDeviceOnlineReported(evt)
-      .map(results => results.filter(result => result._id.cuenca))
-      .mergeMap(devices => this.mapToCharBarData$(devices))
-      .toArray()
-      .mergeMap(msg =>
-        broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceConnected", msg)
-      );   
+      .do(() => this.frontendOnlineVsOfflineDevicesDebounce$.next(evt.timestamp))
   }
-
-  /**
-   * Reaction to deviceofflineReported
-   */
-  handleDeviceDisconnectedEvent$(evt) {
-    // console.log("handleDeviceDisconnectedEvent", evt);
-    return DeviceStatus.onDeviceOfflineReported(evt.aid)
-      .map(results => results.filter(result => result._id.cuenca))
-      .mergeMap(devices => this.mapToCharBarData$(devices))
-      .toArray()
-      .mergeMap(msg =>
-        broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceDisconnected", msg)
-      );
-  } 
 
   /**
    * Reaction to  DeviceCpuUsageAlarmActivated

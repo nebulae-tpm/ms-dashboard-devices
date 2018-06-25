@@ -39,15 +39,6 @@ class DeviceStatusDA {
       { deviceId: evt.aid },
       { $set: { online: evt.data.connected } },
       { upsert: true}
-    ).mergeMap((updateResult) =>  this.getTotalDeviceByCuencaAndNetworkState$());
-  }
-
-  static onDeviceOfflineReported(deviceId){
-    return this.updateOne$(
-      { deviceId: deviceId  },
-      { $set: { online: false } },
-      { upsert: true }
-    ).mergeMap((r) => this.getTotalDeviceByCuencaAndNetworkState$()
     );
   }
   
@@ -69,6 +60,7 @@ class DeviceStatusDA {
       { $sort: { _id: 1 } }
     ])
     .toArray())
+    .map(results => results.filter(result => result._id.cuenca))
   }
   /**
    * Updates a document in the collection

@@ -19,10 +19,6 @@ class EventStoreService {
         fn: dashBoardDevices.handleDeviceConnectedEvent$,
         obj: dashBoardDevices
       },
-      // DeviceDisconnected: {
-      //   fn: dashBoardDevices.handleDeviceDisconnectedEvent$,
-      //   obj: dashBoardDevices
-      // },
       DeviceCpuUsageAlarmActivated: {
         fn: dashBoardDevices.DeviceCpuUsageAlarmActivated$,
         obj: dashBoardDevices
