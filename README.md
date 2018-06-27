@@ -48,13 +48,14 @@ These are the exposed the charts available in the webform [Dashboard-devices fro
 
 ### Alarms card charts
 There are four card of this type in webpage top, each one belong to CPU usage, RAM memory, Voltage and temperature alarms type. Each one have front and back side, the front side allow us to know the quantity of alarms reported in the timerange selected, the back side allow us to know the top list with the five devices with most quantity of reported alarms and there is a button to navigate to see the complete list.
+
 ![NebulaE](docs/images/ms-dasboard-devices_FrontSideAlertCard.png "Alarm front side chart")
 ![NebulaE](docs/images/ms-dasboard-devices_BackSideAlertCard.png "Alarm back side chart")
 
 
 ### Influx of user
 This Chart allow at user to know the influx of user in the total system grouped by cuencas in two differents chart located in the front and back side
-![NebulaE](docs/images/ms-dasboard-devices_UserInfluxBackSide.png "Front side user influx chart")
+![NebulaE](docs/images/ms-dasboard-devices_UserInfluxFrontSide.png "Front side user influx chart")
 ![NebulaE](docs/images/ms-dasboard-devices_UserInfluxBackSide.png "Back side user influx chart")
 
 ### Online Vs Offline devices
