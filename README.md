@@ -6,7 +6,6 @@ The general porpouse of this service is to listen events from the "event store" 
 _This MicroService is built on top of NebulaE MicroService Framework.  Please see the [FrameWork project](https://github.com/NebulaEngineering/nebulae) to understand the full concept_**.
 
 ![Intro](docs/images/ms-dashboard-devices_intro.png "Intro")
-
 # Table of Contents
   * [Project Structure](#structure)
   * [FrontEnd](#frontend)
@@ -20,8 +19,7 @@ _This MicroService is built on top of NebulaE MicroService Framework.  Please se
         * [Event Sourcing](#backend_dashboard-devices_eventsourcing)
         * [CronJobs](#backend_dashboard-devices_cronjobs)
   * [Prepare development environment](#prepare_dev_env)
-
-  # Project structure <a name="structure"></a>
+# Project structure <a name="structure"></a>
 
 ```
 ├── frontend                            => Micro-FrontEnd  
@@ -50,15 +48,22 @@ These are the exposed the charts available in the webform [Dashboard-devices fro
 
 ### Alarms card charts
 There are four card of this type in webpage top, each one belong to CPU usage, RAM memory, Voltage and temperature alarms type. Each one have front and back side, the front side allow us to know the quantity of alarms reported in the timerange selected, the back side allow us to know the top list with the five devices with most quantity of reported alarms and there is a button to navigate to see the complete list.
+![NebulaE](docs/images/ms-dasboard-devices_FrontSideAlertCard.png "Alarm front side chart")
+![NebulaE](docs/images/ms-dasboard-devices_BackSideAlertCard.png "Alarm back side chart")
+
 
 ### Influx of user
 This Chart allow at user to know the influx of user in the total system grouped by cuencas in two differents chart located in the front and back side
+![NebulaE](docs/images/ms-dasboard-devices_UserInfluxBackSide.png "Front side user influx chart")
+![NebulaE](docs/images/ms-dasboard-devices_UserInfluxBackSide.png "Back side user influx chart")
 
 ### Online Vs Offline devices
 This chart allow us to know the devices network status agrouped by Cuencas or group name.
+![NebulaE](docs/images/ms-dashboard-devices_onlineVsOfflineChart.png "Online Vs offline transactions")
 
 ### sucess and failed transactions
 this chart allow us to know the quantity of sucess and failed transactions in the timerange selected.
+![NebulaE](docs/images/ms-dasboard-devices_sucessVsFailedTransactions.png "Sucess Vs failed transactions")
 # API <a name="api"></a>
 Exposed interfaces to send Commands and Queries by the CQRS principles.
 The MicroService exposes its interfaces as Micro-APIs that are nested on the general API.

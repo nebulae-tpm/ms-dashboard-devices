@@ -5,7 +5,7 @@ export const locale = {
       MINI_WIDGET: {
         DEVICES: "Devices",
         ALERTS_BY_PROCESOR: "Alerts by over processing",
-        ALERTS_BY_RAM: "Alerts by memory RAM",
+        ALERTS_BY_RAM: "Alerts by RAM memory",
         ALERTS_BY_VOLTAGE: "Alerts by voltage",
         ALERTS_BY_TEMPERATURE: "Alerts by temperature",
         DEVICES_BY_ROUTE: "Devices by cuenca",
