@@ -7,7 +7,7 @@ import { DatePipe } from '@angular/common';
 import { FuseWidgetModule } from '../../../core/components/widget/widget.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { DashboardDevicesService } from './dashboard-devices.service';
-import { RangeTimeKeys, timeRangeKeysWithtoLocaleString } from './pipes/timeRangeKeys.pipe';
+import { RangeTimeKeys, TimeRangeKeysWithtoLocaleString } from './pipes/timeRangeKeys.pipe';
 import { SelectedItemDirective } from './dashboard-devices.directive';
 
 const routes: Routes = [
@@ -27,7 +27,7 @@ const routes: Routes = [
   declarations: [
     DashboardDevicesComponent,
     RangeTimeKeys,
-    timeRangeKeysWithtoLocaleString,
+    TimeRangeKeysWithtoLocaleString,
     SelectedItemDirective
   ],
   providers: [ DashboardDevicesService, DatePipe]

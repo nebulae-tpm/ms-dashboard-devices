@@ -1,25 +1,24 @@
 import { transition } from "@angular/animations";
-import { FuseTranslationLoaderService } from "./../../../core/services/translation-loader.service";
-import { DashboardDevicesService } from "./dashboard-devices.service";
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
-import { fuseAnimations } from "../../../core/animations";
-import { Subscription } from "rxjs/Subscription";
+import { FuseTranslationLoaderService } from './../../../core/services/translation-loader.service';
+import { DashboardDevicesService } from './dashboard-devices.service';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { fuseAnimations } from '../../../core/animations';
+import { Subscription } from 'rxjs/Subscription';
 // tslint:disable-next-line:import-blacklist
-import * as Rx from "rxjs/Rx";
-import { map, first, mergeMap, toArray, switchMap } from "rxjs/operators";
-import { range } from "rxjs/observable/range";
-import { locale as english } from "./i18n/en";
-import { locale as spanish } from "./i18n/es";
-import { DatePipe } from "@angular/common";
-import { Router, NavigationExtras } from "@angular/router";
-import { TranslateService } from "@ngx-translate/core";
-import { MatSnackBar } from "@angular/material";
-
+import * as Rx from 'rxjs/Rx';
+import { map, first, mergeMap, toArray, switchMap } from 'rxjs/operators';
+import { range } from 'rxjs/observable/range';
+import { locale as english } from './i18n/en';
+import { locale as spanish } from './i18n/es';
+import { DatePipe } from '@angular/common';
+import { Router, NavigationExtras } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
-  selector: "fuse-dashboard-devices",
-  templateUrl: "./dashboard-devices.component.html",
-  styleUrls: ["./dashboard-devices.component.scss"],
+  selector: 'fuse-dashboard-devices',
+  templateUrl: './dashboard-devices.component.html',
+  styleUrls: ['./dashboard-devices.component.scss'],
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations
 })
@@ -39,6 +38,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   allSubscriptions: Subscription[] = [];
 
+
   constructor(
     private dashboardDeviceService: DashboardDevicesService,
     private translationLoader: FuseTranslationLoaderService,
@@ -57,16 +57,16 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       gradient: false,
       legend: false,
       showXAxisLabel: false,
-      xAxisLabel: "Cuenca",
+      xAxisLabel: 'Cuenca',
       showYAxisLabel: true,
-      yAxisLabel: "DASHBOARD.NUMBER_OF_DEVICES",
+      yAxisLabel: 'DASHBOARD.NUMBER_OF_DEVICES',
       scheme: {
-        domain: ["#74C1E2", "#D3DBDF"]
+        domain: ['#74C1E2', '#D3DBDF']
       },
       onSelect: ev => {}
     };
     this.successfulAndFailedTransactionWidget = {
-      name: "successfulAndFailedTransactionWidget",
+      name: 'successfulAndFailedTransactionWidget',
       timeRanges: {
         ONE_HOUR: 1,
         TWO_HOURS: 2,
@@ -75,42 +75,42 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       currentTimeRange: 1,
       datasets: [
         {
-          label: "Errores",
+          label: 'Errores',
           data: [],
           total: 0,
-          fill: "start"
+          fill: 'start'
         },
         {
-          label: "Usos",
+          label: 'Usos',
           data: [],
           total: 0,
-          fill: "start"
+          fill: 'start'
         }
       ],
-      labels: ["12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "13:00"],
+      labels: ['12:00', '12:10', '12:20', '12:30', '12:40', '12:50', '13:00'],
       colors: [
         {
-          borderColor: "#3949ab",
-          backgroundColor: "rgba(57,73, 171,0.3)",
-          pointBackgroundColor: "#3949ab",
-          pointHoverBackgroundColor: "#3949ab",
-          pointBorderColor: "#ffffff",
-          pointHoverBorderColor: "#ffffff"
+          borderColor: '#3949ab',
+          backgroundColor: 'rgba(57,73, 171,0.3)',
+          pointBackgroundColor: '#3949ab',
+          pointHoverBackgroundColor: '#3949ab',
+          pointBorderColor: '#ffffff',
+          pointHoverBorderColor: '#ffffff'
         },
         {
-          borderColor: "rgba(30, 136, 229, 0.87)",
-          backgroundColor: "rgba(30, 136, 229, 0.3)",
-          pointBackgroundColor: "rgba(30, 136, 229, 0.87)",
-          pointHoverBackgroundColor: "rgba(30, 136, 229, 0.87)",
-          pointBorderColor: "#ffffff",
-          pointHoverBorderColor: "#ffffff"
+          borderColor: 'rgba(30, 136, 229, 0.87)',
+          backgroundColor: 'rgba(30, 136, 229, 0.3)',
+          pointBackgroundColor: 'rgba(30, 136, 229, 0.87)',
+          pointHoverBackgroundColor: 'rgba(30, 136, 229, 0.87)',
+          pointBorderColor: '#ffffff',
+          pointHoverBorderColor: '#ffffff'
         }
       ],
       options: {
         spanGaps: false,
         legend: { display: false },
         maintainAspectRatio: false,
-        tooltips: { position: "nearest", mode: "index", intersect: false },
+        tooltips: { position: 'nearest', mode: 'index', intersect: false },
         layout: { padding: { left: 24, right: 32 } },
         elements: {
           point: {
@@ -124,7 +124,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           xAxes: [
             {
               gridLines: { display: false },
-              ticks: { fontColor: "rgba(0,0,0,0.54)" }
+              ticks: { fontColor: 'rgba(0,0,0,0.54)' }
             }
           ],
           yAxes: [
@@ -139,35 +139,35 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         },
         plugins: { filler: { propagate: false } }
       },
-      chartType: "line",
+      chartType: 'line',
       usagesCount: 0,
       errorsCount: 0,
-      onRangeChanged: (range: number) => {
+      onRangeChanged: (timeRange: number) => {
         this.getDeviceTransactionByInterval(
-          range,
+          timeRange,
           this.successfulAndFailedTransactionWidget.name,
           null
         );
       }
     };
     this.successfulAndFailedTransactionByGroupNameWidget = {
-      name: "successfulAndFailedTransactionByGroupNameWidget",
+      name: 'successfulAndFailedTransactionByGroupNameWidget',
       rawData: [],
       datasets: [
         {
-          label: "Usos",
+          label: 'Usos',
           data: [],
           total: 0,
-          fill: "start"
+          fill: 'start'
         },
         {
-          label: "Errores",
+          label: 'Errores',
           data: [],
           total: 0,
-          fill: "start"
+          fill: 'start'
         }
       ],
-      labels: ["12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "13:00"],
+      labels: ['12:00', '12:10', '12:20', '12:30', '12:40', '12:50', '13:00'],
       cuencas: {},
       // cuencasAsync: new Rx.Subject<any[]>(),
       currentCuenca: 0,
@@ -179,27 +179,27 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       currentTimeRange: 1,
       colors: [
         {
-          borderColor: "#3949ab",
-          backgroundColor: "rgba(57,73, 171,0.3)",
-          pointBackgroundColor: "#3949ab",
-          pointHoverBackgroundColor: "#3949ab",
-          pointBorderColor: "#ffffff",
-          pointHoverBorderColor: "#ffffff"
+          borderColor: '#3949ab',
+          backgroundColor: 'rgba(57,73, 171,0.3)',
+          pointBackgroundColor: '#3949ab',
+          pointHoverBackgroundColor: '#3949ab',
+          pointBorderColor: '#ffffff',
+          pointHoverBorderColor: '#ffffff'
         },
         {
-          borderColor: "rgba(30, 136, 229, 0.87)",
-          backgroundColor: "rgba(30, 136, 229, 0.3)",
-          pointBackgroundColor: "rgba(30, 136, 229, 0.87)",
-          pointHoverBackgroundColor: "rgba(30, 136, 229, 0.87)",
-          pointBorderColor: "#ffffff",
-          pointHoverBorderColor: "#ffffff"
+          borderColor: 'rgba(30, 136, 229, 0.87)',
+          backgroundColor: 'rgba(30, 136, 229, 0.3)',
+          pointBackgroundColor: 'rgba(30, 136, 229, 0.87)',
+          pointHoverBackgroundColor: 'rgba(30, 136, 229, 0.87)',
+          pointBorderColor: '#ffffff',
+          pointHoverBorderColor: '#ffffff'
         }
       ],
       options: {
         spanGaps: false,
         legend: { display: false },
         maintainAspectRatio: false,
-        tooltips: { position: "nearest", mode: "index", intersect: false },
+        tooltips: { position: 'nearest', mode: 'index', intersect: false },
         layout: { padding: { left: 24, right: 32 } },
         elements: {
           point: {
@@ -213,7 +213,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           xAxes: [
             {
               gridLines: { display: false },
-              ticks: { fontColor: "rgba(0,0,0,0.54)" }
+              ticks: { fontColor: 'rgba(0,0,0,0.54)' }
             }
           ],
           yAxes: [
@@ -228,13 +228,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         },
         plugins: { filler: { propagate: false } }
       },
-      chartType: "line",
+      chartType: 'line',
       legend: true,
       explodeSlices: false,
       doughnut: true,
       gradient: false,
       scheme: {
-        domain: ["#f44336", "#35c922", "#03a9f4", "#e91e63"]
+        domain: ['#f44336', '#35c922', '#03a9f4', '#e91e63']
       },
       onTimeRangeFilterChanged: (
         ev: number,
@@ -272,7 +272,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       data: [],
       currentTimeRange: 0,
       scheme: {
-        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300"]
+        domain: ['#f44336', '#35c922', '#03a9f4', '#533599', '#cca300']
       },
       onChangeTimeRange: index => {
         this.influxOfUserAdvancedPieChart.currentTimeRange = index;
@@ -302,13 +302,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       timeRanges: [],
       currentTimeRange: 0,
       scheme: {
-        domain: ["#f44336", "#35c922", "#03a9f4", "#533599", "#cca300"]
+        domain: ['#f44336', '#35c922', '#03a9f4', '#533599', '#cca300']
         // domain: ["#3399ff", "#9999ff", "#33ff77", "#ff6666", "#cc00cc"]
       },
-      units: "Usos totales",
+      units: 'Usos totales',
       max: 100,
       min: 0,
-      textValue: "",
+      textValue: '',
       legend: true,
       toggleLegend: () => {
         // this.influxOfUseGaugeChart.legend = !this.influxOfUseGaugeChart.legend;
@@ -342,7 +342,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("ngOnInit on Dashboard, Running Version 0.0.44");
+    console.log('ngOnInit on Dashboard, Running Version 0.0.44');
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
@@ -388,10 +388,10 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           const originalLength = result.length;
           while (result.length < 5) {
             result.push({
-              name: " ".repeat(result.length + 1 - originalLength),
+              name: ' '.repeat(result.length + 1 - originalLength),
               series: [
-                { name: "Online", value: 0 },
-                { name: "Offline", value: 0 }
+                { name: 'Online', value: 0 },
+                { name: 'Offline', value: 0 }
               ]
             });
           }
@@ -405,14 +405,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
           result => {
-            console.log(" ## Updating online Vs offline devices chart");
+            console.log(' ## Updating online Vs offline devices chart');
             const originalLength = result.length;
             while (result.length < 5) {
               result.push({
-                name: " ".repeat(result.length + 1 - originalLength),
+                name: ' '.repeat(result.length + 1 - originalLength),
                 series: [
-                  { name: "Online", value: 0 },
-                  { name: "Offline", value: 0 }
+                  { name: 'Online', value: 0 },
+                  { name: 'Offline', value: 0 }
                 ]
               });
             }
@@ -424,12 +424,12 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
       // CPU_USAGE GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("CPU_USAGE", Date.now())
+        .getDashboardDeviceAlertsBy('CPU_USAGE', Date.now())
         .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
         .subscribe(
           response => {
             if (response !== null) {
-              this.buildWidget("alertsByCpu", response);
+              this.buildWidget('alertsByCpu', response);
             }
           },
           error => this.errorHandler(error)
@@ -439,18 +439,18 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this.dashboardDeviceService
         .listenDashboardDeviceCpuAlarmsEvents()
         .subscribe(
-          resp => this.buildWidget("alertsByCpu", resp),
+          resp => this.buildWidget('alertsByCpu', resp),
           error => this.errorHandler(error)
         ),
 
       // RAM_MEMORY GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("RAM_MEMORY", Date.now())
+        .getDashboardDeviceAlertsBy('RAM_MEMORY', Date.now())
         .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
         .subscribe(
           response => {
             if (response !== null) {
-              this.buildWidget("alertsByRamMemory", response);
+              this.buildWidget('alertsByRamMemory', response);
             }
           },
           error => this.errorHandler(error)
@@ -460,37 +460,37 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       this.dashboardDeviceService
         .listenDashboardDeviceRamMemoryAlarmsEvents()
         .subscribe(
-          response => this.buildWidget("alertsByRamMemory", response),
+          response => this.buildWidget('alertsByRamMemory', response),
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("VOLTAGE", Date.now())
+        .getDashboardDeviceAlertsBy('VOLTAGE', Date.now())
         .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
         .subscribe(
-          response => this.buildWidget("alertsByVoltage", response),
+          response => this.buildWidget('alertsByVoltage', response),
           error => this.errorHandler(error)
         ),
       // VOLTAGE GraphQl Subscription
       this.dashboardDeviceService
         .listenDashboardDeviceVoltageAlarmsEvents()
         .subscribe(
-          response => this.buildWidget("alertsByVoltage", response),
+          response => this.buildWidget('alertsByVoltage', response),
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Query
       this.dashboardDeviceService
-        .getDashboardDeviceAlertsBy("TEMPERATURE", Date.now())
+        .getDashboardDeviceAlertsBy('TEMPERATURE', Date.now())
         .pipe(mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)))
         .subscribe(
-          response => this.buildWidget("alertsByTemperature", response),
+          response => this.buildWidget('alertsByTemperature', response),
           error => this.errorHandler(error)
         ),
       // TEMPERATURE GraphQl Subscription
       this.dashboardDeviceService
         .listenDashboardDeviceTemperatureAlarmsEvents()
         .subscribe(
-          response => this.buildWidget("alertsByTemperature", response),
+          response => this.buildWidget('alertsByTemperature', response),
           error => this.errorHandler(error)
         ),
       // GraphQl Subscription to let know about an update in transactions
@@ -507,7 +507,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           data => {
-            console.log("listenDeviceTransactionsUpdates()", data);
+            console.log('listenDeviceTransactionsUpdates()', data);
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);
             this.influxOfUseGaugeChart.updateRowData(data);
@@ -535,8 +535,8 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     widgetName: string,
     cuencaName: string
   ) {
-    //TODO: Change to currrent date
-    let currentDate1 = new Date();
+    // TODO: Change to currrent date
+    const currentDate1 = new Date();
     currentDate1.setSeconds(0, 0);
 
     const currentDate = Date.now();
@@ -544,7 +544,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       currentDate1.getTime() +
       (10 -
         (Number(
-          this.datePipe.transform(new Date(currentDate1.getTime()), "mm")
+          this.datePipe.transform(new Date(currentDate1.getTime()), 'mm')
         ) %
           10)) *
         60000;
@@ -559,9 +559,9 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       const transactionsGroupByTimeIntervals: any =
         val[1].data.getDeviceTransactionsGroupByTimeInterval;
 
-      for (let timeInterval of timeIntervals) {
-        for (let transactionInterval of transactionsGroupByTimeIntervals) {
-          if (transactionInterval.interval == timeInterval.interval) {
+      for (const timeInterval of timeIntervals) {
+        for (const transactionInterval of transactionsGroupByTimeIntervals) {
+          if (transactionInterval.interval === timeInterval.interval) {
             timeInterval.transactions = transactionInterval.transactions;
             timeInterval.errors = transactionInterval.errors;
           }
@@ -570,25 +570,25 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
       Rx.Observable.of(timeIntervals)
         .pipe(
-          mergeMap((val: any) =>
+          mergeMap((data: any) =>
             Rx.Observable.forkJoin(
-              Rx.Observable.from(val).pipe(
-                map((val: any) => {
-                  return val.transactions;
+              Rx.Observable.from(data).pipe(
+                map((value: any) => {
+                  return value.transactions;
                 }),
                 toArray()
               ),
               Rx.Observable.from(val).pipe(
-                map((val: any) => {
-                  return val.errors;
+                map((value: any) => {
+                  return value.errors;
                 }),
                 toArray()
               ),
               Rx.Observable.from(val).pipe(
-                map((val: any) => {
-                  return new Date(val.interval).toLocaleString("en-US", {
-                    hour: "numeric",
-                    minute: "numeric",
+                map((value: any) => {
+                  return new Date(value.interval).toLocaleString('en-US', {
+                    hour: 'numeric',
+                    minute: 'numeric',
                     hour12: false
                   });
                 }),
@@ -606,13 +606,13 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
             }
           )
         )
-        .subscribe(val => {
+        .subscribe((value: any) => {
           this[widgetName].labels.length = 0;
-          for (let i = 0; i < val.labels.length; i++) {
-            this[widgetName].labels.push(val.labels[i]);
+          for (let i = 0; i < value.labels.length; i++) {
+            this[widgetName].labels.push(value.labels[i]);
           }
 
-          this[widgetName].datasets = val.datasets;
+          this[widgetName].datasets = value.datasets;
           this[widgetName].usagesCount = this.getCountInArray(
             this[widgetName].datasets[0].data
           );
@@ -667,14 +667,14 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     return {
       datasets: [
         {
-          label: "Usos",
+          label: 'Usos',
           data: successTransactionList,
-          fill: "start"
+          fill: 'start'
         },
         {
-          label: "Errores",
+          label: 'Errores',
           data: failedTransactionList,
-          fill: "start"
+          fill: 'start'
         }
       ],
       labels: timeIntervalList
@@ -712,7 +712,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log("ngOnDestroy on Dashboard ...");
+    console.log('ngOnDestroy on Dashboard ...');
     this.allSubscriptions.forEach(s => s.unsubscribe());
   }
 
@@ -757,7 +757,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
    */
   getCountInArray(array: number[]): number {
     let counter = 0;
-    if (!array || array.length == 0) {
+    if (!array || array.length === 0) {
       return 0;
     }
     array.forEach(item => {
@@ -793,7 +793,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       const endTime = this[widgetName].queriedTime;
       this.allSubscriptions.push(
         Rx.Observable.forkJoin(
-          this.translate.get("DASHBOARD.LABEL_FOR_DEVICES_FILTER"),
+          this.translate.get('DASHBOARD.LABEL_FOR_DEVICES_FILTER'),
           this.translate.get(`DASHBOARD.ALARMS_TYPES.${this[widgetName].type}`)
           // this.translate.get('DASHBOARD.BETWEEN'),
           // Rx.Observable.of(new Date(startTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false })),
@@ -801,22 +801,22 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           // Rx.Observable.of(new Date(endTime).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false }))
         )
           .map(([label, alarmType]) => {
-            return label + " " + alarmType;
+            return label + ' ' + alarmType;
           })
           .subscribe(labelTranslation => {
-            let navigationParams: NavigationExtras = {
+            const navigationParams: NavigationExtras = {
               queryParams: {
                 filterTemplate: JSON.stringify({
                   id: 1,
-                  type: this[widgetName].type.slice(0, 4).replace("_", ""),
+                  type: this[widgetName].type.slice(0, 4).replace('_', ''),
                   initTime: startTime,
                   endTime: endTime,
                   label: labelTranslation
                 })
               }
             };
-            console.log(["/devices"], navigationParams);
-            this.router.navigate(["/devices"], navigationParams);
+            console.log(['/devices'], navigationParams);
+            this.router.navigate(['/devices'], navigationParams);
           })
       );
     };
@@ -825,7 +825,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   errorHandler(error: any): void {
-    console.log("errorHandler", error);
+    console.log('errorHandler', error);
   }
 
   onItemWithAlarmClick(
@@ -834,19 +834,20 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     timeRange: string,
     queriedTime: number
   ): void {
-    let navigationParams: NavigationExtras = {
+    const navigationParams: NavigationExtras = {
       queryParams: {
         filterTemplate: JSON.stringify({
           id: 2,
-          type: alarmType.slice(0, 4).replace("_", ""),
+          type: alarmType.slice(0, 4).replace('_', ''),
           range: timeRange
           // queriedTime: queriedTime
         })
       }
     };
-    console.log(["/devices/device", deviceId], navigationParams);
-    this.router.navigate(["/devices/device", deviceId], navigationParams);
+    console.log(['/devices/device', deviceId], navigationParams);
+    this.router.navigate(['/devices/device', deviceId], navigationParams);
   }
+
 
   graphQlAlarmsErrorHandler$(response) {
     return Rx.Observable.of(JSON.parse(JSON.stringify(response))).pipe(
@@ -854,11 +855,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         if (resp.errors) {
           // TO-DO
           // show alerts in client propt
-          console.log("ERRORS IN GRAPHQL ==> ", resp.errors);
+          console.log('ERRORS IN GRAPHQL ==> ', resp.errors);
           this.openSnackBar(resp.errors[0].message, 6000);
           return null;
         } else if (resp.data) {
-          return resp.data["getDashBoardDevicesAlarmReport"];
+          return resp.data['getDashBoardDevicesAlarmReport'];
         }
       })
     );
@@ -866,7 +867,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   openSnackBar(error: any, duration: number, action?: string): void {
     this.translate
-      .get("DASHBOARD.GRAPHQL_ERRORS." + error.code)
+      .get('DASHBOARD.GRAPHQL_ERRORS.' + error.code)
       .subscribe(translation => {
         this.snackBar.open(translation, action, {
           duration: duration
@@ -875,5 +876,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
     // snackbarRef.onAction().subscribe((data) => {
     //   console.log("snackbarRef.onAction()", data);
     // })
+
   }
 }

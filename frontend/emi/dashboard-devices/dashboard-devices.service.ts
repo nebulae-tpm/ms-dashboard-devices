@@ -1,10 +1,10 @@
-import { query } from "@angular/animations";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { HttpClient } from "@angular/common/http";
+import { query } from '@angular/animations';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { HttpClient } from '@angular/common/http';
 // tslint:disable-next-line:import-blacklist
-import * as Rx from "rxjs";
-import { GatewayService } from "../../../api/gateway.service";
+import * as Rx from 'rxjs';
+import { GatewayService } from '../../../api/gateway.service';
 import {
   getDashBoardDevicesAlarmReport,
   onDasboardDeviceOnlineReported,
@@ -20,12 +20,12 @@ import {
   getSucessDeviceTransactionsGroupByGroupName,
   deviceTransactionsUpdatedEvent,
   getDeviceDashBoardTotalAccount
-} from "./gql/DashBoardDevices";
-import { tap } from "rxjs/operators";
+} from './gql/DashBoardDevices';
 
 @Injectable()
 export class DashboardDevicesService {
   constructor(private http: HttpClient, private gateway: GatewayService) {}
+
 
   /**
    * Gets the devices transaction between two dates group by time intervals
@@ -41,7 +41,7 @@ export class DashboardDevicesService {
         endDate: endDate,
         groupName: cuencaName
       }
-    }).valueChanges
+    }).valueChanges;
   }
 
    /**
@@ -59,7 +59,7 @@ export class DashboardDevicesService {
       },
       fetchPolicy: 'network-only'
     }).valueChanges
-    .map(respond => respond.data.getCuencaNamesWithSuccessTransactionsOnInterval)
+    .map(respond => respond.data.getCuencaNamesWithSuccessTransactionsOnInterval);
   }
 
   getDashboardDeviceAlertsBy(alarmType: string, startTime: number) {
@@ -71,7 +71,7 @@ export class DashboardDevicesService {
       },
       fetchPolicy: 'network-only',
       errorPolicy: 'all'
-    }).valueChanges
+    }).valueChanges;
   }
 
   getAllDevicesAccount(){
@@ -97,7 +97,7 @@ export class DashboardDevicesService {
           query: onDasboardDeviceOfflineReported
         })
         .map(resp => resp.data.onDashBoardDeviceOfflineReported)
-    )
+    );
   }
 
   getDevicesOnlineVsOffline() {
@@ -118,7 +118,7 @@ export class DashboardDevicesService {
           query: onDeviceCpuUsageAlarmActivated
         })
         .map(resp => resp.data.onDashBoardDeviceCpuUsageAlarmActivated)
-    )
+    );
   }
 
   listenDashboardDeviceRamMemoryAlarmsEvents(): Observable<any> {
@@ -128,7 +128,7 @@ export class DashboardDevicesService {
           query: onDeviceRamMemoryAlarmActivated
         })
         .map(resp => resp.data.onDashBoardDeviceRamMemoryAlarmActivated)
-    )
+    );
   }
 
   listenDashboardDeviceTemperatureAlarmsEvents(): Observable<any> {
@@ -138,7 +138,7 @@ export class DashboardDevicesService {
           query: onDeviceTemperatureAlarmActivated
         })
         .map(resp => resp.data.onDashBoardDeviceTemperatureAlarmActivated)
-    )
+    );
   }
 
   listenDashboardDeviceVoltageAlarmsEvents(): Observable<any> {
@@ -153,16 +153,17 @@ export class DashboardDevicesService {
           query: onDeviceHighVoltageAlarmActivated
         })
         .map(resp => resp.data.onDashBoardDeviceHighVoltageAlarmReported)
-    )
+    );
   }
 
   listenDeviceTransactionsUpdates(){
    return this.gateway.apollo.subscribe({
       query: deviceTransactionsUpdatedEvent
     })
-    .map(response => response.data.deviceTransactionsUpdatedEvent)
+    .map(response => response.data.deviceTransactionsUpdatedEvent);
     // .mapTo(this.getSucessTransactionsGroupByGroupName())
   }
+
 
   getSucessTransactionsGroupByGroupName(now: number){
     return this.gateway.apollo.query<any>({
@@ -173,6 +174,6 @@ export class DashboardDevicesService {
       fetchPolicy: 'network-only',
       // errorPolicy: 'all'
     })
-    .map(result => result.data.getSucessDeviceTransactionsGroupByGroupName)
+    .map(result => result.data.getSucessDeviceTransactionsGroupByGroupName);
   }
 }

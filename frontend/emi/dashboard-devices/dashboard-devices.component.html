@@ -14,7 +14,6 @@
         <div class="fuse-widget-front mat-white-bg mat-elevation-z2">
           <div class="pl-16 pr-8 py-16 h-52" fxLayout="row" fxLayoutAlign="space-between center">
 
-
             <mat-form-field *ngIf="alertsByCpu.timeRanges">
               <mat-select class="simplified font-size-16" [(ngModel)]="alertsByCpu.currentTimeRange" (change)="alertsByCpu.onChangeTimeRange($event.value)"
                 aria-label="Change range">

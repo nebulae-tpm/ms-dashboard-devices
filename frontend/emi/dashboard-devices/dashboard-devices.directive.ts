@@ -2,6 +2,7 @@ import { Directive, HostListener,
   HostBinding, ElementRef, Renderer2 } from '@angular/core';
 
 @Directive({
+  // tslint:disable-next-line:directive-selector
   selector: '[appHighlight]'
 })
 export class SelectedItemDirective {
