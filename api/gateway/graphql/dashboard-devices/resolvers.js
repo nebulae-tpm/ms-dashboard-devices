@@ -16,8 +16,7 @@ function getReponseFromBackEnd$(response) {
         throw err;
       }
       return resp.data;
-    });
-    
+    });    
 }
 
 

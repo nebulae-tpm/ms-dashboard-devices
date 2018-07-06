@@ -358,7 +358,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       null
     );
 
-    //
     this.successfulAndFailedTransactionByGroupNameWidget.onTimeRangeFilterChanged(
       1,
       true
@@ -873,9 +872,11 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
           duration: duration
         });
       });
+
     // snackbarRef.onAction().subscribe((data) => {
     //   console.log("snackbarRef.onAction()", data);
     // })
 
   }
 }
+
