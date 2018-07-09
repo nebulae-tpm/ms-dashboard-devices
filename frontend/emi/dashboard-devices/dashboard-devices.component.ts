@@ -569,21 +569,21 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
       Rx.Observable.of(timeIntervals)
         .pipe(
-          mergeMap((data: any) =>
+          mergeMap((interval: any) =>
             Rx.Observable.forkJoin(
-              Rx.Observable.from(data).pipe(
-                map((value: any) => {
-                  return value.transactions;
+              Rx.Observable.from(interval).pipe(
+                map((data: any) => {
+                  return data.transactions;
                 }),
                 toArray()
               ),
-              Rx.Observable.from(val).pipe(
+              Rx.Observable.from(interval).pipe(
                 map((value: any) => {
                   return value.errors;
                 }),
                 toArray()
               ),
-              Rx.Observable.from(val).pipe(
+              Rx.Observable.from(interval).pipe(
                 map((value: any) => {
                   return new Date(value.interval).toLocaleString('en-US', {
                     hour: 'numeric',
