@@ -1,4 +1,4 @@
-import { transition } from "@angular/animations";
+// import { transition } from "@angular/animations";
 import { FuseTranslationLoaderService } from './../../../core/services/translation-loader.service';
 import { DashboardDevicesService } from './dashboard-devices.service';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
@@ -276,7 +276,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
       },
       onChangeTimeRange: index => {
         this.influxOfUserAdvancedPieChart.currentTimeRange = index;
-        let newData = this.influxOfUserAdvancedPieChart.timeRanges[
+        const newData = this.influxOfUserAdvancedPieChart.timeRanges[
           this.influxOfUserAdvancedPieChart.currentTimeRange
         ].data.slice();
         this.influxOfUserAdvancedPieChart.data = newData.sort(
@@ -287,7 +287,7 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         this.influxOfUserAdvancedPieChart.timeRanges = JSON.parse(
           JSON.stringify(data)
         );
-        let dataUpdated = this.influxOfUserAdvancedPieChart.timeRanges[
+        const dataUpdated = this.influxOfUserAdvancedPieChart.timeRanges[
           this.influxOfUserAdvancedPieChart.currentTimeRange
         ].data;
         this.influxOfUserAdvancedPieChart.data = dataUpdated.sort(
@@ -879,4 +879,3 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
 
   }
 }
-

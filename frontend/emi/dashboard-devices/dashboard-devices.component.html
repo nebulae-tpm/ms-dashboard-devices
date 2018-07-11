@@ -383,7 +383,7 @@
       <!-- WIDGET AdvancedPieChart and GaugeChart -->
 
 
-      <!-- WIDGET 5 -->
+      <!-- WIDGET 5 online Vs Offline By GroupName -->
       <fuse-widget [@animate]="{value:'*',params:{y:'100%'}}" class="widget" fxLayout="row" fxFlex="100">
 
         <!-- Front -->
@@ -396,11 +396,18 @@
           </div>
 
           <div class="h-420">
-            <ngx-charts-bar-vertical-stacked *fuseIfOnDom [scheme]="onlineVsOfflineByGroupNameWidget.scheme" [results]="onlineVsOfflineByGroupNameWidget.data"
-              [barPadding]="onlineVsOfflineByGroupNameWidget.barPadding" [gradient]="onlineVsOfflineByGroupNameWidget.gradient"
-              [xAxis]="onlineVsOfflineByGroupNameWidget.xAxis" [yAxis]="onlineVsOfflineByGroupNameWidget.yAxis" [legend]="onlineVsOfflineByGroupNameWidget.legend"
-              [showXAxisLabel]="onlineVsOfflineByGroupNameWidget.showXAxisLabel" [showYAxisLabel]="onlineVsOfflineByGroupNameWidget.showYAxisLabel"
-              [xAxisLabel]="onlineVsOfflineByGroupNameWidget.xAxisLabel" [yAxisLabel]="onlineVsOfflineByGroupNameWidget.yAxisLabel | translate"
+            <ngx-charts-bar-vertical-stacked *fuseIfOnDom
+              [scheme]="onlineVsOfflineByGroupNameWidget.scheme"
+              [results]="onlineVsOfflineByGroupNameWidget.data"
+              [barPadding]="onlineVsOfflineByGroupNameWidget.barPadding"
+              [gradient]="onlineVsOfflineByGroupNameWidget.gradient"
+              [xAxis]="onlineVsOfflineByGroupNameWidget.xAxis"
+              [yAxis]="onlineVsOfflineByGroupNameWidget.yAxis"
+              [legend]="onlineVsOfflineByGroupNameWidget.legend"
+              [showXAxisLabel]="onlineVsOfflineByGroupNameWidget.showXAxisLabel"
+              [showYAxisLabel]="onlineVsOfflineByGroupNameWidget.showYAxisLabel"
+              [xAxisLabel]="onlineVsOfflineByGroupNameWidget.xAxisLabel"
+              [yAxisLabel]="onlineVsOfflineByGroupNameWidget.yAxisLabel | translate"
               (select)="onlineVsOfflineByGroupNameWidget.onSelect($event)">
             </ngx-charts-bar-vertical-stacked>
           </div>
