@@ -18,7 +18,7 @@ _This MicroService is built on top of NebulaE MicroService Framework.  Please se
         * [Environment variables](#backend_dashboard-devices_env_vars)
         * [Event Sourcing](#backend_dashboard-devices_eventsourcing)
         * [CronJobs](#backend_dashboard-devices_cronjobs)
-  * [Prepare development environment](#prepare_dev_env)
+  * [Development environment](#dev_env)
 # Project structure <a name="structure"></a>
 
 ```
@@ -308,75 +308,105 @@ specs:
   * Event type: CleanDashBoardDevicesHistoryJobTriggered
   * Payload properties: 
      * obsoleteThreshold (int): number of hours needed to consider a record as obsolete to be able to remove it.
-# Prepare development environment <a name="prepare_dev_env"></a>
+
+# Development environment <a name="dev_env"></a>
+
+
+
+## Install requeriments
+* [node](https://nodejs.org/en/)
+* [docker](https://docs.docker.com/install/)
+* [docker-compose](https://docs.docker.com/compose/install/)
+* [nodemon](https://www.npmjs.com/package/nodemon) 
+   ```npm install -g nodemon```
+* [Nebulae CLI](https://www.npmjs.com/package/@nebulae/cli)  
+  ```npm install -g @nebulae/cli```  
+
+## Prepare environment
 
 ![Development environment](docs/images/ms-devices-location-dev-env.png "Dev_environment")
+###1. clone this repo  
+   ```git clone https://github.com/nebulae-tpm/ms-dashboard-devices.git```
+###2. start databases, broker and security systems using docker-compose
+```
+cd deployment/compose/
+docker-compose up
+```
+###3. setup keycloak
 
-## requeriments
-* docker [Install](https://docs.docker.com/install/)
-* docker-compose [Install](https://docs.docker.com/compose/install/)
-* nodemon [Install](https://www.npmjs.com/package/nodemon)
-* nebulae (npm)[Install](https://www.npmjs.com/package/@nebulae/cli)
-    * Note: nodemon and nebulae packages needs to be installed like global packages.
-
-## First time development enviroment setup
-* **clone the project**
-    * git clone https://github.com/nebulae-tpm/ms-dashboard-devices.git
+#### LogIn to KeyCloak Admin Console
+*  Navigate to http://localhost:8080/auth/admin/
+*  user: keycloak
+*  pass: keycloak  
     
-* **build the docker images with the the docker compose**
-    the first time it's going to take a while because have to pull the docker images from docker hub, so        this depend on your connection and the cpu processing capacity
-    * cd ms-dashboard-devices/deployment/compose/
-    * sudo docker-compose up
-* **Import de keycloak realm to development enviroment**
-    * go to http://localhost:8080 -> Administration Console
-     user: keycloak
-     pass: keycloak
-    * in left panel click on 'add realm' => import option => use the file located at docs/resources/keycloakRealmToImport.json
-
-* **create the  developer user**
-    * select the DEV_TPM keycloak realm and dot to users option in left panel.
-    * select 'add user' option , enable the email verified option, select a locate option and to finish fill fields and click on save option.
-    * set the **developer** and **operator** rol to your user:
-        * select user option in the left panel and click on your user id.
-        * select 'role mapping' option in the top tabs , select the 'developer'
-        * select **developer** and **operator** options from available roles and click on add selected
-
-* **compose the frontend**
-    * nebulae compose-ui development --shell-type=FUSE2_ANGULAR --shell-repo=https://github.com/nebulae-tpm/emi --frontend-id=emi --output-dir=*WORKING_FOLDER*/ms-dashboard-devices/dist/emi  --setup-file=*WORKING_FOLDER*/ms-dashboard-devices/etc/mfe-setup.json
-
-* **Compose the API gateway**
-    * nebulae compose-api development --api-type=NEBULAE_GATEWAY --api-repo=https://github.com/nebulae-tpm/gateway --api-id=gateway --output-dir=*WORKING_FOLDER*/ms-dashboard-devices/dist/gateway  --setup-file=*WORKING_FOLDER*/ms-dashboard-devices/etc/mapi-setup.json
-
-* npm installs required
-    * cd *WORKING_FOLDER*/backend/dashboard-devices/
-    * npm install
-    NOTE:  the npm install step for API gateway and frontEnd were made by the previous two steps
-* setup the **JWT_PUBLIC_KEY** in .env files
-    * go to http://localhost:8080 (user: "keycloak", pass: "keycloak")
-    * select the DEV_TPM keycloak realm and select 'realm settings' in left panel
-    * select keys option on the tab
-    * select public key belongs to RSA key and copy that key.
-    * set this key value to **JWT_PUBLIC_KEY** atribute in the following files: *WORKING_FOLDER*/ms-dashboard-devices/backend/dashboard-devices/.env, *WORKING_FOLDER*/ms-dashboard-devices/dist/gateway/.env.
-    Example: JWT_PUBLIC_KEY=-----BEGIN PUBLIC KEY-----\nPUT_HERE_JWT_PUBLIC_KEY_VALUE\n-----END PUBLIC KEY-----
-* Setup the Apollo engine key to trace request made to apollo server
-    * create a key at https://engine.apollographql.com/login and set it to the **APOLLO_ENGINE_API_KEY** atribute in the *WORKING_FOLDER*/dist/gateway/.env file.
-
-* setup the base href in front-end
-    * change *<base href="/emi/">* by *<base href="/">* in  *WORKING_FOLDER*/ms-dashboard-devices/dist/emi/src/index.html
+#### Import Development realm: 
+*  click on 'add realm' on the left panel
+*  Select import option
+*  import the file located at docs/resources/keycloakRealmToImport.json
+  
+#### Create the initial user:
+* select the DEV_TPM keycloak realm and click on the users option from the left panel.
+* select 'add user' option , fill the needed fields and enable the 'Email Verified' option.
+* set a password by editing the user, open the 'credentials' tabs, type a new password and deselect the 'Temporary' option
 
 
-## Start the develpment enviroment
-* run docker-compose to run up the mongo, keycloak and mqtt containers
-    * cd *WORKING_FOLDER*/ms-dashboard-devices/deployment/compose/
-    * sudo docker-compose up
-* run the backend server
-    * cd *WORKING_FOLDER*/backend/dashboard-devices/
-    * nodemon bin/server.js
-* Run the Api gateway
-    * cd *WORKING_FOLDER*/dist/gateway/
-    * npm run npm run start-dev-env
-* Run frontEnd 
-    * cd *WORKING_FOLDER*/dist/emi/
-    * npm run npm run start-dev-env
+Add the **developer** and **operator** rol to your user:
+* select user option in the left panel and click on your user id.
+* select the 'role mapping' tab
+* select **developer** and **operator** options from available roles and click on add selected
+
+###4. Create PlayGround folder
+   PlayGround is a directory where we are going to place the FrontEnd and API shells so the developer can run tests
+   ```
+   cd  REPO_DIRECTORY
+   mkdir playgorund   
+   ```
+
+###5. Compose FrontEnd
+```
+nebulae compose-ui development --shell-type=FUSE2_ANGULAR --shell-repo=https://github.com/nebulae-tpm/emi --frontend-id=emi --output-dir=/FULL_PATH_TO_REPO/ms-dashboard-devices/playground/emi  --setup-file=/FULL_PATH_TO_REPO/ms-dashboard-devices/etc/mfe-setup.json
+```
+
+###6. Compose the API gateway
+```
+nebulae compose-api development --api-type=NEBULAE_GATEWAY --api-repo=https://github.com/nebulae-tpm/gateway --api-id=gateway --output-dir=FULL_PATH_TO_REPO/ms-dashboard-devices/playground/gateway  --setup-file=FULL_PATH_TO_REPO/ms-dashboard-devices/etc/mapi-setup.json
+```
+
+###7. Set the JWT token 
+* LogIn to keycloak http://localhost:8080/auth/admin/ (user: "keycloak", pass: "keycloak")
+* select the DEV_TPM keycloak realm and click on 'realm settings' in left panel
+* select keys option tab
+* click on 'public key' from the RSA key and copy the contents.
+* set this key value to the **JWT_PUBLIC_KEY** atribute in the following files: *WORKING_FOLDER*/ms-dashboard-devices/backend/dashboard-devices/.env   *WORKING_FOLDER*/ms-dashboard-devices/playground/gateway/.env  
+Note: use the following format: ```JWT_PUBLIC_KEY=-----BEGIN PUBLIC KEY-----\nPUT_HERE_JWT_PUBLIC_KEY_VALUE\n-----END PUBLIC KEY-----```
+* Setup the Apollo engine key to trace API requests
+    * create a key at https://engine.apollographql.com/ and set it to the **APOLLO_ENGINE_API_KEY** atribute in the playground/gateway/.env file
+
+###8. Remove FrontEnd base href used on production
+change ```<base href="/emi/">``` to ```<base href="/">``` in the index.html located at playground/emi/src/index.html
 
 
+## Start the development environment
+1. Start the persistence layer, the broker and keycloak
+```
+cd ms-dashboard-devices/deployment/compose/
+docker-compose up
+```
+2. Start the Micro-BackEnd
+```
+cd backend/dashboard-devices/
+npm install
+npm start
+```
+3. Start the API Gateway
+```
+cd playground/gateway
+npm run start-dev-env
+```
+4. Start the FrontEnd
+```
+cd playground/emi
+npm run start-dev-env
+```
+
+Finally navigate to http://localhost:4200/

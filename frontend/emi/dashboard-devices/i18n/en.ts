@@ -25,7 +25,7 @@ export const locale = {
       USAGES_VS_ERRORS_by: 'Usages Vs write errors by:',
       USAGES: 'Usages',
       ERRORS: 'Errors',
-      INFLUX_OF_USERS: 'Influx of users between ',
+      INFLUX_OF_USERS: 'Users inflow',
       TOTAL_USAGES: 'Total usages',
       TOTAL_USAGES_BY_CUENCA: 'Total usages by site',
       LABEL_FOR_DEVICES_FILTER: 'Devices with',
