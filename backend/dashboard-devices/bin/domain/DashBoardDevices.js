@@ -328,7 +328,6 @@ class DashBoardDevices {
       )
       .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
       .catch(err => this.errorHandler$(err));
-
   }
 
   /**
