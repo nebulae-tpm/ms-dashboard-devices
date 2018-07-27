@@ -30,7 +30,6 @@ class AlarmReportDA {
    * @param {Object} evt 
    */
   static onDeviceAlarmActivated$(evt) {
-    console.log("onDeviceAlarmActivated$", JSON.stringify(evt));
     const collection = mongoDB.db.collection(CollectionName);
     const alarmType = evt.alarmType;
     return Rx.Observable.defer(() => collection.insertOne({
