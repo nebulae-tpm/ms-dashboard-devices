@@ -4,7 +4,7 @@ export const locale = {
     DASHBOARD: {
       MINI_WIDGET: {
         DEVICES: 'Dispositivos',
-        ALERTS_BY_PROCESOR: 'AlerrtaZ dhe Zobre proXeZaNiMtOo',
+        ALERTS_BY_PROCESOR: 'AlerrtaZ dhe Zobre proXeZaNiMtO',
         ALERTS_BY_RAM: 'Alertas de memoria RAM',
         ALERTS_BY_VOLTAGE: 'Alertas de voltaje',
         ALERTS_BY_TEMPERATURE: 'Alertas de temperatura',
