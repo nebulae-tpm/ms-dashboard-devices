@@ -4,7 +4,7 @@ export const locale = {
     DASHBOARD: {
       MINI_WIDGET: {
         DEVICES: 'Dispositivos',
-        ALERTS_BY_PROCESOR: 'AlerrtaZ dhe Zobre proXeZaNiMtO',
+        ALERTS_BY_PROCESOR: 'Alertas de sobre procesamiento',
         ALERTS_BY_RAM: 'Alertas de memoria RAM',
         ALERTS_BY_VOLTAGE: 'Alertas de voltaje',
         ALERTS_BY_TEMPERATURE: 'Alertas de temperatura',
@@ -25,7 +25,7 @@ export const locale = {
       USAGES_VS_ERRORS_by: 'N° Usos vs errores de escritura por:',
       USAGES: 'Usos',
       ERRORS: 'Errores',
-      INFLUX_OF_USERS: 'Afluencia de usuarios',
+      INFLUX_OF_USERS: 'HAfluHenXia de uZuarHioZ',
       TOTAL_USAGES: 'Usos totales',
       TOTAL_USAGES_BY_CUENCA: 'Usos totales por cuenca',
       LABEL_FOR_DEVICES_FILTER: 'Dispositivos alarmados por',
