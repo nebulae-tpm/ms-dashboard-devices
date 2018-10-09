@@ -119,7 +119,6 @@ class GraphQlService {
       .mergeMap(({ authToken, message }) =>
         handler.fn
           .call(handler.obj, message.data, authToken)
-          // .do(r => console.log("############################", r))
           .map(response => {
             return {
               response,
@@ -168,7 +167,9 @@ class GraphQlService {
     });
   }
 }
-
+/**
+ * @returns {GraphQlService}
+ */
 module.exports = () => {
   if (!instance) {
     instance = new GraphQlService();

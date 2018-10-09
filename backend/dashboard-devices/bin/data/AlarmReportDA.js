@@ -11,13 +11,7 @@ class AlarmReportDA {
    * gets DashBoardDevicesAlarmReport by type
    * @param {string} type
    */
-  static getDashBoardDevicesAlarmReport$(evt) {    
-    // if(evt.alarmType === "CPU_USAGE"){   
-    //     // return Rx.Observable.throw(
-    //     //   new CustomError("DashboardDA", "AlarmReportDA.getDashBoardDevicesAlarmReport$", undefined, "Custom error")
-    //     // );
-    //     console.log(dfer);
-    // }    
+  static getDashBoardDevicesAlarmReport$(evt) {     
     return Rx.Observable.forkJoin(
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[0], evt.alarmType),
       AlarmReportDA.getAlarmsInRangeOfTime(evt.timeRanges[1], evt.alarmType),
@@ -196,7 +190,7 @@ class AlarmReportDA {
 
 /**
  * Remove all documents before the obsolete Threshold
- * @param {double} obsoleteThreshold 
+ * @param {number} obsoleteThreshold Timestamp used as oldest limit
  */
   static removeObsoleteAlarmsReports$(obsoleteThreshold){
     const collection = mongoDB.db.collection(CollectionName);
@@ -206,4 +200,7 @@ class AlarmReportDA {
   }
 }
 
+/**
+ * @returns {AlarmReportDA}
+ */
 module.exports =  AlarmReportDA 

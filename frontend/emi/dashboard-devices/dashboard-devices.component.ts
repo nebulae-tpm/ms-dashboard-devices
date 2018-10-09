@@ -342,7 +342,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('ngOnInit on Dashboard, Running Version 0.0.44');
     // Get all cuenca names with transactions in a interval time to set options in successfulAndFailedTransactionByGroupNameWidget
     this.getAllCuencaNamesWithSuccessTransactionsOnInterval(
       this.successfulAndFailedTransactionByGroupNameWidget.currentTimeRange
@@ -404,7 +403,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         .getDashboardDeviceNetworkStatusEvents()
         .subscribe(
           result => {
-            console.log(' ## Updating online Vs offline devices chart');
             const originalLength = result.length;
             while (result.length < 5) {
               result.push({
@@ -506,7 +504,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           data => {
-            console.log('listenDeviceTransactionsUpdates()', data);
             // To update and display the influxOfUseGaugeChart and influxOfUserAdvancedPieChart data
             this.influxOfUserAdvancedPieChart.updateRowData(data);
             this.influxOfUseGaugeChart.updateRowData(data);
@@ -711,7 +708,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('ngOnDestroy on Dashboard ...');
     this.allSubscriptions.forEach(s => s.unsubscribe());
   }
 
@@ -814,7 +810,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
                 })
               }
             };
-            console.log(['/devices'], navigationParams);
             this.router.navigate(['/devices'], navigationParams);
           })
       );
@@ -843,7 +838,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         })
       }
     };
-    console.log(['/devices/device', deviceId], navigationParams);
     this.router.navigate(['/devices/device', deviceId], navigationParams);
   }
 
@@ -854,7 +848,6 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         if (resp.errors) {
           // TO-DO
           // show alerts in client propt
-          console.log('ERRORS IN GRAPHQL ==> ', resp.errors);
           this.openSnackBar(resp.errors[0].message, 6000);
           return null;
         } else if (resp.data) {

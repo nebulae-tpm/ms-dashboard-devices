@@ -65,7 +65,7 @@ class EventStoreService {
    */
   start$() {
     ////##################################################################
-    ///######## SOLO PARA GENERAR  REGISTROS DE ALARMAS##############
+    ///######## SOLO PARA GENERAR  REGISTROS DE ALARMAS ##############
     ////##################################################################
 
     // Rx.Observable.interval(5000).subscribe(() => {
@@ -75,10 +75,7 @@ class EventStoreService {
 
     // Rx.Observable.interval(3000).subscribe(() => {
     //   dashBoardDevices.generateDevices__RANDOM__$()
-    //   .subscribe(
-    //     r => {},
-    //     e => {}
-    //   );
+    //   .subscribe( r => {}, e => {}, () => {} );
     // });
 
     // Rx.Observable.interval(3000).subscribe(() => {
@@ -215,10 +212,6 @@ class EventStoreService {
         aggregateType: "Device",
         eventType: "DeviceConnected"
       },
-      // {
-      //   aggregateType: "Device",
-      //   eventType: "DeviceDisconnected"
-      // },
       {
         aggregateType: "Device",
         eventType: "DeviceDeviceStateReported"
@@ -260,7 +253,9 @@ class EventStoreService {
 }
 
  
-
+/**
+ * @returns {EventStoreService}
+ */
 module.exports = () => {
   if (!instance) {
     instance = new EventStoreService();

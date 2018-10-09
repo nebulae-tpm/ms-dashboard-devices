@@ -19,8 +19,39 @@ class DashBoardDevices {
   constructor() {
     this.frontendDeviceTransactionsUpdatedEvent$ = new Rx.Subject();
     this.frontendOnlineVsOfflineDevicesDebounce$ = new Rx.Subject();
+    
+    Rx.Observable.merge(
+      this.initializeFrontendOnlineVsOfflineDevicesUpdates(),
+      this.initializeFrontendTransactionUpdates()
+      )
+      .subscribe(
+        result => {},
+        error => console.log(error),
+        () => console.log("frontend updates stream completed !!!")
+      )
+  }
 
-    this.frontendDeviceTransactionsUpdatedEvent$
+
+  initializeFrontendOnlineVsOfflineDevicesUpdates() {
+    return this.frontendOnlineVsOfflineDevicesDebounce$
+      .switchMap(update => Rx.Observable.forkJoin(
+        Rx.Observable.of(update),
+        CommonVarsDA.getVarValue$(lastOnlineVsOffUpdateSentToDashboardDBKey)
+          .map(result => result ? result.value : null)
+      ))
+      // if more than 10 seconds have elapsed since the last event generated then we can sen another event
+      .filter(([currentUpdate, lastUpdate]) => lastUpdate == null || currentUpdate > lastUpdate + 10000)
+      .mergeMap(() => {
+        return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
+          .mergeMap(devices => this.mapToCharBarData$(devices))
+          .toArray()
+      })
+      .mergeMap(msg => broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceConnected", msg)) // send update
+      .mergeMap(() => CommonVarsDA.updateVarValue$(lastOnlineVsOffUpdateSentToDashboardDBKey, Date.now())) // update the last update in DB
+  }
+
+  initializeFrontendTransactionUpdates() {
+    return this.frontendDeviceTransactionsUpdatedEvent$
       // The value of 10 is established, because only every 10 minutes there will be useful
       // information to show in the graphs of transactions
       .map((transactionUpdate) => { return { data: { ...transactionUpdate }, timeRange: 10 } })
@@ -28,7 +59,7 @@ class DashBoardDevices {
       .mergeMap((transactionUpdate) => Rx.Observable.forkJoin(
         Rx.Observable.of(transactionUpdate),
         CommonVarsDA.getVarValue$(lastTransactionUpdateSentToClientDBKey)
-          .map(result => result ? result.value : null )
+          .map(result => result ? result.value : null)
       ))
       .map(([transactionUpdate, lastFrontendTransactionsUpdatedSent]) => {
         return { ...transactionUpdate, lastFrontendTransactionsUpdatedSent }
@@ -42,7 +73,7 @@ class DashBoardDevices {
         return (eventMinutes > lastSentMinutes)
           || ((eventMinutes < lastSentMinutes) && transactionUpdate.data.timestamp > transactionUpdate.lastFrontendTransactionsUpdatedSent)
           || transactionUpdate.lastFrontendTransactionsUpdatedSent == null;
-      })      
+      })
       .mergeMap((transactionUpdateEvent) => {
         return Rx.Observable.forkJoin(
           Rx.Observable.of(transactionUpdateEvent[0].data),
@@ -57,52 +88,26 @@ class DashBoardDevices {
           deviceTransactionsUpdatedEvent
         )
       )
-      .subscribe(() => { });
-      
-      this.frontendOnlineVsOfflineDevicesDebounce$
-      .switchMap(update => Rx.Observable.forkJoin(
-        Rx.Observable.of(update),
-        CommonVarsDA.getVarValue$(lastOnlineVsOffUpdateSentToDashboardDBKey)
-          .map(result => result ? result.value : null )
-      ))
-      .do(r => console.log("frontendOnlineVsOfflineDevicesDebounce$", r) )
-      // if more than 10 seconds have elapsed since the last event generated then we can sen another event
-      .filter(([currentUpdate, lastUpdate]) => lastUpdate == null || currentUpdate > lastUpdate + 10000) 
-      .mergeMap(() => {
-        return  DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
-          .mergeMap(devices => this.mapToCharBarData$(devices))
-          .toArray()          
-      })
-      .mergeMap(msg =>  broker.send$(MATERIALIZED_VIEW_TOPIC, "DeviceConnected", msg)) // send update
-      .mergeMap(() => CommonVarsDA.updateVarValue$( lastOnlineVsOffUpdateSentToDashboardDBKey, Date.now())) // update the last update in DB
-      .subscribe(() => {}, err => console.log(err));
-
-  }
-  
+  } 
 
   /**
-   * delivers the current status of the alarm by type
-   * @param {*} param0
-   * @param {*} authToken
+   * Delivers the current status of the alarm by type
+   * @param {any} content object that contains root, args and jwt
+   * @param {string} authToken decoded token
    */
   getDashBoardDevicesAlarmReport$({ root, args, jwt }, authToken) {
-    // console.log("getDashBoardDevicesAlarmReport", args);
     return this.getTimeRangesToLimit$({}, args.type, args.startTime)
-      .mergeMap(result =>
-        AlarmReportDA.getDashBoardDevicesAlarmReport$(result)
-      )
+      .mergeMap(result => AlarmReportDA.getDashBoardDevicesAlarmReport$(result) )
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       // since here the client can do it.
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
-      .map(timeranges => {
-        // console.log(JSON.stringify(timeranges));
-        return {
-          type: args.type,
-          queriedTime: args.startTime,
-          timeRanges: timeranges
-        };
+      .map(timeranges => ({
+        type: args.type,
+        queriedTime: args.startTime,
+        timeRanges: timeranges
       })
+      )
       .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
       .catch(err => this.errorHandler$(err));
   }
@@ -113,7 +118,6 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDashBoardDevicesCurrentNetworkStatus$({ root, args, jwt }, authToken) {
-    // console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getTotalDeviceByCuencaAndNetworkState$()
       .mergeMap(devices => this.mapToCharBarData$(devices))
       .toArray()
@@ -125,7 +129,6 @@ class DashBoardDevices {
    *  Get the Devices count
    */
   getDeviceDashBoardTotalAccount$({ root, args, jwt }, authToken) {
-    // console.log("getDashBoardDevicesCurrentNetworkStatus ..", root, args);
     return DeviceStatus.getDevicesTotalAccount$()
     .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
     .catch(err => this.errorHandler$(err));
@@ -151,9 +154,7 @@ class DashBoardDevices {
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
-      .map(timeranges => {
-        return { type: evt.alarmType, timeRanges: timeranges, queriedTime: queriedTime };
-      })
+      .map(timeranges => ({ type: evt.alarmType, timeRanges: timeranges, queriedTime: queriedTime }))
       .mergeMap(msg =>
         broker.send$(
           MATERIALIZED_VIEW_TOPIC,
@@ -169,26 +170,25 @@ class DashBoardDevices {
   onDeviceRamuUsageAlarmActivated$(evt) {
     const queriedTime = Date.now();
     return this.getTimeRangesToLimit$(evt, "RAM_MEMORY", queriedTime)
-        .mergeMap(evt => this.fillHostnameToEvt$(evt))
-        .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
-        // aca se estaba desordenando el array
-        .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
-        .mergeMap(array => this.mapToAlarmsWidget$(array))
-        .toArray()
-        .map(timeranges => {
-          return {
-            type: evt.alarmType,
-            timeRanges: timeranges,
-            queriedTime: queriedTime
-          };
+      .mergeMap(evt => this.fillHostnameToEvt$(evt))
+      .mergeMap(evt => AlarmReportDA.onDeviceAlarmActivated$(evt))
+      .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
+      .mergeMap(array => this.mapToAlarmsWidget$(array))
+      .toArray()
+      .map(timeranges =>
+        ({
+          type: evt.alarmType,
+          timeRanges: timeranges,
+          queriedTime: queriedTime
         })
-        .mergeMap(msg =>
-          broker.send$(
-            MATERIALIZED_VIEW_TOPIC,
-            "DeviceRamMemoryAlarmActivated",
-            msg
-          )
-        );
+      )
+      .mergeMap(msg =>
+        broker.send$(
+          MATERIALIZED_VIEW_TOPIC,
+          "DeviceRamMemoryAlarmActivated",
+          msg
+        )
+      );
   }
 
   /**
@@ -202,13 +202,13 @@ class DashBoardDevices {
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
-      .map(timeranges => {
-        return {
+      .map(timeranges => 
+         ({
           type: evt.alarmType,
           timeRanges: timeranges,
           queriedTime: queriedTime
-        };
-      })
+        })
+      )
       .mergeMap(msg =>
         broker.send$(
           MATERIALIZED_VIEW_TOPIC,
@@ -232,13 +232,13 @@ class DashBoardDevices {
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
-      .map(timeranges => {
-        return {
+      .map(timeranges => 
+        ({
           type: evt.alarmType,
           timeRanges: timeranges,
           queriedTime: queriedTime
-        };
-      })
+        })
+      )
       .mergeMap(msg =>
         broker.send$(
           MATERIALIZED_VIEW_TOPIC,
@@ -260,13 +260,13 @@ class DashBoardDevices {
       .mergeMap(result => AlarmReportDA.getTopAlarmDevices$(result))
       .mergeMap(array => this.mapToAlarmsWidget$(array))
       .toArray()
-      .map(timeranges => {
-        return {
+      .map(timeranges => 
+        ({
           type: evt.alarmType,
           timeRanges: timeranges,
           queriedTime : queriedTime
-        };
-      })
+        })
+      )
       .mergeMap(msg =>
         broker.send$(
           MATERIALIZED_VIEW_TOPIC,
@@ -285,7 +285,6 @@ class DashBoardDevices {
     { root, args, jwt },
     authToken
   ) {
-    // console.log("------------ getCuencaNamesWithSuccessTransactionsOnInterval", args);
     return DeviceTransactionsDA.getCuencaNamesWithSuccessTransactionsOnInterval$(
       args.startDate,
       args.endDate
@@ -306,7 +305,6 @@ class DashBoardDevices {
    * @param {*} authToken
    */
   getDeviceTransactionsGroupByTimeInterval$({ root, args, jwt }, authToken) {
-    // console.log("------------ getDeviceTransactionGroupByTimeInterval", args);
     return DeviceTransactionsDA.getDeviceTransactionGroupByTimeInterval$(
       args.startDate,
       args.endDate,
@@ -320,12 +318,8 @@ class DashBoardDevices {
    *
    */
   getDeviceTransactionsGroupByGroupName$({ root, args, jwt }, authToken) {
-    // console.log(" ===> getDeviceTransactionsGroupByGroupName", args);
-    return this
-      .getTimeRangesRoundedToLimit$({}, undefined, args.nowDate)
-      .mergeMap(evt =>
-        DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt)
-      )
+    return this.getTimeRangesRoundedToLimit$({}, undefined, args.nowDate)
+      .mergeMap(evt => DeviceTransactionsDA.getDeviceTransactionGroupByGroupName$(evt))
       .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
       .catch(err => this.errorHandler$(err));
   }
@@ -335,7 +329,6 @@ class DashBoardDevices {
    * @param {*} data Reported transaction event
    */
   persistSuccessDeviceTransaction$(data) {
-    // console.log("persistSuccessDeviceTransaction ==> ", data);
     return this.handleDeviceMainAppUsosTranspCountReported$(data, true);
   }
 
@@ -344,7 +337,6 @@ class DashBoardDevices {
    * @param {*} data Reported transaction event
    */
   persistFailedDeviceTransaction$(data) {
-    // console.log("persistFailedDeviceTransaction ==> ", data);
     return this.handleDeviceMainAppUsosTranspCountReported$(data, false);
   }
 
@@ -354,11 +346,8 @@ class DashBoardDevices {
    * @param {*} success boolean that indicates if the transactions were failed or successful
    */
   handleDeviceMainAppUsosTranspCountReported$(data, success) {
-    // console.log("handleDeviceMainAppUsosTranspCountReported | aid ==>", success, data )
-
     return (
       DeviceStatus.getDeviceStatusByID$(data.aid, { groupName: 1 })
-        // .do(d => console.log("deviceFound ==> ", d.deviceId))
         .filter(device => device)
         .map(device => {
           const deviceTransaction = {
@@ -385,21 +374,26 @@ class DashBoardDevices {
    * @param {Object} evt
    */
   handleDeviceStateReportedEvent$(evt) {
-    // console.log("handleDeviceStateReportedEvent", evt);
     return DeviceStatus.onDeviceStateReportedEvent$(evt.data);
   }
 
   /**
    * obsoleteThreshold in hours
    */
-  removeAllObsoleteMongoDocuments$(evt){
-    // console.log("removeAllObsoleteMongoDocuments ==> ", evt.data)
-    const hoursBefore = evt.data ?  evt.data.obsoleteThreshold : 3
-    const obsoleteThreshold = ( Date.now() - (hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
-    return Rx.Observable.forkJoin(
-      AlarmReportDA.removeObsoleteAlarmsReports$(obsoleteThreshold),
-      DeviceTransactionsDA.removeObsoleteTransactions$(obsoleteThreshold)
-    );
+  removeAllObsoleteMongoDocuments$(evt) {
+    // const hoursBefore = (evt.data && evt.data.obsoleteThreshold) ?  evt.data.obsoleteThreshold : 3
+    // const obsoleteThreshold = ( Date.now() - (hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
+    // return Rx.Observable.forkJoin(
+    //   AlarmReportDA.removeObsoleteAlarmsReports$(obsoleteThreshold),
+    //   DeviceTransactionsDA.removeObsoleteTransactions$(obsoleteThreshold)
+    // );
+    return Rx.Observable.of(evt.data)
+      .map(data => (data && data.obsoleteThreshold) ? data.obsoleteThreshold : 3)
+      .map(hoursBefore => (Date.now() - (hoursBefore * 60 * 60 * 1000) + (10 * 60 * 1000)))
+      .mergeMap(obsoleteThreshold => Rx.Observable.forkJoin(
+        AlarmReportDA.removeObsoleteAlarmsReports$(obsoleteThreshold),
+        DeviceTransactionsDA.removeObsoleteTransactions$(obsoleteThreshold)
+      ));
   }
 
   errorHandler$(err) {
@@ -516,7 +510,6 @@ class DashBoardDevices {
    * gets array with datelimits in milliseconds to last one, two and three hours
    */
   getTimeRangesRoundedToLimit$(evt, eventType, dateNow) {
-    // console.log("--getTimeRangesRoundedToLimit$", evt, eventType, dateNow );
     return Rx.Observable.of(evt).map(evt => {
       const now = new Date(dateNow);
       now.setMinutes(now.getMinutes() - now.getMinutes() % 10, 0, 0);
@@ -550,7 +543,9 @@ class DashBoardDevices {
   //#endregion 
   
 }
-
+/**
+ * @returns {DashBoardDevices}
+ */
 module.exports = () => {
   if (!instance) {
     instance = new DashBoardDevices();

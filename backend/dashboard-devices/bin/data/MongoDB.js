@@ -71,7 +71,9 @@ class MongoDB {
     }
 
 }
-
+/**
+ * @returns {MongoDB}
+ */
 module.exports = () => {
     if (!instance) {
         instance = new MongoDB(
