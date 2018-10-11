@@ -140,6 +140,8 @@ class GraphQlService {
           return Rx.Observable.of(undefined);
         }
       })
+      //TODO: Remove this catch
+      .catch(error => Rx.Observable.of('Temporal catch: remove this'))
       .subscribe(
         msg => {
           // console.log(`GraphQlService: ${messageType} process: ${msg}`);
