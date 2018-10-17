@@ -74,15 +74,18 @@ class MongoDB {
 /**
  * @returns {MongoDB}
  */
-module.exports = () => {
-    if (!instance) {
-        instance = new MongoDB(
-            {
-                url: process.env.MONGODB_URL,
-                dbName: process.env.MONGODB_DB_NAME,
-            }
-        );
-        console.log(`MongoDB instance created: ${process.env.MONGODB_DB_NAME}`);
+module.exports = {
+    MongoDB,
+    singleton() {
+        if (!instance) {
+            instance = new MongoDB(
+                {
+                    url: process.env.MONGODB_URL,
+                    dbName: process.env.MONGODB_DB_NAME,
+                }
+            );
+            console.log(`MongoDB instance created: ${process.env.MONGODB_DB_NAME}`);
+        }
+        return instance;
     }
-    return instance;
 };

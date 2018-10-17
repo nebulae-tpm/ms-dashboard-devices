@@ -1,11 +1,24 @@
 "use strict";
 
-const mongoDB = require("./MongoDB")();
+let mongoDB = undefined;
 const Rx = require("rxjs");
 const CollectionName = "deviceTransactions";
-const { CustomError } = require("../tools/customError");
 
 class DeviceTransactionsDA {
+
+  static start$(mongoDbInstance) {
+    return Rx.Observable.create((observer) => {
+      if (mongoDbInstance) {
+        mongoDB = mongoDbInstance;
+        observer.next('using given mongo instance');
+      } else {
+        mongoDB = require('./MongoDB').singleton();
+        observer.next('using singleton system-wide mongo instance');
+      }
+      observer.complete();
+    });
+  }
+
   /**
    * Updates a document in the collection
    * @param {object} filter The selection criteria for the update. The same query selectors as in the find() method are available.

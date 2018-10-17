@@ -24,11 +24,7 @@ class DashBoardDevices {
       this.initializeFrontendOnlineVsOfflineDevicesUpdates(),
       this.initializeFrontendTransactionUpdates()
       )
-      .subscribe(
-        result => {},
-        error => console.log(error),
-        () => console.log("frontend updates stream completed !!!")
-      )
+      .subscribe( () => {}, error => console.log(error), () => console.log("frontend updates stream completed !!!"))
   }
 
 
@@ -295,8 +291,8 @@ class DashBoardDevices {
       });
       return result;
     })
-    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
-    .catch(err => this.errorHandler$(err));
+      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+      .catch(err => this.errorHandler$(err));
   }
 
   /**
@@ -362,7 +358,7 @@ class DashBoardDevices {
         .mergeMap(transaction =>
           DeviceTransactionsDA.insertDeviceTransaction$(transaction)
         )              
-        .map(() => {return { timestamp: new Date().getTime() }})
+        .map(() => ({timestamp: new Date().getTime()}) )
         // TODO check what is the best way to do this
         .do((deviceTransactionUpdatedEvent) => this.frontendDeviceTransactionsUpdatedEvent$.next(deviceTransactionUpdatedEvent))
        
@@ -381,12 +377,6 @@ class DashBoardDevices {
    * obsoleteThreshold in hours
    */
   removeAllObsoleteMongoDocuments$(evt) {
-    // const hoursBefore = (evt.data && evt.data.obsoleteThreshold) ?  evt.data.obsoleteThreshold : 3
-    // const obsoleteThreshold = ( Date.now() - (hoursBefore * 60 * 60 * 1000) + ( 10 * 60 * 1000 ) );
-    // return Rx.Observable.forkJoin(
-    //   AlarmReportDA.removeObsoleteAlarmsReports$(obsoleteThreshold),
-    //   DeviceTransactionsDA.removeObsoleteTransactions$(obsoleteThreshold)
-    // );
     return Rx.Observable.of(evt.data)
       .map(data => (data && data.obsoleteThreshold) ? data.obsoleteThreshold : 3)
       .map(hoursBefore => (Date.now() - (hoursBefore * 60 * 60 * 1000) + (10 * 60 * 1000)))
@@ -442,32 +432,31 @@ class DashBoardDevices {
       });
   }
 
-   /**
-   * used to convert data to Online vs Offline schema.
-   */
+  /**
+  * used to convert data to Online vs Offline schema.
+  */
   mapToCharBarData$(devices) {
     return Rx.Observable.from(devices)
       .groupBy(cuenca => cuenca._id.cuenca)
       .mergeMap(group => group.toArray())
-      .map(group => {
-        return {
-          name: group[0]._id.cuenca,
-          series: [
-            {
-              name: "Online",
-              value: group.filter(c => c._id.online)[0]
-                ? group.filter(c => c._id.online)[0].value
-                : 0
-            },
-            {
-              name: "Offline",
-              value: group.filter(c => !c._id.online)[0]
-                ? group.filter(c => !c._id.online)[0].value
-                : 0
-            }
-          ]
-        };
-      });
+      .map(group => ({
+        name: group[0]._id.cuenca,
+        series: [
+          {
+            name: "Online",
+            value: group.filter(c => c._id.online)[0]
+              ? group.filter(c => c._id.online)[0].value
+              : 0
+          },
+          {
+            name: "Offline",
+            value: group.filter(c => !c._id.online)[0]
+              ? group.filter(c => !c._id.online)[0].value
+              : 0
+          }
+        ]
+      })
+      );
   }
 
   /**
