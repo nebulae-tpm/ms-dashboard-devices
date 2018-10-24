@@ -402,7 +402,7 @@ class DashBoardDevices {
       });
   }
 
-  //#region Mappers
+  // #region Mappers
   buildSuccessResponse$(rawRespponse) {
     return Rx.Observable.of(rawRespponse)
       .map(resp => {
@@ -517,7 +517,7 @@ class DashBoardDevices {
       return evt;
     });
   }
-  //endregion
+  // #endregion
 
   //#region random data generator
 
@@ -529,7 +529,7 @@ class DashBoardDevices {
     return DeviceStatus.generateDevices__RANDOM__$();
   }
 
-  //#endregion 
+  // #endregion 
   
 }
 /**
