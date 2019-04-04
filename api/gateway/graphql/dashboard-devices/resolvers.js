@@ -1,24 +1,22 @@
 const withFilter = require("graphql-subscriptions").withFilter;
 const PubSub = require("graphql-subscriptions").PubSub;
 const pubsub = new PubSub();
-const { of } = require("rxjs");
-const { mergeMap, map } = require("rxjs/operators");
+const Rx = require("rxjs");
 const broker = require("../../broker/BrokerFactory")();
 
 function getReponseFromBackEnd$(response) {
-  return of(response).pipe(
-    map(resp => {
+  return Rx.Observable.of(response)
+    .map(resp => {
       if (resp.result.code != 200) {
         const err = new Error();
-        err.name = "Error";
+        err.name = 'Error';
         err.message = resp.result.error;
         // this[Symbol()] = resp.result.error;
-        Error.captureStackTrace(err, "Error");
+        Error.captureStackTrace(err, 'Error');
         throw err;
       }
       return resp.data;
-    })
-  );
+    });    
 }
 
 module.exports = {
@@ -31,7 +29,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           2000
         )
-        .pipe(mergeMap(response => getReponseFromBackEnd$(response)))
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getDashBoardDevicesCurrentNetworkStatus(root, args, context) {
@@ -42,7 +40,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           2000
         )
-        .pipe(mergeMap(response => getReponseFromBackEnd$(response)))
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getCuencaNamesWithSuccessTransactionsOnInterval(root, args, context) {
@@ -54,7 +52,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           2000
         )
-        .pipe(mergeMap(response => getReponseFromBackEnd$(response)))
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getSucessDeviceTransactionsGroupByGroupName(root, args, context) {
@@ -66,7 +64,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           2000
         )
-        .pipe(mergeMap(response => getReponseFromBackEnd$(response)))
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getDeviceTransactionsGroupByTimeInterval(root, args, context) {
@@ -78,7 +76,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           2000
         )
-        .pipe(mergeMap(response => getReponseFromBackEnd$(response)))
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     },
     getDeviceDashBoardTotalAccount(root, args, context) {
@@ -90,7 +88,7 @@ module.exports = {
           { root, args, jwt: context.encodedToken },
           2000
         )
-        .pipe(mergeMap(response => getReponseFromBackEnd$(response)))
+        .mergeMap(response => getReponseFromBackEnd$(response))
         .toPromise();
     }
   },
@@ -197,104 +195,154 @@ module.exports = {
   }
 };
 
-const eventDescriptors = [
-  {
-    backendEventName: "DeviceHighVoltageAlarmReported",
-    gqlSubscriptionName: "onDashBoardDeviceHighVoltageAlarmReported",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  },
-  {
-    backendEventName: "deviceTransactionsUpdatedEvent",
-    gqlSubscriptionName: "deviceTransactionsUpdatedEvent",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  },
-  {
-    backendEventName: "DeviceLowVoltageAlarmReported",
-    gqlSubscriptionName: "onDashBoardDeviceLowVoltageAlarmReported",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  },
-  {
-    backendEventName: "DeviceTemperatureAlarmActivated",
-    gqlSubscriptionName: "onDashBoardDeviceTemperatureAlarmActivated",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  },
-  {
-    backendEventName: "DeviceRamMemoryAlarmActivated",
-    gqlSubscriptionName: "onDashBoardDeviceRamMemoryAlarmActivated",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  },
-  {
-    backendEventName: "DeviceCpuUsageAlarmActivated",
-    gqlSubscriptionName: "onDashBoardDeviceCpuUsageAlarmActivated",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  },
-  {
-    backendEventName: "DeviceDisconnected",
-    gqlSubscriptionName: "onDashBoardDeviceOfflineReported",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  },
-  {
-    backendEventName: "DeviceConnected",
-    gqlSubscriptionName: "onDashBoardDeviceOnlineReported",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  }
-];
-
-/**
- * Connects every backend event to the right GQL subscription
- */
-eventDescriptors.forEach(descriptor => {
-  broker.getMaterializedViewsUpdates$([descriptor.backendEventName]).subscribe(
+broker
+  .getMaterializedViewsUpdates$(["DeviceHighVoltageAlarmReported"])
+  .subscribe(
     evt => {
-      if (descriptor.onEvent) {
-        descriptor.onEvent(evt, descriptor);
-      }
-      const payload = {};
-      payload[descriptor.gqlSubscriptionName] = descriptor.dataExtractor
-        ? descriptor.dataExtractor(evt)
-        : evt.data;
-      pubsub.publish(descriptor.gqlSubscriptionName, payload);
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceHighVoltageAlarmReported", {
+        onDashBoardDeviceHighVoltageAlarmReported: evt.data
+      });
     },
-
-    error => {
-      if (descriptor.onError) {
-        descriptor.onError(error, descriptor);
-      }
-      console.error(`Error listening ${descriptor.gqlSubscriptionName}`, error);
-    },
-
-    () => console.log(`${descriptor.gqlSubscriptionName} listener STOPED`)
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceHighVoltageAlarmReported",
+        error
+      ),
+    () =>
+      console.log(
+        "onDashBoardDeviceHighVoltageAlarmReported listener STOPED :D"
+      )
   );
-});
+
+broker
+  .getMaterializedViewsUpdates$(["deviceTransactionsUpdatedEvent"])
+  .subscribe(
+    evt => {
+      // console.log({
+      //   type: evt.type,
+      //   data: evt.data
+      // });
+      pubsub.publish("deviceTransactionsUpdatedEvent", {
+        deviceTransactionsUpdatedEvent: evt.data
+      });
+    },
+    error =>
+      console.error("Error listening deviceTransactionsUpdatedEvent", error),
+    () => console.log("deviceTransactionsUpdatedEvent listener STOPED :D")
+  );
+
+broker
+  .getMaterializedViewsUpdates$(["DeviceLowVoltageAlarmReported"])
+  .subscribe(
+    evt => {
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceLowVoltageAlarmReported", {
+        onDashBoardDeviceLowVoltageAlarmReported: evt.data
+      });
+    },
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceLowVoltageAlarmReported",
+        error
+      ),
+    () =>
+      console.log("onDashBoardDeviceLowVoltageAlarmReported listener STOPED :D")
+  );
+
+broker
+  .getMaterializedViewsUpdates$(["DeviceTemperatureAlarmActivated"])
+  .subscribe(
+    evt => {
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceTemperatureAlarmActivated", {
+        onDashBoardDeviceTemperatureAlarmActivated: evt.data
+      });
+    },
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceTemperatureAlarmActivated",
+        error
+      ),
+    () =>
+      console.log(
+        "onDashBoardDeviceTemperatureAlarmActivated listener STOPED :D"
+      )
+  );
+
+broker
+  .getMaterializedViewsUpdates$(["DeviceRamMemoryAlarmActivated"])
+  .subscribe(
+    evt => {
+      console.log({
+        type: evt.type,
+        data: evt.data
+      });
+      pubsub.publish("onDashBoardDeviceRamMemoryAlarmActivated", {
+        onDashBoardDeviceRamMemoryAlarmActivated: evt.data
+      });
+    },
+    error =>
+      console.error(
+        "Error listening onDashBoardDeviceRamMemoryAlarmActivated",
+        error
+      ),
+    () =>
+      console.log("onDashBoardDeviceRamMemoryAlarmActivated listener STOPED :D")
+  );
+
+broker.getMaterializedViewsUpdates$(["DeviceCpuUsageAlarmActivated"]).subscribe(
+  evt => {
+    console.log({
+      type: evt.type,
+      data: evt.data
+    });
+    pubsub.publish("onDashBoardDeviceCpuUsageAlarmActivated", {
+      onDashBoardDeviceCpuUsageAlarmActivated: evt.data
+    });
+  },
+  error =>
+    console.error(
+      "Error listening onDashBoardDeviceCpuUsageAlarmActivated",
+      error
+    ),
+  () =>
+    console.log("onDashBoardDeviceCpuUsageAlarmActivated listener STOPED :D")
+);
+broker.getMaterializedViewsUpdates$(["DeviceDisconnected"]).subscribe(
+  evt => {
+    console.log({
+      type: evt.type,
+      data: evt.data
+    });
+    pubsub.publish("onDashBoardDeviceOfflineReported", {
+      onDashBoardDeviceOfflineReported: evt.data
+    });
+  },
+  error =>
+    console.error("Error listening onDashBoardDeviceOfflineReported", error),
+  () => console.log("onDashBoardDeviceOfflineReported listener STOPED :D")
+);
+broker.getMaterializedViewsUpdates$(["DeviceConnected"]).subscribe(
+  evt => {
+    console.log({
+      type: evt.type,
+      data: evt.data
+    });
+    pubsub.publish("onDashBoardDeviceOnlineReported", {
+      onDashBoardDeviceOnlineReported: evt.data
+    });
+  },
+  error =>
+    console.error("Error listening onDashBoardDeviceOnlineReported", error),
+  () => console.log("onDashBoardDeviceOnlineReported listener STOPED :D")
+);

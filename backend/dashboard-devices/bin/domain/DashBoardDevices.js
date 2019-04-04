@@ -24,7 +24,7 @@ class DashBoardDevices {
       this.initializeFrontendOnlineVsOfflineDevicesUpdates(),
       this.initializeFrontendTransactionUpdates()
       )
-      .subscribe( () => {}, error => console.log(error), () => console.log("frontend updates stream completed !!!"))
+      .subscribe( () => {}, error => console.log(error), () => console.log("frontend updates stream completed !!!."))
   }
 
 

@@ -866,9 +866,5 @@ export class DashboardDevicesComponent implements OnInit, OnDestroy {
         });
       });
 
-    // snackbarRef.onAction().subscribe((data) => {
-    //   console.log("snackbarRef.onAction()", data);
-    // })
-
   }
 }
